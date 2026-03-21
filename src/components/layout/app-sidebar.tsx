@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import { useLayout } from '@/context/layout-provider'
 import {
   Sidebar,
@@ -7,13 +8,18 @@ import {
   SidebarRail,
 } from '@/components/ui/sidebar'
 // import { AppTitle } from './app-title'
-import { sidebarData } from './data/sidebar-data'
+import { getSidebarData } from './data/sidebar-data'
 import { NavGroup } from './nav-group'
 import { NavUser } from './nav-user'
 import { TeamSwitcher } from './team-switcher'
 
 export function AppSidebar() {
   const { collapsible, variant } = useLayout()
+  const { i18n } = useTranslation()
+
+  // Get fresh sidebar data when language changes
+  const sidebarData = getSidebarData()
+
   return (
     <Sidebar collapsible={collapsible} variant={variant}>
       <SidebarHeader>
@@ -23,7 +29,7 @@ export function AppSidebar() {
          /* if you want to use the normal app title instead of TeamSwitch dropdown */}
         {/* <AppTitle /> */}
       </SidebarHeader>
-      <SidebarContent>
+      <SidebarContent key={i18n.language}>
         {sidebarData.navGroups.map((props) => (
           <NavGroup key={props.title} {...props} />
         ))}

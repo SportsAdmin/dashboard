@@ -1,0 +1,163 @@
+{
+  "common": {
+    "search": "Search",
+    "add": "Add",
+    "edit": "Edit",
+    "delete": "Delete",
+    "cancel": "Cancel",
+    "save": "Save",
+    "create": "Create",
+    "update": "Update",
+    "actions": "Actions",
+    "loading": "Loading...",
+    "noResults": "No results found",
+    "error": "Error",
+    "success": "Success"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "pos": "POS",
+    "inventory": "Inventory",
+    "products": "Products",
+    "customers": "Customers",
+    "tasks": "Tasks",
+    "apps": "Apps",
+    "chats": "Chats",
+    "users": "Users",
+    "settings": "Settings",
+    "helpCenter": "Help Center"
+  },
+  "pos": {
+    "dashboard": {
+      "title": "POS Dashboard",
+      "salesToday": "Sales Today",
+      "revenueThisMonth": "Total Revenue This Month",
+      "lowStockProducts": "Low Stock Products",
+      "totalOrders": "Total Orders",
+      "salesChart": "Sales - Last 7 Days",
+      "recentSales": "Recent Sales",
+      "fromYesterday": "from yesterday",
+      "fromLastMonth": "from last month",
+      "requiresAttention": "Requires attention",
+      "sinceLastHour": "since last hour"
+    },
+    "sales": {
+      "title": "New Sale",
+      "searchProducts": "Search products...",
+      "cart": "Cart",
+      "cartEmpty": "Cart is empty",
+      "subtotal": "Subtotal",
+      "tax": "Tax (10%)",
+      "total": "Total",
+      "clearCart": "Clear Cart",
+      "payment": {
+        "cash": "Cash",
+        "card": "Card",
+        "transfer": "Transfer"
+      },
+      "outOfStock": "Out of Stock",
+      "stock": "Stock",
+      "each": "each",
+      "stockLimitReached": "Stock limit reached. Only {{stock}} available",
+      "paymentSuccess": "{{method}} payment of ${{total}} completed",
+      "cartCleared": "Cart cleared"
+    },
+    "topNav": {
+      "panel": "Dashboard",
+      "newSale": "New Sale",
+      "history": "History"
+    },
+    "table": {
+      "date": "Date",
+      "customer": "Customer",
+      "total": "Total",
+      "paymentMethod": "Payment Method"
+    }
+  },
+  "inventory": {
+    "title": "Inventory",
+    "description": "Manage your product inventory and stock levels",
+    "searchPlaceholder": "Search by product, size, or color...",
+    "table": {
+      "productName": "Product Name",
+      "variant": "Variant",
+      "stock": "Stock",
+      "price": "Price"
+    },
+    "filters": {
+      "product": "Product",
+      "stockStatus": "Stock Status",
+      "inStock": "In Stock",
+      "lowStock": "Low Stock",
+      "outOfStock": "Out of Stock"
+    }
+  },
+  "products": {
+    "title": "Products",
+    "description": "Manage your products and variants",
+    "createProduct": "Create Product",
+    "searchPlaceholder": "Search products...",
+    "dialog": {
+      "title": "Create New Product",
+      "description": "Add a new product with variants to your inventory",
+      "name": "Product Name",
+      "namePlaceholder": "e.g., Running Shoes Pro",
+      "nameRequired": "Product name is required",
+      "category": "Category",
+      "categoryPlaceholder": "e.g., Footwear, Apparel, Equipment",
+      "categoryRequired": "Category is required",
+      "basePrice": "Base Price",
+      "basePriceRequired": "Price must be positive",
+      "variants": "Variants",
+      "addVariant": "Add Variant",
+      "variant": "Variant",
+      "size": "Size",
+      "sizePlaceholder": "e.g., M, L, XL",
+      "sizeRequired": "Size is required",
+      "color": "Color",
+      "colorPlaceholder": "e.g., Red, Blue",
+      "colorRequired": "Color is required",
+      "price": "Price",
+      "priceRequired": "Price must be positive",
+      "noVariants": "No variants added. Click \"Add Variant\" to create one.",
+      "atLeastOneVariant": "At least one variant is required",
+      "creating": "Creating...",
+      "productCreated": "{{name}} has been added successfully"
+    },
+    "table": {
+      "name": "Product Name",
+      "basePrice": "Base Price",
+      "variants": "Variants",
+      "created": "Created",
+      "variantsCount": "{{count}} variant(s)",
+      "totalStock": "Stock: {{stock}}"
+    }
+  },
+  "customers": {
+    "title": "Customers",
+    "description": "Manage your customer database",
+    "addCustomer": "Add Customer",
+    "searchPlaceholder": "Search customers...",
+    "dialog": {
+      "title": "Add New Customer",
+      "description": "Add a new customer to your database",
+      "name": "Name",
+      "namePlaceholder": "e.g., John Smith",
+      "nameRequired": "Name is required",
+      "phone": "Phone",
+      "phonePlaceholder": "e.g., +1 (555) 123-4567",
+      "phoneRequired": "Phone is required",
+      "email": "Email",
+      "emailPlaceholder": "e.g., john@email.com",
+      "emailInvalid": "Invalid email address",
+      "adding": "Adding...",
+      "customerAdded": "{{name}} has been added successfully"
+    },
+    "table": {
+      "name": "Name",
+      "phone": "Phone",
+      "email": "Email",
+      "joined": "Joined"
+    }
+  }
+}

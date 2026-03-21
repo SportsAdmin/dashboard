@@ -1,0 +1,163 @@
+{
+  "common": {
+    "search": "Buscar",
+    "add": "Agregar",
+    "edit": "Editar",
+    "delete": "Eliminar",
+    "cancel": "Cancelar",
+    "save": "Guardar",
+    "create": "Crear",
+    "update": "Actualizar",
+    "actions": "Acciones",
+    "loading": "Cargando...",
+    "noResults": "No se encontraron resultados",
+    "error": "Error",
+    "success": "Éxito"
+  },
+  "nav": {
+    "dashboard": "Panel",
+    "pos": "TPV",
+    "inventory": "Inventario",
+    "products": "Productos",
+    "customers": "Clientes",
+    "tasks": "Tareas",
+    "apps": "Aplicaciones",
+    "chats": "Chats",
+    "users": "Usuarios",
+    "settings": "Configuración",
+    "helpCenter": "Centro de Ayuda"
+  },
+  "pos": {
+    "dashboard": {
+      "title": "Panel de Ventas",
+      "salesToday": "Ventas Hoy",
+      "revenueThisMonth": "Ingresos del Mes",
+      "lowStockProducts": "Productos con Bajo Stock",
+      "totalOrders": "Total de Pedidos",
+      "salesChart": "Ventas - Últimos 7 Días",
+      "recentSales": "Ventas Recientes",
+      "fromYesterday": "desde ayer",
+      "fromLastMonth": "desde el mes pasado",
+      "requiresAttention": "Requiere atención",
+      "sinceLastHour": "desde la última hora"
+    },
+    "sales": {
+      "title": "Nueva Venta",
+      "searchProducts": "Buscar productos...",
+      "cart": "Carrito",
+      "cartEmpty": "El carrito está vacío",
+      "subtotal": "Subtotal",
+      "tax": "IVA (10%)",
+      "total": "Total",
+      "clearCart": "Vaciar Carrito",
+      "payment": {
+        "cash": "Efectivo",
+        "card": "Tarjeta",
+        "transfer": "Transferencia"
+      },
+      "outOfStock": "Sin Stock",
+      "stock": "Stock",
+      "each": "c/u",
+      "stockLimitReached": "Límite de stock alcanzado. Solo {{stock}} disponibles",
+      "paymentSuccess": "Pago de {{method}} por ${{total}} completado",
+      "cartCleared": "Carrito vaciado"
+    },
+    "topNav": {
+      "panel": "Panel",
+      "newSale": "Nueva Venta",
+      "history": "Historial"
+    },
+    "table": {
+      "date": "Fecha",
+      "customer": "Cliente",
+      "total": "Total",
+      "paymentMethod": "Método de Pago"
+    }
+  },
+  "inventory": {
+    "title": "Inventario",
+    "description": "Administra tu inventario y niveles de stock",
+    "searchPlaceholder": "Buscar por producto, tamaño o color...",
+    "table": {
+      "productName": "Nombre del Producto",
+      "variant": "Variante",
+      "stock": "Stock",
+      "price": "Precio"
+    },
+    "filters": {
+      "product": "Producto",
+      "stockStatus": "Estado de Stock",
+      "inStock": "En Stock",
+      "lowStock": "Bajo Stock",
+      "outOfStock": "Sin Stock"
+    }
+  },
+  "products": {
+    "title": "Productos",
+    "description": "Administra tus productos y variantes",
+    "createProduct": "Crear Producto",
+    "searchPlaceholder": "Buscar productos...",
+    "dialog": {
+      "title": "Crear Nuevo Producto",
+      "description": "Agrega un nuevo producto con variantes a tu inventario",
+      "name": "Nombre del Producto",
+      "namePlaceholder": "ej., Zapatillas Pro",
+      "nameRequired": "El nombre del producto es obligatorio",
+      "category": "Categoría",
+      "categoryPlaceholder": "ej., Calzado, Ropa, Equipo",
+      "categoryRequired": "La categoría es obligatoria",
+      "basePrice": "Precio Base",
+      "basePriceRequired": "El precio debe ser positivo",
+      "variants": "Variantes",
+      "addVariant": "Agregar Variante",
+      "variant": "Variante",
+      "size": "Talla",
+      "sizePlaceholder": "ej., M, L, XL",
+      "sizeRequired": "La talla es obligatoria",
+      "color": "Color",
+      "colorPlaceholder": "ej., Rojo, Azul",
+      "colorRequired": "El color es obligatorio",
+      "price": "Precio",
+      "priceRequired": "El precio debe ser positivo",
+      "noVariants": "No se han agregado variantes. Haz clic en \"Agregar Variante\" para crear una.",
+      "atLeastOneVariant": "Se requiere al menos una variante",
+      "creating": "Creando...",
+      "productCreated": "{{name}} se ha agregado exitosamente"
+    },
+    "table": {
+      "name": "Nombre del Producto",
+      "basePrice": "Precio Base",
+      "variants": "Variantes",
+      "created": "Creado",
+      "variantsCount": "{{count}} variante(s)",
+      "totalStock": "Stock: {{stock}}"
+    }
+  },
+  "customers": {
+    "title": "Clientes",
+    "description": "Administra tu base de datos de clientes",
+    "addCustomer": "Agregar Cliente",
+    "searchPlaceholder": "Buscar clientes...",
+    "dialog": {
+      "title": "Agregar Nuevo Cliente",
+      "description": "Agrega un nuevo cliente a tu base de datos",
+      "name": "Nombre",
+      "namePlaceholder": "ej., Juan Pérez",
+      "nameRequired": "El nombre es obligatorio",
+      "phone": "Teléfono",
+      "phonePlaceholder": "ej., +1 (555) 123-4567",
+      "phoneRequired": "El teléfono es obligatorio",
+      "email": "Correo Electrónico",
+      "emailPlaceholder": "ej., juan@email.com",
+      "emailInvalid": "Correo electrónico inválido",
+      "adding": "Agregando...",
+      "customerAdded": "{{name}} se ha agregado exitosamente"
+    },
+    "table": {
+      "name": "Nombre",
+      "phone": "Teléfono",
+      "email": "Correo Electrónico",
+      "joined": "Registrado"
+    }
+  }
+}

@@ -1,5 +1,6 @@
-import { useNavigate, useLocation } from '@tanstack/react-router'
-import { useAuthStore } from '@/stores/auth-store'
+import { useState } from 'react'
+import { toast } from 'sonner'
+import { supabase } from '@/lib/supabase'
 import { ConfirmDialog } from '@/components/confirm-dialog'
 
 interface SignOutDialogProps {
@@ -8,19 +9,34 @@ interface SignOutDialogProps {
 }
 
 export function SignOutDialog({ open, onOpenChange }: SignOutDialogProps) {
-  const navigate = useNavigate()
-  const location = useLocation()
-  const { auth } = useAuthStore()
+  const [isLoading, setIsLoading] = useState(false)
 
-  const handleSignOut = () => {
-    auth.reset()
-    // Preserve current location for redirect after sign-in
-    const currentPath = location.href
-    navigate({
-      to: '/sign-in',
-      search: { redirect: currentPath },
-      replace: true,
-    })
+  const handleSignOut = async () => {
+    setIsLoading(true)
+    try {
+      // Call Supabase signOut directly
+      const { error } = await supabase.auth.signOut()
+
+      if (error) {
+        setIsLoading(false)
+        toast.error('Sign out failed', {
+          description: error.message,
+        })
+        return
+      }
+
+      // Success - close dialog and redirect
+      onOpenChange(false)
+
+      // Use window.location for a clean redirect without loading state issues
+      window.location.href = '/sign-in'
+    } catch (error) {
+      setIsLoading(false)
+      toast.error('Sign out failed', {
+        description:
+          error instanceof Error ? error.message : 'An unexpected error occurred',
+      })
+    }
   }
 
   return (
@@ -29,10 +45,11 @@ export function SignOutDialog({ open, onOpenChange }: SignOutDialogProps) {
       onOpenChange={onOpenChange}
       title='Sign out'
       desc='Are you sure you want to sign out? You will need to sign in again to access your account.'
-      confirmText='Sign out'
+      confirmText={isLoading ? 'Signing out...' : 'Sign out'}
       destructive
       handleConfirm={handleSignOut}
       className='sm:max-w-sm'
+      disabled={isLoading}
     />
   )
 }

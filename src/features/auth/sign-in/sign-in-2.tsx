@@ -1,3 +1,7 @@
+import { useEffect } from 'react'
+import { useNavigate, useSearch } from '@tanstack/react-router'
+import { Loader2 } from 'lucide-react'
+import { useAuth } from '@/hooks/use-auth'
 import { Logo } from '@/assets/logo'
 import { cn } from '@/lib/utils'
 import dashboardDark from './assets/dashboard-dark.png'
@@ -5,6 +9,36 @@ import dashboardLight from './assets/dashboard-light.png'
 import { UserAuthForm } from './components/user-auth-form'
 
 export function SignIn2() {
+  const { user, loading } = useAuth()
+  const navigate = useNavigate()
+  const searchParams = useSearch({ from: '/(auth)/sign-in-2' })
+  const redirect = (searchParams as { redirect?: string })?.redirect
+
+  // Redirect if already logged in
+  useEffect(() => {
+    if (!loading && user) {
+      const targetPath = redirect || '/'
+      navigate({ to: targetPath, replace: true })
+    }
+  }, [user, loading, navigate, redirect])
+
+  // Show loading state while checking auth
+  if (loading) {
+    return (
+      <div className='relative container grid h-svh flex-col items-center justify-center'>
+        <div className='flex flex-col items-center gap-2'>
+          <Loader2 className='h-8 w-8 animate-spin text-muted-foreground' />
+          <p className='text-sm text-muted-foreground'>Loading...</p>
+        </div>
+      </div>
+    )
+  }
+
+  // Don't render login form if user is logged in (will redirect)
+  if (user) {
+    return null
+  }
+
   return (
     <div className='relative container grid h-svh flex-col items-center justify-center lg:max-w-none lg:grid-cols-2 lg:px-0'>
       <div className='lg:p-8'>
@@ -22,7 +56,7 @@ export function SignIn2() {
               to log into your account
             </p>
           </div>
-          <UserAuthForm />
+          <UserAuthForm redirectTo={redirect} />
           <p className='px-8 text-center text-sm text-muted-foreground'>
             By clicking sign in, you agree to our{' '}
             <a

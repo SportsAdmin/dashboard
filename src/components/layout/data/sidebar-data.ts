@@ -21,11 +21,17 @@ import {
   AudioWaveform,
   Command,
   GalleryVerticalEnd,
+  ShoppingCart,
+  PackageSearch,
+  Package2,
+  UserCircle,
+  Building2,
 } from 'lucide-react'
+import i18n from '@/lib/i18n'
 import { ClerkLogo } from '@/assets/clerk-logo'
 import { type SidebarData } from '../types'
 
-export const sidebarData: SidebarData = {
+export const getSidebarData = (): SidebarData => ({
   user: {
     name: 'satnaing',
     email: 'satnaingdev@gmail.com',
@@ -53,30 +59,64 @@ export const sidebarData: SidebarData = {
       title: 'General',
       items: [
         {
-          title: 'Dashboard',
+          title: i18n.t('nav.dashboard'),
           url: '/',
           icon: LayoutDashboard,
         },
         {
-          title: 'Tasks',
+          title: i18n.t('nav.pos'),
+          url: '/pos',
+          icon: ShoppingCart,
+        },
+        {
+          title: i18n.t('nav.inventory'),
+          url: '/inventory',
+          icon: PackageSearch,
+        },
+        {
+          title: i18n.t('nav.products'),
+          url: '/products',
+          icon: Package2,
+        },
+        {
+          title: i18n.t('nav.customers'),
+          url: '/customers',
+          icon: UserCircle,
+        },
+        {
+          title: i18n.t('nav.tasks'),
           url: '/tasks',
           icon: ListTodo,
         },
         {
-          title: 'Apps',
+          title: i18n.t('nav.apps'),
           url: '/apps',
           icon: Package,
         },
         {
-          title: 'Chats',
+          title: i18n.t('nav.chats'),
           url: '/chats',
           badge: '3',
           icon: MessagesSquare,
         },
         {
-          title: 'Users',
+          title: i18n.t('nav.users'),
           url: '/users',
           icon: Users,
+        },
+        {
+          title: 'Clubs',
+          icon: Building2,
+          items: [
+            {
+              title: 'All Clubs',
+              url: '/clubs',
+            },
+            {
+              title: 'Create Club',
+              url: '/clubs/create',
+            },
+          ],
         },
         {
           title: 'Secured by Clerk',
@@ -195,11 +235,11 @@ export const sidebarData: SidebarData = {
           ],
         },
         {
-          title: 'Help Center',
+          title: i18n.t('nav.helpCenter'),
           url: '/help-center',
           icon: HelpCircle,
         },
       ],
     },
   ],
-}
+})
