@@ -11,8 +11,19 @@
     "actions": "Actions",
     "loading": "Loading...",
     "noResults": "No results found",
+    "noResultsFound": "No results found.",
     "error": "Error",
-    "success": "Success"
+    "success": "Success",
+    "page": "Page",
+    "of": "of",
+    "rows": "rows",
+    "selected": "selected",
+    "clearFilters": "Clear filters",
+    "clearSelection": "Clear selection",
+    "reset": "Reset",
+    "filter": "Filter",
+    "view": "View",
+    "toggleColumns": "Toggle columns"
   },
   "nav": {
     "dashboard": "Dashboard",
@@ -50,6 +61,10 @@
       "tax": "Tax (10%)",
       "total": "Total",
       "clearCart": "Clear Cart",
+      "newSale": "New Sale",
+      "loadingProducts": "Loading products...",
+      "noProductsFound": "No products found",
+      "allCategories": "All Categories",
       "payment": {
         "cash": "Cash",
         "card": "Card",
@@ -158,6 +173,56 @@
       "phone": "Phone",
       "email": "Email",
       "joined": "Joined"
+    }
+  },
+  "purchaseOrders": {
+    "title": "Purchase Orders",
+    "description": "Manage orders to suppliers for inventory replenishment",
+    "createOrder": "Create Order",
+    "loadingOrders": "Loading purchase orders...",
+    "noOrdersYet": "No purchase orders yet",
+    "createFirstOrder": "Create your first purchase order to get started",
+    "noOrdersFound": "No purchase orders found.",
+    "searchPlaceholder": "Search by supplier...",
+    "create": {
+      "title": "Create Purchase Order",
+      "description": "Create a new order to request inventory from a supplier"
+    },
+    "table": {
+      "supplier": "Supplier",
+      "status": "Status",
+      "expectedDate": "Expected Date",
+      "products": "Products",
+      "totalItems": "Total Items",
+      "created": "Created",
+      "actions": "Actions",
+      "noItems": "No items",
+      "moreItems": "+{{count}} more",
+      "units": "{{count}} units"
+    },
+    "form": {
+      "orderInformation": "Order Information",
+      "supplier": "Supplier",
+      "supplierPlaceholder": "e.g., Nike, Adidas",
+      "supplierRequired": "Supplier name is required",
+      "expectedDate": "Expected Delivery Date",
+      "expectedDateRequired": "Expected date is required",
+      "notes": "Notes",
+      "notesPlaceholder": "Additional notes or special instructions...",
+      "orderItems": "Order Items",
+      "addItem": "Add Item",
+      "loadingProducts": "Loading products...",
+      "noItemsYet": "No items added yet. Click \"Add Item\" to get started.",
+      "product": "Product",
+      "selectProduct": "Select a product",
+      "selectProductError": "Please select a product",
+      "quantity": "Quantity",
+      "quantityMin": "Quantity must be at least 1",
+      "atLeastOneItem": "At least one item is required",
+      "creating": "Creating...",
+      "createButton": "Create Purchase Order",
+      "orderCreated": "Purchase order created successfully",
+      "orderCreateFailed": "Failed to create purchase order"
     }
   }
 }

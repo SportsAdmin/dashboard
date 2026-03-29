@@ -11,8 +11,19 @@
     "actions": "Acciones",
     "loading": "Cargando...",
     "noResults": "No se encontraron resultados",
+    "noResultsFound": "No se encontraron resultados.",
     "error": "Error",
-    "success": "Éxito"
+    "success": "Éxito",
+    "page": "Página",
+    "of": "de",
+    "rows": "filas",
+    "selected": "seleccionado(s)",
+    "clearFilters": "Limpiar filtros",
+    "clearSelection": "Limpiar selección",
+    "reset": "Restablecer",
+    "filter": "Filtrar",
+    "view": "Ver",
+    "toggleColumns": "Alternar columnas"
   },
   "nav": {
     "dashboard": "Panel",
@@ -50,6 +61,10 @@
       "tax": "IVA (10%)",
       "total": "Total",
       "clearCart": "Vaciar Carrito",
+      "newSale": "Nueva Venta",
+      "loadingProducts": "Cargando productos...",
+      "noProductsFound": "No se encontraron productos",
+      "allCategories": "Todas las Categorías",
       "payment": {
         "cash": "Efectivo",
         "card": "Tarjeta",
@@ -158,6 +173,56 @@
       "phone": "Teléfono",
       "email": "Correo Electrónico",
       "joined": "Registrado"
+    }
+  },
+  "purchaseOrders": {
+    "title": "Órdenes de Compra",
+    "description": "Administra órdenes a proveedores para reabastecimiento de inventario",
+    "createOrder": "Crear Orden",
+    "loadingOrders": "Cargando órdenes de compra...",
+    "noOrdersYet": "No hay órdenes de compra todavía",
+    "createFirstOrder": "Crea tu primera orden de compra para comenzar",
+    "noOrdersFound": "No se encontraron órdenes de compra.",
+    "searchPlaceholder": "Buscar por proveedor...",
+    "create": {
+      "title": "Crear Orden de Compra",
+      "description": "Crea una nueva orden para solicitar inventario a un proveedor"
+    },
+    "table": {
+      "supplier": "Proveedor",
+      "status": "Estado",
+      "expectedDate": "Fecha Esperada",
+      "products": "Productos",
+      "totalItems": "Total de Artículos",
+      "created": "Creado",
+      "actions": "Acciones",
+      "noItems": "Sin artículos",
+      "moreItems": "+{{count}} más",
+      "units": "{{count}} unidades"
+    },
+    "form": {
+      "orderInformation": "Información de la Orden",
+      "supplier": "Proveedor",
+      "supplierPlaceholder": "ej., Nike, Adidas",
+      "supplierRequired": "El nombre del proveedor es obligatorio",
+      "expectedDate": "Fecha de Entrega Esperada",
+      "expectedDateRequired": "La fecha esperada es obligatoria",
+      "notes": "Notas",
+      "notesPlaceholder": "Notas adicionales o instrucciones especiales...",
+      "orderItems": "Artículos de la Orden",
+      "addItem": "Agregar Artículo",
+      "loadingProducts": "Cargando productos...",
+      "noItemsYet": "No se han agregado artículos aún. Haz clic en \"Agregar Artículo\" para comenzar.",
+      "product": "Producto",
+      "selectProduct": "Selecciona un producto",
+      "selectProductError": "Por favor selecciona un producto",
+      "quantity": "Cantidad",
+      "quantityMin": "La cantidad debe ser al menos 1",
+      "atLeastOneItem": "Se requiere al menos un artículo",
+      "creating": "Creando...",
+      "createButton": "Crear Orden de Compra",
+      "orderCreated": "Orden de compra creada exitosamente",
+      "orderCreateFailed": "Error al crear la orden de compra"
     }
   }
 }

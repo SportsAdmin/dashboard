@@ -5,7 +5,9 @@
       "Bash(pnpm add:*)",
       "Bash(npm run dev:*)",
       "Bash(npm run type-check:*)",
-      "Bash(npx tsc:*)"
+      "Bash(npx tsc:*)",
+      "Bash(npm run build:routes:*)",
+      "Bash(supabase functions deploy:*)"
     ],
     "deny": [],
     "ask": []

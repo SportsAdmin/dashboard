@@ -1,4 +1,5 @@
 import { Banknote, CreditCard, ArrowLeftRight } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
 
 type PaymentButtonsProps = {
@@ -10,6 +11,7 @@ export function PaymentButtons({
   disabled,
   onPayment,
 }: PaymentButtonsProps) {
+  const { t } = useTranslation()
   return (
     <div className='grid grid-cols-3 gap-3'>
       <Button
@@ -19,7 +21,7 @@ export function PaymentButtons({
         onClick={() => onPayment('cash')}
       >
         <Banknote className='size-6' />
-        <span className='text-sm font-semibold'>Cash</span>
+        <span className='text-sm font-semibold'>{t('pos.sales.payment.cash')}</span>
       </Button>
       <Button
         size='lg'
@@ -28,7 +30,7 @@ export function PaymentButtons({
         onClick={() => onPayment('transfer')}
       >
         <ArrowLeftRight className='size-6' />
-        <span className='text-sm font-semibold'>Transfer</span>
+        <span className='text-sm font-semibold'>{t('pos.sales.payment.transfer')}</span>
       </Button>
       <Button
         size='lg'
@@ -37,7 +39,7 @@ export function PaymentButtons({
         onClick={() => onPayment('card')}
       >
         <CreditCard className='size-6' />
-        <span className='text-sm font-semibold'>Card</span>
+        <span className='text-sm font-semibold'>{t('pos.sales.payment.card')}</span>
       </Button>
     </div>
   )

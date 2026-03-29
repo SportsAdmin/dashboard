@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { toast } from 'sonner'
+import { useTranslation } from 'react-i18next'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
 import { ProfileDropdown } from '@/components/profile-dropdown'
@@ -7,22 +8,23 @@ import { ThemeSwitch } from '@/components/theme-switch'
 import { LanguageSwitcher } from '@/components/language-switcher'
 import { ConfigDrawer } from '@/components/config-drawer'
 import { Button } from '@/components/ui/button'
-import { type InventoryItem } from '@/features/inventory/data/schema'
+import { type POSProduct } from '@/services/pos'
 import { ProductSelector } from './components/product-selector'
 import { Cart } from './components/cart'
 import { PaymentButtons } from './components/payment-buttons'
 import { type CartItem } from './types'
 
 export function PosSales() {
+  const { t } = useTranslation()
   const [cartItems, setCartItems] = useState<CartItem[]>([])
 
-  const handleAddToCart = (product: InventoryItem) => {
+  const handleAddToCart = (product: POSProduct) => {
     setCartItems((prev) => {
       const existing = prev.find((item) => item.id === product.id)
       if (existing) {
         // Increase quantity if already in cart
         if (existing.quantity >= existing.stock) {
-          toast.error(`Stock limit reached. Only ${existing.stock} available`)
+          toast.error(t('pos.sales.stockLimitReached', { stock: existing.stock }))
           return prev
         }
         return prev.map((item) =>
@@ -36,7 +38,8 @@ export function PosSales() {
         ...prev,
         {
           id: product.id,
-          productName: product.productName,
+          variant_id: product.variant_id,
+          productName: product.product_name,
           size: product.size,
           color: product.color,
           price: product.price,
@@ -67,8 +70,12 @@ export function PosSales() {
     )
     const totalWithTax = total * 1.1
 
+    const methodTranslated = t(`pos.sales.payment.${method}`)
     toast.success(
-      `${method.charAt(0).toUpperCase() + method.slice(1)} payment of $${totalWithTax.toFixed(2)} completed`
+      t('pos.sales.paymentSuccess', {
+        method: methodTranslated,
+        total: totalWithTax.toFixed(2)
+      })
     )
 
     // Clear cart after successful payment
@@ -77,17 +84,17 @@ export function PosSales() {
 
   const handleClearCart = () => {
     setCartItems([])
-    toast.success('Cart cleared')
+    toast.success(t('pos.sales.cartCleared'))
   }
 
   return (
     <>
       <Header>
         <div className='flex items-center gap-4'>
-          <h1 className='text-lg font-semibold'>New Sale</h1>
+          <h1 className='text-lg font-semibold'>{t('pos.sales.newSale')}</h1>
           {cartItems.length > 0 && (
             <Button variant='outline' size='sm' onClick={handleClearCart}>
-              Clear Cart
+              {t('pos.sales.clearCart')}
             </Button>
           )}
         </div>

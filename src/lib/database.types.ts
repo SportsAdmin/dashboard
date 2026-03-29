@@ -231,6 +231,58 @@ export interface Database {
           created_at?: string
         }
       }
+      purchase_orders: {
+        Row: {
+          id: string
+          club_id: string
+          supplier: string
+          status: 'pending' | 'approved' | 'in_production' | 'shipped' | 'delivered'
+          expected_date: string
+          notes: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          club_id?: string
+          supplier: string
+          status?: 'pending' | 'approved' | 'in_production' | 'shipped' | 'delivered'
+          expected_date: string
+          notes?: string | null
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          club_id?: string
+          supplier?: string
+          status?: 'pending' | 'approved' | 'in_production' | 'shipped' | 'delivered'
+          expected_date?: string
+          notes?: string | null
+          created_at?: string
+        }
+      }
+      purchase_order_items: {
+        Row: {
+          id: string
+          purchase_order_id: string
+          inventory_item_id: string
+          quantity: number
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          purchase_order_id: string
+          inventory_item_id: string
+          quantity: number
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          purchase_order_id?: string
+          inventory_item_id?: string
+          quantity?: number
+          created_at?: string
+        }
+      }
     }
     Views: {
       [_ in never]: never

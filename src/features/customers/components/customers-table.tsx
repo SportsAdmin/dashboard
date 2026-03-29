@@ -9,6 +9,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table'
+import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
 import {
   Table,
@@ -29,6 +30,7 @@ type CustomersTableProps = {
 }
 
 export function CustomersTable({ data }: CustomersTableProps) {
+  const { t } = useTranslation()
   const [rowSelection, setRowSelection] = useState({})
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
@@ -135,7 +137,7 @@ export function CustomersTable({ data }: CustomersTableProps) {
                   colSpan={columns.length}
                   className='h-24 text-center'
                 >
-                  No results.
+                  {t('common.noResults')}
                 </TableCell>
               </TableRow>
             )}

@@ -26,6 +26,7 @@ import {
   Package2,
   UserCircle,
   Building2,
+  ClipboardList,
 } from 'lucide-react'
 import i18n from '@/lib/i18n'
 import { ClerkLogo } from '@/assets/clerk-logo'
@@ -79,6 +80,11 @@ export const getSidebarData = (): SidebarData => ({
           icon: Package2,
         },
         {
+          title: 'Purchase Orders',
+          url: '/purchase-orders',
+          icon: ClipboardList,
+        },
+        {
           title: i18n.t('nav.customers'),
           url: '/customers',
           icon: UserCircle,
@@ -103,18 +109,22 @@ export const getSidebarData = (): SidebarData => ({
           title: i18n.t('nav.users'),
           url: '/users',
           icon: Users,
+          roles: ['admin', 'manager'],
         },
         {
           title: 'Clubs',
           icon: Building2,
+          roles: ['admin'],
           items: [
             {
               title: 'All Clubs',
               url: '/clubs',
+              roles: ['admin'],
             },
             {
               title: 'Create Club',
               url: '/clubs/create',
+              roles: ['admin'],
             },
           ],
         },

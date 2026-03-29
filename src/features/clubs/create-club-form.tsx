@@ -4,6 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
+import { useNavigate, useRouter } from '@tanstack/react-router'
 import { createClubWithAdmin } from '@/services/clubs'
 import {
   Card,
@@ -74,6 +75,8 @@ type CreateClubFormValues = z.infer<typeof createClubFormSchema>
 
 export function CreateClubForm() {
   const [isLoading, setIsLoading] = useState(false)
+  const navigate = useNavigate()
+  const router = useRouter()
 
   const form = useForm<CreateClubFormValues>({
     resolver: zodResolver(createClubFormSchema),
@@ -112,6 +115,15 @@ export function CreateClubForm() {
 
         // Reset form
         form.reset()
+
+        // Invalidate the clubs route to force data reload
+        await router.invalidate()
+
+        // Redirect to clubs list
+        navigate({
+          to: '/clubs',
+          replace: true,
+        })
       } else {
         toast.error('Failed to create club', {
           description: response.error || 'An unknown error occurred',

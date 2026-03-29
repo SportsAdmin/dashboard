@@ -1,31 +1,27 @@
 import { z } from 'zod'
 
-const userStatusSchema = z.union([
-  z.literal('active'),
-  z.literal('inactive'),
-  z.literal('invited'),
-  z.literal('suspended'),
-])
-export type UserStatus = z.infer<typeof userStatusSchema>
-
+/**
+ * User roles matching Supabase profiles table
+ */
 const userRoleSchema = z.union([
-  z.literal('superadmin'),
   z.literal('admin'),
-  z.literal('cashier'),
   z.literal('manager'),
+  z.literal('seller'),
 ])
+export type UserRole = z.infer<typeof userRoleSchema>
 
+/**
+ * User schema matching data from Supabase
+ * Combines profiles table with auth.users email
+ */
 const userSchema = z.object({
   id: z.string(),
-  firstName: z.string(),
-  lastName: z.string(),
-  username: z.string(),
-  email: z.string(),
-  phoneNumber: z.string(),
-  status: userStatusSchema,
+  name: z.string(),
+  email: z.string().nullable(),
   role: userRoleSchema,
-  createdAt: z.coerce.date(),
-  updatedAt: z.coerce.date(),
+  club_id: z.string().nullable(),
+  created_at: z.string(),
+  updated_at: z.string(),
 })
 export type User = z.infer<typeof userSchema>
 

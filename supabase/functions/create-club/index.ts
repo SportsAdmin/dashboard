@@ -1,283 +1,250 @@
-// ============================================
-// Supabase Edge Function: create-club
-// ============================================
-//
-// This Edge Function securely creates a new club with an admin user.
-//
-// SECURITY:
-// - Runs server-side with access to service role key
-// - Validates user permissions before creating club
-// - Creates users using Admin API (supabase.auth.admin)
-//
-// DEPLOYMENT:
-// supabase functions deploy create-club
-//
-// TEST LOCALLY:
-// supabase functions serve create-club
-//
-// ============================================
+// supabase/functions/create-club/index.ts
 
-import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.39.0"
 
-// CORS headers for browser requests
+// CORS headers configuration
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers':
-    'authorization, x-client-info, apikey, content-type',
-}
-
-// Types
-interface ClubData {
-  name: string
-  city: string
-  logo_url?: string | null
-}
-
-interface AdminData {
-  name: string
-  email: string
-  password: string
-}
-
-interface RequestBody {
-  club: ClubData
-  admin: AdminData
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
 serve(async (req) => {
-  // Handle CORS preflight requests
+  // Handle CORS preflight request
   if (req.method === 'OPTIONS') {
-    return new Response('ok', { headers: corsHeaders })
+    return new Response('ok', {
+      headers: corsHeaders,
+      status: 200
+    })
   }
 
   try {
-    // ============================================
-    // 1. Initialize Supabase Client with Service Role
-    // ============================================
+    // Create Supabase client for admin operations
+    const supabaseAdmin = createClient(
+      Deno.env.get("SUPABASE_URL") ?? "",
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
+      {
+        auth: {
+          autoRefreshToken: false,
+          persistSession: false
+        }
+      }
+    )
 
-    const supabaseUrl = Deno.env.get('SUPABASE_URL')!
-    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
+    // Parse request body
+    const { club_name, email, password, name, debug } = await req.json()
 
-    const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey, {
-      auth: {
-        autoRefreshToken: false,
-        persistSession: false,
-      },
-    })
+    // 🔍 Debug mode
+    if (debug === true) {
+      const authHeader = req.headers.get("Authorization")
 
-    // ============================================
-    // 2. Verify the requesting user is authorized
-    // ============================================
+      // Try to get user from the auth header if present
+      let userCheck = { success: false, error: "No auth header", userId: null }
+      if (authHeader) {
+        const token = authHeader.replace("Bearer ", "")
+        const { data, error } = await supabaseAdmin.auth.getUser(token)
+        userCheck = {
+          success: !error,
+          error: error?.message || null,
+          userId: data?.user?.id || null
+        }
+      }
 
-    // Get JWT from Authorization header
-    const authHeader = req.headers.get('Authorization')
-    if (!authHeader) {
       return new Response(
-        JSON.stringify({ error: 'Missing authorization header' }),
+        JSON.stringify({
+          debug: true,
+          message: "Debug mode - Edge Function is working!",
+          environment: {
+            hasUrl: !!Deno.env.get("SUPABASE_URL"),
+            hasServiceKey: !!Deno.env.get("SUPABASE_SERVICE_ROLE_KEY"),
+            hasAnonKey: !!Deno.env.get("SUPABASE_ANON_KEY"),
+            hasJwtSecret: !!Deno.env.get("JWT_SECRET"),
+            url: Deno.env.get("SUPABASE_URL"),
+          },
+          request: {
+            hasAuthHeader: !!authHeader,
+            authHeaderLength: authHeader?.length || 0,
+          },
+          userCheck,
+          timestamp: new Date().toISOString()
+        }),
         {
-          status: 401,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          status: 200,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
         }
       )
     }
-
-    // Verify the JWT and get user
-    const token = authHeader.replace('Bearer ', '')
-    const {
-      data: { user },
-      error: authError,
-    } = await supabaseAdmin.auth.getUser(token)
-
-    if (authError || !user) {
-      return new Response(
-        JSON.stringify({ error: 'Invalid or expired token' }),
-        {
-          status: 401,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        }
-      )
-    }
-
-    // ============================================
-    // 3. Check if user has permission to create clubs
-    // ============================================
-
-    // TODO: Add your authorization logic here
-    // Example: Check if user is a super admin
-    // const { data: profile } = await supabaseAdmin
-    //   .from('profiles')
-    //   .select('role')
-    //   .eq('id', user.id)
-    //   .single()
-    //
-    // if (profile?.role !== 'super_admin') {
-    //   return new Response(
-    //     JSON.stringify({ error: 'Insufficient permissions' }),
-    //     { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-    //   )
-    // }
-
-    // ============================================
-    // 4. Parse and validate request body
-    // ============================================
-
-    const requestBody: RequestBody = await req.json()
-
-    if (!requestBody.club || !requestBody.admin) {
-      return new Response(
-        JSON.stringify({ error: 'Missing club or admin data' }),
-        {
-          status: 400,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        }
-      )
-    }
-
-    const { club, admin } = requestBody
 
     // Validate required fields
-    if (!club.name || !club.city) {
+    if (!club_name || !email || !password || !name) {
       return new Response(
-        JSON.stringify({ error: 'Club name and city are required' }),
+        JSON.stringify({ error: "Missing required fields: club_name, email, password, name" }),
         {
           status: 400,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
         }
       )
     }
 
-    if (!admin.name || !admin.email || !admin.password) {
+    // Get authorization header
+    const authHeader = req.headers.get("Authorization")
+    if (!authHeader) {
+      return new Response(
+        JSON.stringify({ error: "Missing Authorization header" }),
+        {
+          status: 401,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        }
+      )
+    }
+
+    // Validate the user's JWT token
+    const token = authHeader.replace("Bearer ", "")
+    const { data: { user }, error: userError } = await supabaseAdmin.auth.getUser(token)
+
+    if (userError || !user) {
       return new Response(
         JSON.stringify({
-          error: 'Admin name, email, and password are required',
+          error: "Invalid authentication token",
+          details: userError?.message || "User not found",
+          hint: "Please try logging out and logging in again"
+        }),
+        {
+          status: 401,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        }
+      )
+    }
+
+    // Check if user has admin role
+    const { data: profile, error: profileError } = await supabaseAdmin
+      .from("profiles")
+      .select("role")
+      .eq("id", user.id)
+      .single()
+
+    if (profileError || !profile) {
+      return new Response(
+        JSON.stringify({
+          error: "Profile not found",
+          details: `No profile found for user ${user.email}`,
+        }),
+        {
+          status: 403,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        }
+      )
+    }
+
+    if (profile.role !== "admin") {
+      return new Response(
+        JSON.stringify({
+          error: "Forbidden",
+          details: `User role is '${profile.role}', but 'admin' is required`,
+        }),
+        {
+          status: 403,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        }
+      )
+    }
+
+    // Create new user for the club admin
+    const { data: newUser, error: createUserError } = await supabaseAdmin.auth.admin.createUser({
+      email,
+      password,
+      email_confirm: true,
+    })
+
+    if (createUserError || !newUser.user) {
+      return new Response(
+        JSON.stringify({
+          error: "Failed to create user",
+          details: createUserError?.message || "Unknown error"
         }),
         {
           status: 400,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
         }
       )
     }
 
-    // ============================================
-    // 5. Create admin user using Admin API
-    // ============================================
+    const userId = newUser.user.id
 
-    const { data: authData, error: createUserError } =
-      await supabaseAdmin.auth.admin.createUser({
-        email: admin.email,
-        password: admin.password,
-        email_confirm: true, // Auto-confirm email for admin users
-        user_metadata: {
-          name: admin.name,
-        },
-      })
-
-    if (createUserError || !authData.user) {
-      console.error('Failed to create user:', createUserError)
-      return new Response(
-        JSON.stringify({
-          error: `Failed to create admin user: ${createUserError?.message}`,
-        }),
-        {
-          status: 500,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        }
-      )
-    }
-
-    const userId = authData.user.id
-
-    // ============================================
-    // 6. Create club record
-    // ============================================
-
-    const { data: clubData, error: clubError } = await supabaseAdmin
-      .from('clubs')
-      .insert({
-        name: club.name,
-        city: club.city,
-        logo_url: club.logo_url || null,
-      })
+    // Create club
+    const { data: club, error: clubError } = await supabaseAdmin
+      .from("clubs")
+      .insert({ name: club_name })
       .select()
       .single()
 
-    if (clubError || !clubData) {
-      console.error('Failed to create club:', clubError)
-
-      // Rollback: Delete the created user
+    if (clubError || !club) {
+      // Rollback: delete the user we just created
       await supabaseAdmin.auth.admin.deleteUser(userId)
 
       return new Response(
         JSON.stringify({
-          error: `Failed to create club: ${clubError?.message}`,
+          error: "Failed to create club",
+          details: clubError?.message || "Unknown error"
         }),
         {
-          status: 500,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          status: 400,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
         }
       )
     }
 
-    const clubId = clubData.id
-
-    // ============================================
-    // 7. Create admin profile
-    // ============================================
-
-    const { error: profileError } = await supabaseAdmin
-      .from('profiles')
+    // Create profile for the new admin
+    const { error: profileInsertError } = await supabaseAdmin
+      .from("profiles")
       .insert({
         id: userId,
-        name: admin.name,
-        role: 'admin',
-        club_id: clubId,
+        club_id: club.id,
+        name,
+        role: "admin",
       })
 
-    if (profileError) {
-      console.error('Failed to create profile:', profileError)
-
-      // Rollback: Delete club and user
-      await supabaseAdmin.from('clubs').delete().eq('id', clubId)
+    if (profileInsertError) {
+      // Rollback: delete club and user
+      await supabaseAdmin.from("clubs").delete().eq("id", club.id)
       await supabaseAdmin.auth.admin.deleteUser(userId)
 
       return new Response(
         JSON.stringify({
-          error: `Failed to create admin profile: ${profileError.message}`,
+          error: "Failed to create profile",
+          details: profileInsertError.message
         }),
         {
-          status: 500,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          status: 400,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
         }
       )
     }
 
-    // ============================================
-    // 8. Return success response
-    // ============================================
-
+    // Success!
     return new Response(
       JSON.stringify({
         success: true,
-        clubId,
-        userId,
-        message: `Club "${club.name}" created successfully with admin ${admin.email}`,
+        clubId: club.id,
+        userId: userId,
+        message: `Club '${club_name}' created successfully`
       }),
       {
         status: 200,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       }
     )
-  } catch (error) {
-    console.error('Unexpected error:', error)
 
+  } catch (err: any) {
+    console.error("Unexpected error:", err)
     return new Response(
       JSON.stringify({
-        error: error instanceof Error ? error.message : 'Unknown error occurred',
+        error: "Internal server error",
+        details: err.message || "Unknown error"
       }),
       {
         status: 500,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       }
     )
   }

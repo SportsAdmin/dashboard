@@ -31,6 +31,7 @@ import { Route as AuthenticatedSettingsRouteRouteImport } from './routes/_authen
 import { Route as AuthenticatedUsersIndexRouteImport } from './routes/_authenticated/users/index'
 import { Route as AuthenticatedTasksIndexRouteImport } from './routes/_authenticated/tasks/index'
 import { Route as AuthenticatedSettingsIndexRouteImport } from './routes/_authenticated/settings/index'
+import { Route as AuthenticatedPurchaseOrdersIndexRouteImport } from './routes/_authenticated/purchase-orders/index'
 import { Route as AuthenticatedPosIndexRouteImport } from './routes/_authenticated/pos/index'
 import { Route as AuthenticatedHelpCenterIndexRouteImport } from './routes/_authenticated/help-center/index'
 import { Route as AuthenticatedClubsIndexRouteImport } from './routes/_authenticated/clubs/index'
@@ -43,6 +44,8 @@ import { Route as AuthenticatedSettingsNotificationsRouteImport } from './routes
 import { Route as AuthenticatedSettingsDisplayRouteImport } from './routes/_authenticated/settings/display'
 import { Route as AuthenticatedSettingsAppearanceRouteImport } from './routes/_authenticated/settings/appearance'
 import { Route as AuthenticatedSettingsAccountRouteImport } from './routes/_authenticated/settings/account'
+import { Route as AuthenticatedPurchaseOrdersCreateRouteImport } from './routes/_authenticated/purchase-orders/create'
+import { Route as AuthenticatedPurchaseOrdersIdRouteImport } from './routes/_authenticated/purchase-orders/$id'
 import { Route as AuthenticatedPosNewRouteImport } from './routes/_authenticated/pos/new'
 import { Route as AuthenticatedErrorsErrorRouteImport } from './routes/_authenticated/errors/$error'
 import { Route as AuthenticatedClubsCreateRouteImport } from './routes/_authenticated/clubs/create'
@@ -156,6 +159,12 @@ const AuthenticatedSettingsIndexRoute =
     path: '/',
     getParentRoute: () => AuthenticatedSettingsRouteRoute,
   } as any)
+const AuthenticatedPurchaseOrdersIndexRoute =
+  AuthenticatedPurchaseOrdersIndexRouteImport.update({
+    id: '/purchase-orders/',
+    path: '/purchase-orders/',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedPosIndexRoute = AuthenticatedPosIndexRouteImport.update({
   id: '/pos/',
   path: '/pos/',
@@ -222,6 +231,18 @@ const AuthenticatedSettingsAccountRoute =
     path: '/account',
     getParentRoute: () => AuthenticatedSettingsRouteRoute,
   } as any)
+const AuthenticatedPurchaseOrdersCreateRoute =
+  AuthenticatedPurchaseOrdersCreateRouteImport.update({
+    id: '/purchase-orders/create',
+    path: '/purchase-orders/create',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedPurchaseOrdersIdRoute =
+  AuthenticatedPurchaseOrdersIdRouteImport.update({
+    id: '/purchase-orders/$id',
+    path: '/purchase-orders/$id',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedPosNewRoute = AuthenticatedPosNewRouteImport.update({
   id: '/pos/new',
   path: '/pos/new',
@@ -260,6 +281,8 @@ export interface FileRoutesByFullPath {
   '/clubs/create': typeof AuthenticatedClubsCreateRoute
   '/errors/$error': typeof AuthenticatedErrorsErrorRoute
   '/pos/new': typeof AuthenticatedPosNewRoute
+  '/purchase-orders/$id': typeof AuthenticatedPurchaseOrdersIdRoute
+  '/purchase-orders/create': typeof AuthenticatedPurchaseOrdersCreateRoute
   '/settings/account': typeof AuthenticatedSettingsAccountRoute
   '/settings/appearance': typeof AuthenticatedSettingsAppearanceRoute
   '/settings/display': typeof AuthenticatedSettingsDisplayRoute
@@ -272,6 +295,7 @@ export interface FileRoutesByFullPath {
   '/clubs': typeof AuthenticatedClubsIndexRoute
   '/help-center': typeof AuthenticatedHelpCenterIndexRoute
   '/pos': typeof AuthenticatedPosIndexRoute
+  '/purchase-orders': typeof AuthenticatedPurchaseOrdersIndexRoute
   '/settings/': typeof AuthenticatedSettingsIndexRoute
   '/tasks': typeof AuthenticatedTasksIndexRoute
   '/users': typeof AuthenticatedUsersIndexRoute
@@ -295,6 +319,8 @@ export interface FileRoutesByTo {
   '/clubs/create': typeof AuthenticatedClubsCreateRoute
   '/errors/$error': typeof AuthenticatedErrorsErrorRoute
   '/pos/new': typeof AuthenticatedPosNewRoute
+  '/purchase-orders/$id': typeof AuthenticatedPurchaseOrdersIdRoute
+  '/purchase-orders/create': typeof AuthenticatedPurchaseOrdersCreateRoute
   '/settings/account': typeof AuthenticatedSettingsAccountRoute
   '/settings/appearance': typeof AuthenticatedSettingsAppearanceRoute
   '/settings/display': typeof AuthenticatedSettingsDisplayRoute
@@ -307,6 +333,7 @@ export interface FileRoutesByTo {
   '/clubs': typeof AuthenticatedClubsIndexRoute
   '/help-center': typeof AuthenticatedHelpCenterIndexRoute
   '/pos': typeof AuthenticatedPosIndexRoute
+  '/purchase-orders': typeof AuthenticatedPurchaseOrdersIndexRoute
   '/settings': typeof AuthenticatedSettingsIndexRoute
   '/tasks': typeof AuthenticatedTasksIndexRoute
   '/users': typeof AuthenticatedUsersIndexRoute
@@ -335,6 +362,8 @@ export interface FileRoutesById {
   '/_authenticated/clubs/create': typeof AuthenticatedClubsCreateRoute
   '/_authenticated/errors/$error': typeof AuthenticatedErrorsErrorRoute
   '/_authenticated/pos/new': typeof AuthenticatedPosNewRoute
+  '/_authenticated/purchase-orders/$id': typeof AuthenticatedPurchaseOrdersIdRoute
+  '/_authenticated/purchase-orders/create': typeof AuthenticatedPurchaseOrdersCreateRoute
   '/_authenticated/settings/account': typeof AuthenticatedSettingsAccountRoute
   '/_authenticated/settings/appearance': typeof AuthenticatedSettingsAppearanceRoute
   '/_authenticated/settings/display': typeof AuthenticatedSettingsDisplayRoute
@@ -347,6 +376,7 @@ export interface FileRoutesById {
   '/_authenticated/clubs/': typeof AuthenticatedClubsIndexRoute
   '/_authenticated/help-center/': typeof AuthenticatedHelpCenterIndexRoute
   '/_authenticated/pos/': typeof AuthenticatedPosIndexRoute
+  '/_authenticated/purchase-orders/': typeof AuthenticatedPurchaseOrdersIndexRoute
   '/_authenticated/settings/': typeof AuthenticatedSettingsIndexRoute
   '/_authenticated/tasks/': typeof AuthenticatedTasksIndexRoute
   '/_authenticated/users/': typeof AuthenticatedUsersIndexRoute
@@ -373,6 +403,8 @@ export interface FileRouteTypes {
     | '/clubs/create'
     | '/errors/$error'
     | '/pos/new'
+    | '/purchase-orders/$id'
+    | '/purchase-orders/create'
     | '/settings/account'
     | '/settings/appearance'
     | '/settings/display'
@@ -385,6 +417,7 @@ export interface FileRouteTypes {
     | '/clubs'
     | '/help-center'
     | '/pos'
+    | '/purchase-orders'
     | '/settings/'
     | '/tasks'
     | '/users'
@@ -408,6 +441,8 @@ export interface FileRouteTypes {
     | '/clubs/create'
     | '/errors/$error'
     | '/pos/new'
+    | '/purchase-orders/$id'
+    | '/purchase-orders/create'
     | '/settings/account'
     | '/settings/appearance'
     | '/settings/display'
@@ -420,6 +455,7 @@ export interface FileRouteTypes {
     | '/clubs'
     | '/help-center'
     | '/pos'
+    | '/purchase-orders'
     | '/settings'
     | '/tasks'
     | '/users'
@@ -447,6 +483,8 @@ export interface FileRouteTypes {
     | '/_authenticated/clubs/create'
     | '/_authenticated/errors/$error'
     | '/_authenticated/pos/new'
+    | '/_authenticated/purchase-orders/$id'
+    | '/_authenticated/purchase-orders/create'
     | '/_authenticated/settings/account'
     | '/_authenticated/settings/appearance'
     | '/_authenticated/settings/display'
@@ -459,6 +497,7 @@ export interface FileRouteTypes {
     | '/_authenticated/clubs/'
     | '/_authenticated/help-center/'
     | '/_authenticated/pos/'
+    | '/_authenticated/purchase-orders/'
     | '/_authenticated/settings/'
     | '/_authenticated/tasks/'
     | '/_authenticated/users/'
@@ -635,6 +674,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedSettingsIndexRouteImport
       parentRoute: typeof AuthenticatedSettingsRouteRoute
     }
+    '/_authenticated/purchase-orders/': {
+      id: '/_authenticated/purchase-orders/'
+      path: '/purchase-orders'
+      fullPath: '/purchase-orders'
+      preLoaderRoute: typeof AuthenticatedPurchaseOrdersIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/pos/': {
       id: '/_authenticated/pos/'
       path: '/pos'
@@ -719,6 +765,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedSettingsAccountRouteImport
       parentRoute: typeof AuthenticatedSettingsRouteRoute
     }
+    '/_authenticated/purchase-orders/create': {
+      id: '/_authenticated/purchase-orders/create'
+      path: '/purchase-orders/create'
+      fullPath: '/purchase-orders/create'
+      preLoaderRoute: typeof AuthenticatedPurchaseOrdersCreateRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/purchase-orders/$id': {
+      id: '/_authenticated/purchase-orders/$id'
+      path: '/purchase-orders/$id'
+      fullPath: '/purchase-orders/$id'
+      preLoaderRoute: typeof AuthenticatedPurchaseOrdersIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/pos/new': {
       id: '/_authenticated/pos/new'
       path: '/pos/new'
@@ -775,11 +835,14 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedClubsCreateRoute: typeof AuthenticatedClubsCreateRoute
   AuthenticatedErrorsErrorRoute: typeof AuthenticatedErrorsErrorRoute
   AuthenticatedPosNewRoute: typeof AuthenticatedPosNewRoute
+  AuthenticatedPurchaseOrdersIdRoute: typeof AuthenticatedPurchaseOrdersIdRoute
+  AuthenticatedPurchaseOrdersCreateRoute: typeof AuthenticatedPurchaseOrdersCreateRoute
   AuthenticatedAppsIndexRoute: typeof AuthenticatedAppsIndexRoute
   AuthenticatedChatsIndexRoute: typeof AuthenticatedChatsIndexRoute
   AuthenticatedClubsIndexRoute: typeof AuthenticatedClubsIndexRoute
   AuthenticatedHelpCenterIndexRoute: typeof AuthenticatedHelpCenterIndexRoute
   AuthenticatedPosIndexRoute: typeof AuthenticatedPosIndexRoute
+  AuthenticatedPurchaseOrdersIndexRoute: typeof AuthenticatedPurchaseOrdersIndexRoute
   AuthenticatedTasksIndexRoute: typeof AuthenticatedTasksIndexRoute
   AuthenticatedUsersIndexRoute: typeof AuthenticatedUsersIndexRoute
 }
@@ -793,11 +856,15 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedClubsCreateRoute: AuthenticatedClubsCreateRoute,
   AuthenticatedErrorsErrorRoute: AuthenticatedErrorsErrorRoute,
   AuthenticatedPosNewRoute: AuthenticatedPosNewRoute,
+  AuthenticatedPurchaseOrdersIdRoute: AuthenticatedPurchaseOrdersIdRoute,
+  AuthenticatedPurchaseOrdersCreateRoute:
+    AuthenticatedPurchaseOrdersCreateRoute,
   AuthenticatedAppsIndexRoute: AuthenticatedAppsIndexRoute,
   AuthenticatedChatsIndexRoute: AuthenticatedChatsIndexRoute,
   AuthenticatedClubsIndexRoute: AuthenticatedClubsIndexRoute,
   AuthenticatedHelpCenterIndexRoute: AuthenticatedHelpCenterIndexRoute,
   AuthenticatedPosIndexRoute: AuthenticatedPosIndexRoute,
+  AuthenticatedPurchaseOrdersIndexRoute: AuthenticatedPurchaseOrdersIndexRoute,
   AuthenticatedTasksIndexRoute: AuthenticatedTasksIndexRoute,
   AuthenticatedUsersIndexRoute: AuthenticatedUsersIndexRoute,
 }
