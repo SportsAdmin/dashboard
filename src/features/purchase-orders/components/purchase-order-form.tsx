@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { useForm, useFieldArray } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -17,7 +16,7 @@ import {
 } from '@/components/ui/select'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { useInventory } from '@/hooks/use-inventory'
-import { type CreatePurchaseOrderPayload } from '@/services/purchaseOrders'
+import type { CreatePurchaseOrderPayload } from '@/types'
 
 // Form schema with translations - we need to use a function to access t()
 const getPurchaseOrderFormSchema = (t: any) => z.object({
@@ -63,7 +62,6 @@ export function PurchaseOrderForm({
     handleSubmit,
     control,
     setValue,
-    watch,
     formState: { errors },
   } = useForm<PurchaseOrderFormData>({
     resolver: zodResolver(getPurchaseOrderFormSchema(t)),
@@ -92,13 +90,6 @@ export function PurchaseOrderForm({
     if (fields.length > 1) {
       remove(index)
     }
-  }
-
-  // Get inventory item label
-  const getInventoryLabel = (itemId: string) => {
-    const item = inventory.find((inv) => inv.id === itemId)
-    if (!item) return ''
-    return `${item.productName} - ${item.size} - ${item.color}`
   }
 
   return (

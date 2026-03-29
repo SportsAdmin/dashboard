@@ -367,7 +367,7 @@ export function ContextMenuExample() {
 // ============================================
 
 export function ComplexPermissionExample() {
-  const { role, can, isAdmin, isManager } = usePermissions()
+  const { role, isAdmin, isManager } = usePermissions()
   const order = { status: 'pending', createdBy: 'user-123' }
   const currentUserId = 'user-123'
 

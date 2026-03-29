@@ -11,7 +11,8 @@ import { LanguageSwitcher } from '@/components/language-switcher'
 import { Button } from '@/components/ui/button'
 import { PurchaseOrderEditForm } from './components/purchase-order-edit-form'
 import { usePurchaseOrder } from '@/hooks/use-purchase-orders'
-import { updatePurchaseOrder, type UpdatePurchaseOrderPayload } from '@/services/purchaseOrders'
+import { updatePurchaseOrder } from '@/services/purchaseOrders'
+import type { UpdatePurchaseOrderPayload } from '@/types'
 
 export function EditPurchaseOrder() {
   const navigate = useNavigate()

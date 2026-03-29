@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
+import type { Profile } from '@/types'
 
 /**
  * Valid user roles in the system
@@ -73,7 +74,7 @@ export function useRole(): UseRoleReturn {
         .from('profiles')
         .select('id, role, name, club_id')
         .eq('id', user.id)
-        .single()
+        .single<Profile>()
 
       if (profileError) {
         setError(`Failed to fetch profile: ${profileError.message}`)

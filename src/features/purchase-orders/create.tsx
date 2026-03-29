@@ -12,7 +12,7 @@ import { LanguageSwitcher } from '@/components/language-switcher'
 import { Button } from '@/components/ui/button'
 import { PurchaseOrderForm } from './components/purchase-order-form'
 import { usePurchaseOrders } from '@/hooks/use-purchase-orders'
-import { type CreatePurchaseOrderPayload } from '@/services/purchaseOrders'
+import type { CreatePurchaseOrderPayload } from '@/types'
 
 export function CreatePurchaseOrder() {
   const { t } = useTranslation()

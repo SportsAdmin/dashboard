@@ -1,12 +1,12 @@
-import { type PurchaseOrder, type PurchaseOrderItem } from '@/services/purchaseOrders'
+import type { PurchaseOrderWithItems, PurchaseOrderItemWithDetails } from '@/types'
 
 /**
  * Calculate total quantity of items in a purchase order
  */
-export function getTotalQuantity(purchaseOrder: PurchaseOrder): number {
+export function getTotalQuantity(purchaseOrder: PurchaseOrderWithItems): number {
   return (
     purchaseOrder.purchase_order_items?.reduce(
-      (sum, item) => sum + item.quantity,
+      (sum: number, item: PurchaseOrderItemWithDetails) => sum + item.quantity,
       0
     ) || 0
   )
@@ -17,7 +17,7 @@ export function getTotalQuantity(purchaseOrder: PurchaseOrder): number {
  * Format: "Product Size Color"
  * Example: "Camiseta M Negra"
  */
-export function getProductLabel(item: PurchaseOrderItem): string {
+export function getProductLabel(item: PurchaseOrderItemWithDetails): string {
   const variant = item.inventory_items?.product_variants
   const productName = variant?.products?.name || 'Unknown Product'
   const size = variant?.sizes?.name || ''
@@ -30,7 +30,7 @@ export function getProductLabel(item: PurchaseOrderItem): string {
  * Get product preview list (first N products)
  */
 export function getProductPreviews(
-  purchaseOrder: PurchaseOrder,
+  purchaseOrder: PurchaseOrderWithItems,
   limit: number = 2
 ): { previews: string[]; hasMore: boolean; remaining: number } {
   const items = purchaseOrder.purchase_order_items || []
@@ -48,7 +48,7 @@ export function getProductPreviews(
 /**
  * Check if purchase order is overdue
  */
-export function isOverdue(purchaseOrder: PurchaseOrder): boolean {
+export function isOverdue(purchaseOrder: PurchaseOrderWithItems): boolean {
   if (purchaseOrder.status === 'delivered') return false
 
   try {
@@ -64,10 +64,10 @@ export function isOverdue(purchaseOrder: PurchaseOrder): boolean {
  */
 export function getStatusVariant(
   status: string
-): 'default' | 'secondary' | 'destructive' | 'outline' | 'success' | 'warning' | 'info' {
-  const variants: Record<string, any> = {
-    pending: 'warning',
-    approved: 'info',
+): 'default' | 'secondary' | 'destructive' | 'outline' | 'success' {
+  const variants: Record<string, 'default' | 'secondary' | 'destructive' | 'outline' | 'success'> = {
+    pending: 'outline',
+    approved: 'secondary',
     in_production: 'default',
     shipped: 'secondary',
     delivered: 'success',

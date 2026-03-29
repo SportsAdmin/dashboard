@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react'
 import { useNavigate } from '@tanstack/react-router'
 import { Eye, Pencil, Search } from 'lucide-react'
 import { format } from 'date-fns'
-import { useClubs, type ClubData } from '@/hooks/use-clubs'
+import { useClubs } from '@/hooks/use-clubs'
 import {
   Table,
   TableBody,

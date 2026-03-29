@@ -1,32 +1,10 @@
 import { supabase } from '@/lib/supabase'
-
-// ============================================
-// Types
-// ============================================
-
-export interface Club {
-  name: string
-  city: string
-  logo_url?: string | null
-}
-
-export interface Admin {
-  name: string
-  email: string
-  password: string
-}
-
-export interface CreateClubPayload {
-  club: Club
-  admin: Admin
-}
-
-export interface CreateClubResponse {
-  success: boolean
-  error?: string
-  clubId?: string
-  userId?: string
-}
+import type {
+  Profile,
+  CreateClubPayload,
+  CreateClubResponse,
+  ClubsResponse,
+} from '@/types'
 
 // ============================================
 // Service Functions
@@ -93,7 +71,7 @@ export async function checkCurrentUserProfile(): Promise<{
       .from('profiles')
       .select('id, role, name')
       .eq('id', sessionData.session.user.id)
-      .single()
+      .single<Profile>()
 
     if (profileError || !profile) {
       return {
@@ -333,17 +311,7 @@ export async function createClubWithAdmin(
  *   console.log('Clubs:', response.clubs)
  * }
  */
-export async function getClubs(): Promise<{
-  success: boolean
-  error?: string
-  clubs?: Array<{
-    id: string
-    name: string
-    city: string
-    logo_url: string | null
-    created_at: string
-  }>
-}> {
+export async function getClubs(): Promise<ClubsResponse> {
   try {
     const { data, error } = await supabase
       .from('clubs')

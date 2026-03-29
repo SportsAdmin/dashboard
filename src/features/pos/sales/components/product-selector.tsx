@@ -120,7 +120,7 @@ export function ProductSelector({ onSelectProduct }: ProductSelectorProps) {
                             product.stock === 0
                               ? 'destructive'
                               : product.stock < 5
-                                ? 'warning'
+                                ? 'outline'
                                 : 'success'
                           }
                           className='text-xs'

@@ -16,10 +16,7 @@ import {
 } from '@/components/ui/select'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { useInventory } from '@/hooks/use-inventory'
-import {
-  type PurchaseOrder,
-  type UpdatePurchaseOrderPayload,
-} from '@/services/purchaseOrders'
+import type { PurchaseOrderWithItems, UpdatePurchaseOrderPayload } from '@/types'
 import { statusOptions } from '../data/data'
 
 // Form schema
@@ -47,7 +44,7 @@ const purchaseOrderEditFormSchema = z.object({
 type PurchaseOrderEditFormData = z.infer<typeof purchaseOrderEditFormSchema>
 
 type PurchaseOrderEditFormProps = {
-  purchaseOrder: PurchaseOrder
+  purchaseOrder: PurchaseOrderWithItems
   onSubmit: (data: UpdatePurchaseOrderPayload) => Promise<boolean>
   onCancel: () => void
   isSubmitting?: boolean

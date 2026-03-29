@@ -1,26 +1,5 @@
 import { supabase } from '@/lib/supabase'
-import { type InventoryItem } from '@/features/inventory/data/schema'
-
-// ============================================
-// Types
-// ============================================
-
-export interface InventoryItemRaw {
-  id: string
-  stock: number
-  variant: {
-    id: string
-    color: string
-    price: number
-    size: {
-      name: string
-    }
-    product: {
-      name: string
-      category: string
-    }
-  }
-}
+import type { InventoryItem } from '@/types'
 
 // ============================================
 // Service Functions
@@ -90,7 +69,7 @@ export async function getInventory(): Promise<{
     // Transform the nested data structure to a flat format for easier use in UI
     const formattedInventory: InventoryItem[] = data
       .filter((item) => item.product_variants) // Filter out items with missing variant data
-      .map((item) => {
+      .map((item: InventoryItem) => {
         const variant = item.product_variants as any
         const product = variant?.products
         const size = variant?.sizes

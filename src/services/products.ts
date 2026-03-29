@@ -1,42 +1,11 @@
 import { supabase } from '@/lib/supabase'
-
-// ============================================
-// Types
-// ============================================
-
-export interface ProductVariant {
-  id: string
-  product_id: string
-  size_id: string
-  color: string
-  price: number
-  price_sale: number | null
-  created_at: string
-}
-
-export interface ProductWithVariants {
-  id: string
-  name: string
-  category: string
-  club_id: string
-  created_at: string
-  updated_at: string
-  variants: ProductVariant[]
-}
-
-export interface CreateProductPayload {
-  product: {
-    name: string
-    category: string
-    description: string
-  }
-  variants: Array<{
-    size_id: string
-    color: string
-    price: number
-    price_sale?: number | null
-  }>
-}
+import type {
+  Product,
+  ProductWithVariants,
+  CreateProductPayload,
+  ProductsResponse,
+  CreateProductResponse,
+} from '@/types'
 
 // ============================================
 // Service Functions
@@ -57,11 +26,7 @@ export interface CreateProductPayload {
  *   // Each product includes its variants array
  * }
  */
-export async function getProducts(): Promise<{
-  success: boolean
-  error?: string
-  products?: ProductWithVariants[]
-}> {
+export async function getProducts(): Promise<ProductsResponse> {
   try {
     // Fetch products with their variants using Supabase join syntax
     // The '*' after product_variants gets all variant fields
@@ -90,7 +55,7 @@ export async function getProducts(): Promise<{
     }
 
     // Transform the data to match our ProductWithVariants type
-    const products: ProductWithVariants[] = data.map((product) => ({
+    const products: ProductWithVariants[] = data.map((product: Product) => ({
       id: product.id,
       name: product.name,
       category: product.category,
@@ -144,11 +109,7 @@ export async function getProducts(): Promise<{
  */
 export async function createProduct(
   payload: CreateProductPayload
-): Promise<{
-  success: boolean
-  error?: string
-  productId?: string
-}> {
+): Promise<CreateProductResponse> {
   try {
     // Transform variants to match RPC function parameter shape
     const transformedVariants = payload.variants.map((variant) => ({

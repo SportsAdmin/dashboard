@@ -25,13 +25,13 @@ import {
 } from '@/components/ui/table'
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { statusOptions } from '../data/data'
-import { type PurchaseOrder } from '@/services/purchaseOrders'
+import type { PurchaseOrderWithItems } from '@/types'
 import { getPurchaseOrdersColumns } from './purchase-orders-columns'
 
 const route = getRouteApi('/_authenticated/purchase-orders/')
 
 type DataTableProps = {
-  data: PurchaseOrder[]
+  data: PurchaseOrderWithItems[]
 }
 
 export function PurchaseOrdersTable({ data }: DataTableProps) {

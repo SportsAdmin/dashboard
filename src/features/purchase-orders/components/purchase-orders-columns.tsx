@@ -1,12 +1,11 @@
 import { type ColumnDef } from '@tanstack/react-table'
 import { format } from 'date-fns'
-import { useTranslation } from 'react-i18next'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { DataTableColumnHeader } from '@/components/data-table'
 import { Link } from '@tanstack/react-router'
 import { Pencil } from 'lucide-react'
-import { type PurchaseOrder } from '@/services/purchaseOrders'
+import type { PurchaseOrderWithItems } from '@/types'
 import {
   getStatusVariant,
   getStatusLabel,
@@ -15,7 +14,7 @@ import {
   getTotalQuantity,
 } from '../utils/formatters'
 
-export const getPurchaseOrdersColumns = (t: any): ColumnDef<PurchaseOrder>[] => [
+export const getPurchaseOrdersColumns = (t: any): ColumnDef<PurchaseOrderWithItems>[] => [
   {
     accessorKey: 'supplier',
     header: ({ column }) => (

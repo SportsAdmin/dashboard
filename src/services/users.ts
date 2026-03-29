@@ -1,5 +1,5 @@
 import { supabase } from '@/lib/supabase'
-import type { Database } from '@/lib/database.types'
+import type { Profile } from '@/types'
 
 /**
  * Valid user roles in the system
@@ -48,7 +48,7 @@ async function getCurrentUserProfile(): Promise<CurrentUserProfile | null> {
     .from('profiles')
     .select('id, role, club_id')
     .eq('id', user.id)
-    .single()
+    .single<Profile>()
 
   if (profileError) {
     throw new Error(`Failed to fetch profile: ${profileError.message}`)
@@ -130,7 +130,7 @@ export async function getUsers(): Promise<User[]> {
 
   try {
     // Get all user IDs
-    const userIds = profiles.map((p) => p.id)
+    // const userIds = profiles.map((p) => p.id)
 
     // Fetch emails for these users
     // This approach works if you have RLS policies that allow reading auth data
@@ -155,7 +155,7 @@ export async function getUsers(): Promise<User[]> {
   }
 
   // Combine profile data with emails
-  const users: User[] = profiles.map((profile) => ({
+  const users: User[] = (profiles as Profile[]).map((profile) => ({
     id: profile.id,
     name: profile.name,
     email: emailMap[profile.id] || null,

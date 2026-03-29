@@ -1,79 +1,15 @@
 import { supabase } from '@/lib/supabase'
-
-// ============================================
-// Types
-// ============================================
-
-export type PurchaseOrderStatus =
-  | 'pending'
-  | 'approved'
-  | 'in_production'
-  | 'shipped'
-  | 'delivered'
-
-export interface PurchaseOrderItem {
-  id: string
-  purchase_order_id: string
-  inventory_item_id: string
-  quantity: number
-  inventory_items?: {
-    id: string
-    variant_id: string
-    stock: number
-    product_variants?: {
-      id: string
-      color: string
-      products?: {
-        name: string
-      }
-      sizes?: {
-        name: string
-      }
-    }
-  }
-}
-
-export interface PurchaseOrder {
-  id: string
-  club_id: string
-  supplier: string
-  status: PurchaseOrderStatus
-  expected_date: string
-  notes?: string | null
-  created_at: string
-  purchase_order_items?: PurchaseOrderItem[]
-}
-
-// Input type for purchase order items (used in creation)
-export type PurchaseOrderItemInput = {
-  inventory_item_id: string
-  quantity: number
-}
-
-// Payload for creating a purchase order (frontend -> service)
-export interface CreatePurchaseOrderPayload {
-  supplier: string
-  expected_date: string
-  notes?: string
-  items: PurchaseOrderItemInput[]
-}
-
-// Payload for updating a purchase order
-export interface UpdatePurchaseOrderPayload {
-  supplier?: string
-  status?: PurchaseOrderStatus
-  expected_date?: string
-  notes?: string
-  items?: PurchaseOrderItemInput[]
-}
-
-// RPC payload format (service -> Supabase RPC)
-export interface CreatePurchaseOrderRPCPayload {
-  p_supplier: string
-  p_expected_date: string
-  p_notes: string | null
-  p_items: PurchaseOrderItemInput[]
-}
+import type {
+  PurchaseOrderWithItems,
+  CreatePurchaseOrderPayload,
+  UpdatePurchaseOrderPayload,
+  CreatePurchaseOrderRPCPayload,
+  PurchaseOrdersResponse,
+  PurchaseOrderResponse,
+  CreatePurchaseOrderResponse,
+  UpdatePurchaseOrderResponse,
+  DeletePurchaseOrderResponse,
+} from '@/types'
 
 // ============================================
 // Service Functions
@@ -89,11 +25,7 @@ export interface CreatePurchaseOrderRPCPayload {
  *
  * @returns {Promise} Response with purchase orders or error
  */
-export async function getPurchaseOrders(): Promise<{
-  success: boolean
-  error?: string
-  purchaseOrders?: PurchaseOrder[]
-}> {
+export async function getPurchaseOrders(): Promise<PurchaseOrdersResponse> {
   try {
     const { data, error } = await supabase
       .from('purchase_orders')
@@ -137,7 +69,7 @@ export async function getPurchaseOrders(): Promise<{
 
     return {
       success: true,
-      purchaseOrders: data as PurchaseOrder[],
+      purchaseOrders: data as PurchaseOrderWithItems[],
     }
   } catch (error) {
     console.error('Unexpected error in getPurchaseOrders:', error)
@@ -154,11 +86,7 @@ export async function getPurchaseOrders(): Promise<{
  * @param {string} id - Purchase order ID
  * @returns {Promise} Response with purchase order or error
  */
-export async function getPurchaseOrder(id: string): Promise<{
-  success: boolean
-  error?: string
-  purchaseOrder?: PurchaseOrder
-}> {
+export async function getPurchaseOrder(id: string): Promise<PurchaseOrderResponse> {
   try {
     const { data, error } = await supabase
       .from('purchase_orders')
@@ -203,7 +131,7 @@ export async function getPurchaseOrder(id: string): Promise<{
 
     return {
       success: true,
-      purchaseOrder: data as PurchaseOrder,
+      purchaseOrder: data as PurchaseOrderWithItems,
     }
   } catch (error) {
     console.error('Unexpected error in getPurchaseOrder:', error)
@@ -228,11 +156,7 @@ export async function getPurchaseOrder(id: string): Promise<{
  */
 export async function createPurchaseOrder(
   payload: CreatePurchaseOrderPayload
-): Promise<{
-  success: boolean
-  error?: string
-  purchaseOrderId?: string
-}> {
+): Promise<CreatePurchaseOrderResponse> {
   try {
     // Transform payload for RPC call
     const rpcPayload: CreatePurchaseOrderRPCPayload = {
@@ -286,10 +210,7 @@ export async function createPurchaseOrder(
 export async function updatePurchaseOrder(
   id: string,
   payload: UpdatePurchaseOrderPayload
-): Promise<{
-  success: boolean
-  error?: string
-}> {
+): Promise<UpdatePurchaseOrderResponse> {
   try {
     // Update the purchase order basic fields
     const updateData: Record<string, any> = {}
@@ -370,10 +291,7 @@ export async function updatePurchaseOrder(
  * @param {string} id - Purchase order ID
  * @returns {Promise} Response with success status or error
  */
-export async function deletePurchaseOrder(id: string): Promise<{
-  success: boolean
-  error?: string
-}> {
+export async function deletePurchaseOrder(id: string): Promise<DeletePurchaseOrderResponse> {
   try {
     // Delete items first (if not using CASCADE)
     const { error: itemsError } = await supabase

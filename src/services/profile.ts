@@ -1,13 +1,5 @@
 import { supabase } from '@/lib/supabase'
-import type { Database } from '@/lib/database.types'
-
-export type Profile = Database['public']['Tables']['profiles']['Row']
-
-export interface ProfileResponse {
-  success: boolean
-  error?: string
-  profile?: Profile
-}
+import type { Profile, ProfileResponse } from '@/types'
 
 /**
  * Get user profile by user ID

@@ -1,20 +1,6 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
-
-type Sale = {
-  id: string
-  customerName: string | null
-  total: number
-  tax: number
-  paymentMethod: string
-  createdAt: string
-}
-
-type SaleItem = {
-  variantId: string
-  quantity: number
-  price: number
-}
+import type { Sale, SaleItem } from '@/types'
 
 export function useSales() {
   const [sales, setSales] = useState<Sale[]>([])
@@ -43,7 +29,7 @@ export function useSales() {
         return
       }
 
-      const mappedSales: Sale[] = data.map((sale) => ({
+      const mappedSales: Sale[] = data.map((sale: Sale) => ({
         id: sale.id,
         customerName: sale.customer_name,
         total: sale.total,
@@ -65,6 +51,7 @@ export function useSales() {
     items: SaleItem[],
     paymentMethod: string
   ) => {
+    // eslint-disable-next-line no-useless-catch
     try {
       // Calculate totals
       const subtotal = items.reduce(
@@ -89,7 +76,7 @@ export function useSales() {
       if (saleError) throw saleError
 
       // Create sale items
-      const saleItems = items.map((item) => ({
+      const saleItems = items.map((item: Sale) => ({
         sale_id: sale.id,
         variant_id: item.variantId,
         quantity: item.quantity,
