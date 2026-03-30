@@ -8,26 +8,15 @@ export const users = Array.from({ length: 500 }, () => {
   const lastName = faker.person.lastName()
   return {
     id: faker.string.uuid(),
-    firstName,
-    lastName,
-    username: faker.internet
-      .username({ firstName, lastName })
-      .toLocaleLowerCase(),
+    name: `${firstName} ${lastName}`,
     email: faker.internet.email({ firstName }).toLocaleLowerCase(),
-    phoneNumber: faker.phone.number({ style: 'international' }),
-    status: faker.helpers.arrayElement([
-      'active',
-      'inactive',
-      'invited',
-      'suspended',
-    ]),
     role: faker.helpers.arrayElement([
-      'superadmin',
       'admin',
-      'cashier',
       'manager',
-    ]),
-    createdAt: faker.date.past(),
-    updatedAt: faker.date.recent(),
+      'seller',
+    ]) as 'admin' | 'manager' | 'seller',
+    club_id: faker.helpers.maybe(() => faker.string.uuid(), { probability: 0.8 }) || null,
+    created_at: faker.date.past().toISOString(),
+    updated_at: faker.date.recent().toISOString(),
   }
 })

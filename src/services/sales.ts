@@ -9,7 +9,7 @@ export async function createSale(payload: {
   p_items: any[];
   p_payments: any[];
 }) {
-  const { data, error } = await supabase.rpc("create_sale", payload);
+  const { data, error } = await supabase.rpc("create_sale", payload as any);
 
   if (error) {
     console.error("Error creating sale:", error);

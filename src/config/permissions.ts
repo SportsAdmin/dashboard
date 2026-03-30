@@ -1,5 +1,8 @@
 import type { Role } from '@/hooks/use-role'
 
+// Re-export Role for convenience
+export type { Role } from '@/hooks/use-role'
+
 /**
  * Action types that can be performed in the system
  */

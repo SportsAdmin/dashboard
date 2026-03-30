@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
-import type { Sale, SaleItem } from '@/types'
+import type { Sale, SaleItem, InventoryItem } from '@/types'
 
 export function useSales() {
   const [sales, setSales] = useState<Sale[]>([])
@@ -29,13 +29,13 @@ export function useSales() {
         return
       }
 
-      const mappedSales: Sale[] = data.map((sale: Sale) => ({
+      const mappedSales: Sale[] = data.map((sale: any) => ({
         id: sale.id,
-        customerName: sale.customer_name,
+        customer_name: sale.customer_name,
         total: sale.total,
         tax: sale.tax,
-        paymentMethod: sale.payment_method,
-        createdAt: sale.created_at,
+        payment_method: sale.payment_method,
+        created_at: sale.created_at,
       }))
 
       setSales(mappedSales)
@@ -69,23 +69,23 @@ export function useSales() {
           total,
           tax,
           payment_method: paymentMethod,
-        })
+        } as any)
         .select()
-        .single()
+        .single<Sale>()
 
       if (saleError) throw saleError
 
       // Create sale items
-      const saleItems = items.map((item: Sale) => ({
+      const saleItems = items.map((item: SaleItem) => ({
         sale_id: sale.id,
-        variant_id: item.variantId,
+        variant_id: item.variant_id,
         quantity: item.quantity,
         price: item.price,
       }))
 
       const { error: itemsError } = await supabase
         .from('sale_items')
-        .insert(saleItems)
+        .insert(saleItems as any)
 
       if (itemsError) throw itemsError
 
@@ -95,17 +95,18 @@ export function useSales() {
         const { data: inventoryData } = await supabase
           .from('inventory_items')
           .select('stock')
-          .eq('variant_id', item.variantId)
-          .single()
+          .eq('variant_id', item.variant_id)
+          .single<InventoryItem>()
 
         if (inventoryData) {
           const newStock = inventoryData.stock - item.quantity
 
           // Update stock
           await supabase
+            .schema('public')
             .from('inventory_items')
             .update({ stock: Math.max(0, newStock) })
-            .eq('variant_id', item.variantId)
+            .eq('variant_id', item.variant_id)
         }
       }
 
@@ -123,7 +124,7 @@ export function useSales() {
     today.setHours(0, 0, 0, 0)
 
     const salesToday = sales.filter(
-      (sale) => new Date(sale.createdAt) >= today
+      (sale: Sale) => new Date(sale.created_at) >= today
     )
     const salesTodayTotal = salesToday.reduce(
       (sum, sale) => sum + sale.total,
@@ -132,7 +133,7 @@ export function useSales() {
 
     const thisMonth = new Date(today.getFullYear(), today.getMonth(), 1)
     const salesThisMonth = sales.filter(
-      (sale) => new Date(sale.createdAt) >= thisMonth
+      (sale) => new Date(sale.created_at) >= thisMonth
     )
     const salesThisMonthTotal = salesThisMonth.reduce(
       (sum, sale) => sum + sale.total,

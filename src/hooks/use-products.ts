@@ -1,10 +1,9 @@
 import { useEffect, useState } from 'react'
 import {
   getProducts,
-  createProduct as createProductService,
-  type ProductWithVariants,
-  type CreateProductPayload,
+  createProduct as createProductService
 } from '@/services/products'
+import type { CreateProductPayload, ProductWithVariants } from '@/types'
 import { type Product } from '@/features/products/data/schema'
 
 interface UseProductsReturn {

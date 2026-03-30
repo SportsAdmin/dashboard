@@ -5,10 +5,8 @@ import {
   createPurchaseOrder,
   updatePurchaseOrder,
   deletePurchaseOrder,
-  type PurchaseOrder,
-  type CreatePurchaseOrderPayload,
-  type UpdatePurchaseOrderPayload,
 } from '@/services/purchaseOrders'
+import type { PurchaseOrder, CreatePurchaseOrderPayload, UpdatePurchaseOrderPayload } from '@/types'
 
 interface UsePurchaseOrdersReturn {
   purchaseOrders: PurchaseOrder[]

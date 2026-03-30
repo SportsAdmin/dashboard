@@ -1,6 +1,5 @@
 import { supabase } from '@/lib/supabase'
 import type {
-  Product,
   ProductWithVariants,
   CreateProductPayload,
   ProductsResponse,
@@ -55,7 +54,7 @@ export async function getProducts(): Promise<ProductsResponse> {
     }
 
     // Transform the data to match our ProductWithVariants type
-    const products: ProductWithVariants[] = data.map((product: Product) => ({
+    const products: ProductWithVariants[] = data.map((product: any) => ({
       id: product.id,
       name: product.name,
       category: product.category,
@@ -126,7 +125,7 @@ export async function createProduct(
       p_category: payload.product.category,
       p_description: payload.product.description,
       p_variants: transformedVariants,
-    })
+    } as any)
 
     if (error) {
       console.error('RPC create_product error:', error)

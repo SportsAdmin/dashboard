@@ -1,5 +1,5 @@
 import { supabase } from '@/lib/supabase'
-import type { InventoryItem } from '@/types'
+import type { InventoryItem } from '@/features/inventory/data/schema'
 
 // ============================================
 // Service Functions
@@ -67,10 +67,10 @@ export async function getInventory(): Promise<{
     }
 
     // Transform the nested data structure to a flat format for easier use in UI
-    const formattedInventory: InventoryItem[] = data
-      .filter((item) => item.product_variants) // Filter out items with missing variant data
-      .map((item: InventoryItem) => {
-        const variant = item.product_variants as any
+    const formattedInventory: InventoryItem[] = (data as any[])
+      .filter((item: any) => item.product_variants) // Filter out items with missing variant data
+      .map((item: any) => {
+        const variant = item.product_variants
         const product = variant?.products
         const size = variant?.sizes
 

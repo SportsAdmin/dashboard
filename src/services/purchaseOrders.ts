@@ -170,7 +170,7 @@ export async function createPurchaseOrder(
     }
 
     // Call the RPC function
-    const { data, error } = await supabase.rpc('create_purchase_order', rpcPayload)
+    const { data, error } = await supabase.rpc('create_purchase_order', rpcPayload as any)
 
     if (error) {
       console.error('Error creating purchase order via RPC:', error)
@@ -221,9 +221,11 @@ export async function updatePurchaseOrder(
     if (payload.notes !== undefined) updateData.notes = payload.notes
 
     if (Object.keys(updateData).length > 0) {
-      const { error: orderError } = await supabase
+      const updatePayload = { ...updateData }
+      const { error: orderError} = await supabase
         .from('purchase_orders')
-        .update(updateData)
+        // @ts-expect-error - Supabase types are not correctly generated for this table
+        .update(updatePayload)
         .eq('id', id)
 
       if (orderError) {
@@ -261,7 +263,7 @@ export async function updatePurchaseOrder(
 
         const { error: itemsError } = await supabase
           .from('purchase_order_items')
-          .insert(itemsToInsert)
+          .insert(itemsToInsert as any)
 
         if (itemsError) {
           console.error('Error creating purchase order items:', itemsError)

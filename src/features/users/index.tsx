@@ -68,7 +68,7 @@ export function Users() {
             </p>
             <Button
               className='mt-4'
-              onClick={() => homeNavigate({ to: '/dashboard' })}
+              onClick={() => homeNavigate({ to: '/' })}
             >
               Go to Dashboard
             </Button>

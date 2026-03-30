@@ -1,7 +1,8 @@
 import { useState, useEffect, useCallback } from 'react'
 import { supabase } from '@/lib/supabase'
 import { login as authLogin, logout as authLogout } from '@/services/auth'
-import { getProfile, type Profile } from '@/services/profile'
+import { getProfile } from '@/services/profile'
+import type { Profile } from '@/types'
 import type { User } from '@supabase/supabase-js'
 
 interface UseAuthReturn {

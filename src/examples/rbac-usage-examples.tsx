@@ -187,7 +187,7 @@ export function NavigationExample() {
       <ul>
         {/* Always visible */}
         <li>
-          <Link to='/dashboard'>Dashboard</Link>
+          <Link to='/'>Dashboard</Link>
         </li>
 
         {/* Show only if user can access */}
@@ -207,7 +207,7 @@ export function NavigationExample() {
         {/* Show for specific roles */}
         <HasRole roles={['admin', 'manager']}>
           <li>
-            <Link to='/reports'>Reports</Link>
+            <Link to='/purchase-orders'>Purchase Orders</Link>
           </li>
         </HasRole>
       </ul>

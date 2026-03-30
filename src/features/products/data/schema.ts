@@ -24,8 +24,8 @@ export type Product = z.infer<typeof productSchema>
 export const variantFormSchema = z.object({
   size_id: z.string().min(1, 'Size is required'),
   color: z.string().min(1, 'Color is required'),
-  price: z.coerce.number().min(0, 'Price must be positive'),
-  price_sale: z.coerce.number().min(0, 'Sale price must be positive').optional().nullable(),
+  price: z.number().min(0, 'Price must be positive'),
+  price_sale: z.number().min(0, 'Sale price must be positive').optional().nullable(),
 })
 
 export const productFormSchema = z.object({

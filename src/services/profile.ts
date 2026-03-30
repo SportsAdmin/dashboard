@@ -76,7 +76,7 @@ export async function createProfile(
         name,
         role,
         club_id: clubId || null,
-      })
+      } as any)
       .select()
       .single()
 
@@ -117,12 +117,15 @@ export async function updateProfile(
   updates: Partial<Pick<Profile, 'name' | 'role' | 'club_id'>>
 ): Promise<ProfileResponse> {
   try {
+    const updatePayload = {
+      ...updates,
+      updated_at: new Date().toISOString(),
+    }
+
     const { data, error } = await supabase
       .from('profiles')
-      .update({
-        ...updates,
-        updated_at: new Date().toISOString(),
-      })
+      // @ts-expect-error - Supabase types are not correctly generated for this table
+      .update(updatePayload)
       .eq('id', userId)
       .select()
       .single()
