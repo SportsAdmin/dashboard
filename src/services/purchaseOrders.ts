@@ -3,7 +3,10 @@ import type {
   PurchaseOrderWithItems,
   CreatePurchaseOrderPayload,
   UpdatePurchaseOrderPayload,
+  PurchaseOrderUpdateData,
   CreatePurchaseOrderRPCPayload,
+  ExistingPurchaseOrderItem,
+  PurchaseOrderItemToInsert,
   PurchaseOrdersResponse,
   PurchaseOrderResponse,
   CreatePurchaseOrderResponse,
@@ -170,7 +173,8 @@ export async function createPurchaseOrder(
     }
 
     // Call the RPC function
-    const { data, error } = await supabase.rpc('create_purchase_order', rpcPayload as any)
+    // @ts-expect-error - Supabase RPC types are not correctly generated for create_purchase_order function
+    const { data, error } = await supabase.rpc('create_purchase_order', rpcPayload)
 
     if (error) {
       console.error('Error creating purchase order via RPC:', error)
@@ -217,7 +221,7 @@ export async function updatePurchaseOrder(
 ): Promise<UpdatePurchaseOrderResponse> {
   try {
     // Step 1: Update the purchase order basic fields
-    const updateData: Record<string, any> = {}
+    const updateData: PurchaseOrderUpdateData = {}
     if (payload.supplier !== undefined) updateData.supplier = payload.supplier
     if (payload.status !== undefined) updateData.status = payload.status
     if (payload.expected_date !== undefined)
@@ -225,11 +229,10 @@ export async function updatePurchaseOrder(
     if (payload.notes !== undefined) updateData.notes = payload.notes
 
     if (Object.keys(updateData).length > 0) {
-      const updatePayload = { ...updateData }
       const { error: orderError} = await supabase
         .from('purchase_orders')
         // @ts-expect-error - Supabase types are not correctly generated for this table
-        .update(updatePayload)
+        .update(updateData)
         .eq('id', id)
 
       if (orderError) {
@@ -259,8 +262,10 @@ export async function updatePurchaseOrder(
       // Check if items actually changed
       const itemsChanged = !existingItems ||
         existingItems.length !== payload.items.length ||
-        !payload.items.every((newItem, index) => {
-          const existing = existingItems.find(e => e.inventory_item_id === newItem.inventory_item_id)
+        !payload.items.every((newItem) => {
+          const existing = (existingItems as ExistingPurchaseOrderItem[]).find(
+            (e) => e.inventory_item_id === newItem.inventory_item_id
+          )
           return existing && existing.quantity === newItem.quantity
         })
 
@@ -281,7 +286,7 @@ export async function updatePurchaseOrder(
         }
 
         // Insert new items
-        const itemsToInsert = payload.items.map((item) => ({
+        const itemsToInsert: PurchaseOrderItemToInsert[] = payload.items.map((item) => ({
           purchase_order_id: id,
           inventory_item_id: item.inventory_item_id,
           quantity: item.quantity,
@@ -289,7 +294,8 @@ export async function updatePurchaseOrder(
 
         const { error: itemsError } = await supabase
           .from('purchase_order_items')
-          .insert(itemsToInsert as any)
+          // @ts-expect-error - Supabase types are not correctly generated for purchase_order_items insert
+          .insert(itemsToInsert)
 
         if (itemsError) {
           console.error('Error creating purchase order items:', itemsError)

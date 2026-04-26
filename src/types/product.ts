@@ -20,6 +20,11 @@ export type SizeUpdate = Database['public']['Tables']['sizes']['Update']
 // Extended Types with Relations
 // ============================================
 
+// Type for Supabase query response that includes variants
+export interface ProductFromSupabase extends Product {
+  variants: ProductVariant[]
+}
+
 export interface ProductWithVariants extends Product {
   variants: ProductVariant[]
 }
@@ -47,6 +52,18 @@ export interface CreateProductPayload {
     description: string
   }
   variants: ProductVariantInput[]
+}
+
+export interface CreateProductRPCParams {
+  p_name: string
+  p_category: string
+  p_description: string
+  p_variants: {
+    size_id: string
+    color: string
+    price: number
+    price_sale: number | null
+  }[]
 }
 
 export interface UpdateProductPayload {

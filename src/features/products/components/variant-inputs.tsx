@@ -11,15 +11,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { type UseFieldArrayReturn, type Control, Controller } from 'react-hook-form'
+import { type UseFieldArrayReturn, type Control, Controller, type UseFormRegister, type FieldErrors } from 'react-hook-form'
 import { type ProductFormData } from '../data/schema'
 import { type Size } from '@/services/sizes'
 
 type VariantInputsProps = {
   fieldArray: UseFieldArrayReturn<ProductFormData, 'variants', 'id'>
   control: Control<ProductFormData>
-  register: any
-  errors: any
+  register: UseFormRegister<ProductFormData>
+  errors: FieldErrors<ProductFormData>
   disabled?: boolean
   sizes?: Size[]
   sizesLoading?: boolean
@@ -166,7 +166,7 @@ export function VariantInputs({
                     placeholder={t('products.dialog.salePricePlaceholder')}
                     disabled={disabled}
                     {...register(`variants.${index}.price_sale`, {
-                      setValueAs: (value) => value === '' ? null : Number(value)
+                      setValueAs: (value: string) => value === '' ? null : Number(value)
                     })}
                   />
                   {errors?.variants?.[index]?.price_sale && (

@@ -81,12 +81,34 @@ export interface UpdatePurchaseOrderPayload {
   items?: PurchaseOrderItemInput[]
 }
 
+// Type for update data sent to Supabase
+export interface PurchaseOrderUpdateData {
+  supplier?: string
+  status?: PurchaseOrderStatus
+  expected_date?: string
+  notes?: string
+}
+
 // RPC payload format (service -> Supabase RPC)
 export interface CreatePurchaseOrderRPCPayload {
   p_supplier: string
   p_expected_date: string
   p_notes: string | null
   p_items: PurchaseOrderItemInput[]
+}
+
+// Type for existing purchase order item from database
+export interface ExistingPurchaseOrderItem {
+  id: string
+  inventory_item_id: string
+  quantity: number
+}
+
+// Type for purchase order item to insert
+export interface PurchaseOrderItemToInsert {
+  purchase_order_id: string
+  inventory_item_id: string
+  quantity: number
 }
 
 // ============================================

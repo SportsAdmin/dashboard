@@ -47,7 +47,7 @@ function UserManagement() {
   return (
     <>
       <SignedIn>
-        <UsersProvider>
+        <UsersProvider refetchUsers={async () => {}}>
           <Header fixed>
             <Search />
             <div className='ms-auto flex items-center space-x-4'>

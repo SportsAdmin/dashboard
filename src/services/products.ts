@@ -1,8 +1,9 @@
 import { supabase } from '@/lib/supabase'
 import type {
-  Product,
   ProductWithVariants,
+  ProductFromSupabase,
   CreateProductPayload,
+  CreateProductRPCParams,
   ProductsResponse,
   CreateProductResponse,
 } from '@/types'
@@ -56,7 +57,7 @@ export async function getProducts(): Promise<ProductsResponse> {
     }
 
     // Transform the data to match our ProductWithVariants type
-    const products: ProductWithVariants[] = data.map((product: Product) => ({
+    const products: ProductWithVariants[] = (data as ProductFromSupabase[]).map((product) => ({
       id: product.id,
       name: product.name,
       category: product.category,
@@ -122,12 +123,15 @@ export async function createProduct(
 
     // Call RPC function to create product
     // Backend handles: club_id assignment, product creation, variant creation, inventory creation
-    const { data, error } = await supabase.rpc('create_product', {
+    const rpcParams: CreateProductRPCParams = {
       p_name: payload.product.name,
       p_category: payload.product.category,
       p_description: payload.product.description,
       p_variants: transformedVariants,
-    } as any)
+    }
+
+    // @ts-expect-error - Supabase RPC types are not correctly generated for create_product function
+    const { data, error } = await supabase.rpc('create_product', rpcParams)
 
     if (error) {
       console.error('RPC create_product error:', error)

@@ -1,27 +1,12 @@
 import {
-  Construction,
   LayoutDashboard,
-  Monitor,
-  Bug,
   ListTodo,
-  FileX,
-  HelpCircle,
-  Lock,
-  Bell,
   Package,
-  Palette,
-  ServerOff,
-  Settings,
-  Wrench,
-  UserCog,
-  UserX,
   Users,
   MessagesSquare,
-  ShieldCheck,
   AudioWaveform,
   Command,
   GalleryVerticalEnd,
-  ShoppingCart,
   PackageSearch,
   Package2,
   UserCircle,
@@ -29,7 +14,6 @@ import {
   ClipboardList,
 } from 'lucide-react'
 import i18n from '@/lib/i18n'
-import { ClerkLogo } from '@/assets/clerk-logo'
 import { type SidebarData } from '../types'
 
 export const getSidebarData = (): SidebarData => ({
