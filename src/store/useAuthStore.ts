@@ -52,14 +52,30 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         .from('profiles')
         .select('*')
         .eq('id', user.id)
-        .single()
+        .maybeSingle() // Use maybeSingle instead of single to handle 0 or 1 results
 
-      if (profileError) throw profileError
+      if (profileError) {
+        console.error('Profile fetch error:', profileError)
+        throw profileError
+      }
+
+      // If no profile found, user might not have been set up properly
+      if (!profile) {
+        console.warn('No profile found for user:', user.id)
+        set({
+          user,
+          profile: null,
+          loading: false,
+          error: 'Profile not found. Please contact an administrator.'
+        })
+        return
+      }
 
       set({
         user,
         profile,
-        loading: false
+        loading: false,
+        error: null
       })
     } catch (error) {
       console.error('Error fetching profile:', error)

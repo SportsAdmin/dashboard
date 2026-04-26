@@ -1,4 +1,5 @@
 import { type ColumnDef } from '@tanstack/react-table'
+import i18n from '@/lib/i18n'
 import { Badge } from '@/components/ui/badge'
 import { DataTableColumnHeader } from '@/components/data-table'
 import { type Product } from '../data/schema'
@@ -7,7 +8,7 @@ export const productsColumns: ColumnDef<Product>[] = [
   {
     accessorKey: 'name',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Product Name' />
+      <DataTableColumnHeader column={column} title={i18n.t('products.table.name')} />
     ),
     meta: {
       className: 'ps-1 max-w-0 w-2/5',
@@ -28,7 +29,7 @@ export const productsColumns: ColumnDef<Product>[] = [
     accessorKey: 'variants',
     id: 'price',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Price' />
+      <DataTableColumnHeader column={column} title={i18n.t('products.dialog.price')} />
     ),
     meta: {
       className: 'ps-1',
@@ -73,7 +74,7 @@ export const productsColumns: ColumnDef<Product>[] = [
   },
   {
     accessorKey: 'variants',
-    header: 'Variants',
+    header: i18n.t('products.table.variants'),
     meta: {
       className: 'ps-1',
       tdClassName: 'ps-4',
@@ -87,9 +88,11 @@ export const productsColumns: ColumnDef<Product>[] = [
 
       return (
         <div className='flex items-center gap-2'>
-          <Badge variant='outline'>{variantsCount} variant(s)</Badge>
+          <Badge variant='outline'>
+            {i18n.t('products.table.variantsCount', { count: variantsCount })}
+          </Badge>
           <span className='text-sm text-muted-foreground'>
-            Stock: {totalStock}
+            {i18n.t('products.table.totalStock', { stock: totalStock })}
           </span>
         </div>
       )
@@ -99,7 +102,7 @@ export const productsColumns: ColumnDef<Product>[] = [
   {
     accessorKey: 'createdAt',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Created' />
+      <DataTableColumnHeader column={column} title={i18n.t('products.table.created')} />
     ),
     meta: {
       className: 'ps-1',

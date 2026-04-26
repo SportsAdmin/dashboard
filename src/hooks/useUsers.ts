@@ -50,14 +50,15 @@ export function useUsers(): UseUsersReturn {
       setLoading(true)
       setError(null)
 
-      // Check access first
-      const accessCheck = await checkUserAccess()
+      // Check access first (now synchronous - uses store)
+      const accessCheck = checkUserAccess()
       setHasAccess(accessCheck.hasAccess)
       setCurrentUserRole(accessCheck.role)
 
       // If no access, don't fetch users
       if (!accessCheck.hasAccess) {
         setUsers([])
+        setLoading(false)
         return
       }
 

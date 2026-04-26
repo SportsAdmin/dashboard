@@ -10,7 +10,11 @@
       "Bash(supabase functions deploy:*)",
       "Bash(mkdir:*)",
       "Bash(tree:*)",
-      "Bash(pnpm run build:*)"
+      "Bash(pnpm run build:*)",
+      "Bash(pnpm run dev)",
+      "Bash(pnpm run type-check:*)",
+      "Bash(supabase status:*)",
+      "Bash(npx supabase:*)"
     ],
     "deny": [],
     "ask": []

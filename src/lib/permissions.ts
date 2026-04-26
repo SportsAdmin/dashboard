@@ -12,7 +12,11 @@ export function canAccessRoute(role: Role | null, route: string): boolean {
   // Define route restrictions
   const restrictedRoutes: Record<string, Role[]> = {
     '/users': ['admin', 'manager'],
-    '/clubs': ['admin']
+    '/clubs': ['admin'],
+    '/clubs/create': ['admin'],
+    '/tasks': ['admin'],
+    '/apps': ['admin'],
+    '/chats': ['admin'],
   }
 
   // Check if route is restricted

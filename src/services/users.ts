@@ -1,4 +1,5 @@
 import { supabase } from '@/lib/supabase'
+import { useAuthStore } from '@/store/useAuthStore'
 import type { Profile } from '@/types'
 
 /**
@@ -29,33 +30,14 @@ interface CurrentUserProfile {
 }
 
 /**
- * Get current user's profile with role and club information
- * Used for role-based access control
+ * Get current user's profile with role and club information from store
+ * Used for role-based access control - uses cached profile from store to avoid duplicate requests
  */
-async function getCurrentUserProfile(): Promise<CurrentUserProfile | null> {
-  // Get authenticated user
-  const {
-    data: { user },
-    error: userError,
-  } = await supabase.auth.getUser()
-
-  if (userError || !user) {
-    throw new Error('Not authenticated')
-  }
-
-  // Get user profile
-  const { data: profile, error: profileError } = await supabase
-    .from('profiles')
-    .select('id, role, club_id')
-    .eq('id', user.id)
-    .single<Profile>()
-
-  if (profileError) {
-    throw new Error(`Failed to fetch profile: ${profileError.message}`)
-  }
+function getCurrentUserProfile(): CurrentUserProfile | null {
+  const { profile } = useAuthStore.getState()
 
   if (!profile) {
-    throw new Error('Profile not found')
+    return null
   }
 
   return {
@@ -85,8 +67,8 @@ async function getCurrentUserProfile(): Promise<CurrentUserProfile | null> {
  * const users = await getUsers()
  */
 export async function getUsers(): Promise<User[]> {
-  // Get current user's profile to determine access level
-  const currentProfile = await getCurrentUserProfile()
+  // Get current user's profile to determine access level from store
+  const currentProfile = getCurrentUserProfile()
 
   if (!currentProfile) {
     throw new Error('Unable to fetch current user profile')
@@ -123,42 +105,14 @@ export async function getUsers(): Promise<User[]> {
     return []
   }
 
-  // Fetch emails from auth.users
-  // Note: This requires service role key or admin API access
-  // If not available, we'll return users without email
-  let emailMap: Record<string, string> = {}
-
-  try {
-    // Get all user IDs
-    // const userIds = profiles.map((p) => p.id)
-
-    // Fetch emails for these users
-    // This approach works if you have RLS policies that allow reading auth data
-    // Alternative: Use a server-side function or edge function
-    const { data: authUsers, error: authError } = await supabase.auth.admin.listUsers()
-
-    if (!authError && authUsers?.users) {
-      // Create a map of user_id -> email
-      emailMap = authUsers.users.reduce(
-        (acc, user) => {
-          if (user.email) {
-            acc[user.id] = user.email
-          }
-          return acc
-        },
-        {} as Record<string, string>
-      )
-    }
-  } catch (error) {
-    // If we can't fetch emails (due to permissions), continue without them
-    console.warn('Unable to fetch user emails:', error)
-  }
-
-  // Combine profile data with emails
+  // Map profiles to users
+  // Note: Email is set to null as it's not stored in profiles table
+  // If emails are needed, they should be added to the profiles table
+  // or fetched via a secure server-side function
   const users: User[] = (profiles as Profile[]).map((profile) => ({
     id: profile.id,
     name: profile.name,
-    email: emailMap[profile.id] || null,
+    email: null, // Email not available in profiles table
     role: profile.role as UserRole,
     club_id: profile.club_id,
     created_at: profile.created_at,
@@ -179,12 +133,12 @@ export async function getUsers(): Promise<User[]> {
  *   return <Unauthorized />
  * }
  */
-export async function checkUserAccess(): Promise<{
+export function checkUserAccess(): {
   hasAccess: boolean
   role: UserRole | null
-}> {
+} {
   try {
-    const profile = await getCurrentUserProfile()
+    const profile = getCurrentUserProfile()
 
     if (!profile) {
       return { hasAccess: false, role: null }
@@ -200,5 +154,92 @@ export async function checkUserAccess(): Promise<{
   } catch (error) {
     console.error('Error checking user access:', error)
     return { hasAccess: false, role: null }
+  }
+}
+
+/**
+ * Create a new user with profile
+ *
+ * @param data User creation data
+ * @returns Result of user creation
+ *
+ * @example
+ * const result = await createUser({
+ *   email: 'seller@example.com',
+ *   password: 'SecurePass123',
+ *   name: 'John Seller',
+ *   role: 'seller',
+ *   club_id: 'club-uuid'
+ * })
+ */
+export async function createUser(data: {
+  email: string
+  password: string
+  name: string
+  role: UserRole
+  club_id?: string
+}): Promise<{ success: boolean; error?: string; userId?: string }> {
+  try {
+    // Get current user's profile to validate permissions
+    const currentProfile = getCurrentUserProfile()
+
+    if (!currentProfile) {
+      return { success: false, error: 'Not authenticated' }
+    }
+
+    // Validate permissions
+    // - Managers can only create sellers in their club
+    // - Admins can create any role
+    if (currentProfile.role === 'manager') {
+      if (data.role !== 'seller') {
+        return { success: false, error: 'Managers can only create sellers' }
+      }
+      // Ensure the new user is in the same club as the manager
+      if (!currentProfile.club_id) {
+        return { success: false, error: 'Manager must be assigned to a club' }
+      }
+      // Override club_id to ensure it's the manager's club
+      data.club_id = currentProfile.club_id
+    } else if (currentProfile.role === 'seller') {
+      return { success: false, error: 'Sellers cannot create users' }
+    }
+
+    // Call Edge Function to create user
+    // This is necessary because creating auth users requires service role key
+    // which should not be exposed in the client
+    const { data: result, error: functionError } = await supabase.functions.invoke(
+      'create-user',
+      {
+        body: {
+          email: data.email,
+          password: data.password,
+          name: data.name,
+          role: data.role,
+          club_id: data.club_id,
+        },
+      }
+    )
+
+    if (functionError) {
+      return {
+        success: false,
+        error: functionError.message || 'Failed to create user',
+      }
+    }
+
+    if (!result || !result.success) {
+      return {
+        success: false,
+        error: result?.error || 'Failed to create user',
+      }
+    }
+
+    return { success: true, userId: result.userId }
+  } catch (error) {
+    console.error('Error creating user:', error)
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : 'Unknown error',
+    }
   }
 }

@@ -1,10 +1,12 @@
 import { supabase } from '@/lib/supabase'
 import type {
+  Product,
   ProductWithVariants,
   CreateProductPayload,
   ProductsResponse,
   CreateProductResponse,
 } from '@/types'
+
 
 // ============================================
 // Service Functions
@@ -54,7 +56,7 @@ export async function getProducts(): Promise<ProductsResponse> {
     }
 
     // Transform the data to match our ProductWithVariants type
-    const products: ProductWithVariants[] = data.map((product: any) => ({
+    const products: ProductWithVariants[] = data.map((product: Product) => ({
       id: product.id,
       name: product.name,
       category: product.category,

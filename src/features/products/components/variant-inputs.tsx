@@ -1,4 +1,5 @@
 import { Plus, Trash2 } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -33,12 +34,13 @@ export function VariantInputs({
   sizes = [],
   sizesLoading = false,
 }: VariantInputsProps) {
+  const { t } = useTranslation()
   const { fields, append, remove } = fieldArray
 
   return (
     <div className='space-y-3'>
       <div className='flex items-center justify-between'>
-        <Label>Variants</Label>
+        <Label>{t('products.dialog.variants')}</Label>
         <Button
           type='button'
           variant='outline'
@@ -47,13 +49,13 @@ export function VariantInputs({
           disabled={disabled}
         >
           <Plus className='mr-2 size-4' />
-          Add Variant
+          {t('products.dialog.addVariant')}
         </Button>
       </div>
 
       {fields.length === 0 && (
         <div className='rounded-md border border-dashed p-8 text-center text-sm text-muted-foreground'>
-          No variants added. Click "Add Variant" to create one.
+          {t('products.dialog.noVariants')}
         </div>
       )}
 
@@ -63,7 +65,7 @@ export function VariantInputs({
             <div className='space-y-3'>
               <div className='flex items-center justify-between'>
                 <span className='text-sm font-medium'>
-                  Variant {index + 1}
+                  {t('products.dialog.variant')} {index + 1}
                 </span>
                 <Button
                   type='button'
@@ -79,7 +81,7 @@ export function VariantInputs({
 
               <div className='grid gap-3 sm:grid-cols-2'>
                 <div className='space-y-1.5'>
-                  <Label htmlFor={`variants.${index}.size_id`}>Size</Label>
+                  <Label htmlFor={`variants.${index}.size_id`}>{t('products.dialog.size')}</Label>
                   <Controller
                     name={`variants.${index}.size_id`}
                     control={control}
@@ -93,10 +95,10 @@ export function VariantInputs({
                           <SelectValue
                             placeholder={
                               sizesLoading
-                                ? 'Loading sizes...'
+                                ? t('products.dialog.loadingSizes')
                                 : sizes.length === 0
-                                  ? 'No sizes available'
-                                  : 'Select size'
+                                  ? t('products.dialog.noSizesAvailable')
+                                  : t('products.dialog.selectSize')
                             }
                           />
                         </SelectTrigger>
@@ -118,10 +120,10 @@ export function VariantInputs({
                 </div>
 
                 <div className='space-y-1.5'>
-                  <Label htmlFor={`variants.${index}.color`}>Color</Label>
+                  <Label htmlFor={`variants.${index}.color`}>{t('products.dialog.color')}</Label>
                   <Input
                     id={`variants.${index}.color`}
-                    placeholder='e.g., Red, Blue'
+                    placeholder={t('products.dialog.colorPlaceholder')}
                     disabled={disabled}
                     {...register(`variants.${index}.color`)}
                   />
@@ -136,7 +138,7 @@ export function VariantInputs({
               <div className='grid gap-3 sm:grid-cols-2'>
                 <div className='space-y-1.5'>
                   <Label htmlFor={`variants.${index}.price`}>
-                    Price *
+                    {t('products.dialog.price')} *
                   </Label>
                   <Input
                     id={`variants.${index}.price`}
@@ -144,7 +146,7 @@ export function VariantInputs({
                     step='0.01'
                     placeholder='0.00'
                     disabled={disabled}
-                    {...register(`variants.${index}.price`)}
+                    {...register(`variants.${index}.price`, { valueAsNumber: true })}
                   />
                   {errors?.variants?.[index]?.price && (
                     <p className='text-xs text-destructive'>
@@ -155,15 +157,17 @@ export function VariantInputs({
 
                 <div className='space-y-1.5'>
                   <Label htmlFor={`variants.${index}.price_sale`}>
-                    Sale Price (Optional)
+                    {t('products.dialog.salePrice')}
                   </Label>
                   <Input
                     id={`variants.${index}.price_sale`}
                     type='number'
                     step='0.01'
-                    placeholder='0.00'
+                    placeholder={t('products.dialog.salePricePlaceholder')}
                     disabled={disabled}
-                    {...register(`variants.${index}.price_sale`)}
+                    {...register(`variants.${index}.price_sale`, {
+                      setValueAs: (value) => value === '' ? null : Number(value)
+                    })}
                   />
                   {errors?.variants?.[index]?.price_sale && (
                     <p className='text-xs text-destructive'>

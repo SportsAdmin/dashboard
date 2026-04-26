@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { useNavigate } from '@tanstack/react-router'
-import { useAuth } from '@/hooks/use-auth'
+import { useAuthStore } from '@/store/useAuthStore'
 import { Loader2 } from 'lucide-react'
 
 interface ProtectedRouteProps {
@@ -26,7 +26,8 @@ export function ProtectedRoute({
   children,
   redirectTo,
 }: ProtectedRouteProps) {
-  const { user, loading } = useAuth()
+  const user = useAuthStore(state => state.user)
+  const loading = useAuthStore(state => state.loading)
   const navigate = useNavigate()
 
   useEffect(() => {

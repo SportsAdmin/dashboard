@@ -9,16 +9,22 @@ type UsersContextType = {
   setOpen: (str: UsersDialogType | null) => void
   currentRow: User | null
   setCurrentRow: React.Dispatch<React.SetStateAction<User | null>>
+  refetchUsers: () => Promise<void>
 }
 
 const UsersContext = React.createContext<UsersContextType | null>(null)
 
-export function UsersProvider({ children }: { children: React.ReactNode }) {
+type UsersProviderProps = {
+  children: React.ReactNode
+  refetchUsers: () => Promise<void>
+}
+
+export function UsersProvider({ children, refetchUsers }: UsersProviderProps) {
   const [open, setOpen] = useDialogState<UsersDialogType>(null)
   const [currentRow, setCurrentRow] = useState<User | null>(null)
 
   return (
-    <UsersContext value={{ open, setOpen, currentRow, setCurrentRow }}>
+    <UsersContext value={{ open, setOpen, currentRow, setCurrentRow, refetchUsers }}>
       {children}
     </UsersContext>
   )

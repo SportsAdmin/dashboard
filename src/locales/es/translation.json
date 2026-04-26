@@ -97,7 +97,9 @@
       "productName": "Nombre del Producto",
       "variant": "Variante",
       "stock": "Stock",
-      "price": "Precio"
+      "price": "Precio",
+      "size": "Talla",
+      "color": "Color"
     },
     "filters": {
       "product": "Producto",
@@ -121,12 +123,18 @@
       "category": "Categoría",
       "categoryPlaceholder": "ej., Calzado, Ropa, Equipo",
       "categoryRequired": "La categoría es obligatoria",
+      "description": "Descripción",
+      "descriptionPlaceholder": "ej., Zapatillas profesionales para corredores",
+      "descriptionRequired": "La descripción es obligatoria",
       "basePrice": "Precio Base",
       "basePriceRequired": "El precio debe ser positivo",
       "variants": "Variantes",
       "addVariant": "Agregar Variante",
       "variant": "Variante",
       "size": "Talla",
+      "selectSize": "Seleccionar talla",
+      "loadingSizes": "Cargando tallas...",
+      "noSizesAvailable": "No hay tallas disponibles",
       "sizePlaceholder": "ej., M, L, XL",
       "sizeRequired": "La talla es obligatoria",
       "color": "Color",
@@ -134,9 +142,13 @@
       "colorRequired": "El color es obligatorio",
       "price": "Precio",
       "priceRequired": "El precio debe ser positivo",
+      "salePrice": "Precio de Oferta (Opcional)",
+      "salePricePlaceholder": "0.00",
       "noVariants": "No se han agregado variantes. Haz clic en \"Agregar Variante\" para crear una.",
       "atLeastOneVariant": "Se requiere al menos una variante",
+      "cancel": "Cancelar",
       "creating": "Creando...",
+      "createProduct": "Crear Producto",
       "productCreated": "{{name}} se ha agregado exitosamente"
     },
     "table": {
@@ -188,6 +200,23 @@
       "title": "Crear Orden de Compra",
       "description": "Crea una nueva orden para solicitar inventario a un proveedor"
     },
+    "edit": {
+      "title": "Editar Orden de Compra",
+      "description": "Actualiza los detalles de la orden y administra el estado",
+      "orderUpdated": "Orden de compra actualizada exitosamente",
+      "orderUpdateFailed": "Error al actualizar la orden de compra",
+      "status": "Estado",
+      "selectStatus": "Selecciona un estado",
+      "updating": "Actualizando...",
+      "updateButton": "Actualizar Orden de Compra"
+    },
+    "status": {
+      "pending": "Pendiente",
+      "approved": "Aprobada",
+      "in_production": "En Producción",
+      "shipped": "Enviada",
+      "delivered": "Entregada"
+    },
     "table": {
       "supplier": "Proveedor",
       "status": "Estado",
@@ -223,6 +252,238 @@
       "createButton": "Crear Orden de Compra",
       "orderCreated": "Orden de compra creada exitosamente",
       "orderCreateFailed": "Error al crear la orden de compra"
+    }
+  },
+  "profile": {
+    "role": {
+      "admin": "Administrador",
+      "manager": "Gerente",
+      "seller": "Vendedor"
+    },
+    "menu": {
+      "profile": "Perfil",
+      "account": "Cuenta",
+      "settings": "Configuración",
+      "notifications": "Notificaciones",
+      "signOut": "Cerrar sesión"
+    }
+  },
+  "clubs": {
+    "title": "Clubes",
+    "createClub": "Crear Club",
+    "pageTitle": "Crear Club",
+    "pageDescription": "Configura un nuevo club con su cuenta de administrador",
+    "form": {
+      "title": "Crear Nuevo Club",
+      "description": "Configura un nuevo club con un usuario administrador en tu sistema multi-tenant",
+      "clubInformation": "Información del Club",
+      "clubInfoDescription": "Información básica sobre el club deportivo",
+      "clubName": "Nombre del Club",
+      "clubNamePlaceholder": "FC Barcelona",
+      "clubNameDescription": "El nombre oficial del club deportivo",
+      "clubNameMin": "El nombre del club debe tener al menos 2 caracteres",
+      "clubNameMax": "El nombre del club debe tener menos de 100 caracteres",
+      "city": "Ciudad",
+      "cityPlaceholder": "Barcelona",
+      "cityDescription": "La ciudad donde se encuentra el club",
+      "cityMin": "La ciudad debe tener al menos 2 caracteres",
+      "cityMax": "La ciudad debe tener menos de 100 caracteres",
+      "logoUrl": "URL del Logo (Opcional)",
+      "logoUrlPlaceholder": "https://ejemplo.com/logo.png",
+      "logoUrlDescription": "URL de la imagen del logo del club",
+      "logoUrlInvalid": "Debe ser una URL válida",
+      "adminUser": "Usuario Administrador",
+      "adminUserDescription": "Crea la cuenta de administrador principal para este club",
+      "adminName": "Nombre del Administrador",
+      "adminNamePlaceholder": "Juan Pérez",
+      "adminNameDescription": "Nombre completo del administrador del club",
+      "adminNameMin": "El nombre del administrador debe tener al menos 2 caracteres",
+      "adminNameMax": "El nombre del administrador debe tener menos de 100 caracteres",
+      "adminEmail": "Email del Administrador",
+      "adminEmailPlaceholder": "admin@fcbarcelona.com",
+      "adminEmailDescription": "Dirección de correo electrónico para la cuenta de administrador",
+      "adminEmailInvalid": "Debe ser una dirección de correo electrónico válida",
+      "password": "Contraseña",
+      "passwordPlaceholder": "••••••••",
+      "passwordDescription": "Debe tener al menos 8 caracteres con mayúsculas, minúsculas y números",
+      "passwordMin": "La contraseña debe tener al menos 8 caracteres",
+      "passwordPattern": "La contraseña debe contener al menos una letra mayúscula, una letra minúscula y un número",
+      "confirmPassword": "Confirmar Contraseña",
+      "confirmPasswordPlaceholder": "••••••••",
+      "confirmPasswordDescription": "Vuelve a ingresar la contraseña para confirmar",
+      "passwordsNoMatch": "Las contraseñas no coinciden",
+      "reset": "Restablecer",
+      "creating": "Creando Club...",
+      "createButton": "Crear Club",
+      "success": "¡Club creado exitosamente!",
+      "successDescription": "El club \"{{clubName}}\" ha sido creado con el administrador {{adminEmail}}",
+      "error": "Error al crear el club",
+      "errorUnknown": "Ocurrió un error desconocido",
+      "errorUnexpected": "Ocurrió un error inesperado"
+    }
+  },
+  "users": {
+    "title": "Usuarios",
+    "description": "Administra los usuarios de tu sistema",
+    "addUser": "Agregar Usuario",
+    "searchPlaceholder": "Buscar usuarios...",
+    "invite": "Invitar Usuario",
+    "loading": "Cargando usuarios...",
+    "accessDenied": "Acceso Denegado",
+    "noPermission": "No tienes permiso para acceder a la gestión de usuarios.",
+    "sellerRestricted": "Los vendedores no pueden ver las listas de usuarios.",
+    "contactAdmin": "Por favor, contacta a tu administrador para obtener acceso.",
+    "goToDashboard": "Ir al Panel",
+    "pageTitle": "Lista de Usuarios",
+    "managerNote": "Mostrando usuarios de tu club solamente.",
+    "columns": {
+      "name": "Nombre",
+      "email": "Correo Electrónico",
+      "role": "Rol",
+      "status": "Estado",
+      "created": "Creado",
+      "verified": "Verificado"
+    }
+  },
+  "errors": {
+    "notFound": {
+      "code": "404",
+      "title": "¡Oops! Página No Encontrada",
+      "description": "Parece que la página que buscas no existe o ha sido eliminada.",
+      "goBack": "Volver",
+      "backHome": "Volver al Inicio"
+    },
+    "serverError": {
+      "code": "500",
+      "title": "¡Oops! Algo salió mal",
+      "description": "Disculpa las molestias. Por favor, inténtalo de nuevo más tarde.",
+      "goBack": "Volver",
+      "backHome": "Volver al Inicio"
+    },
+    "unauthorized": {
+      "code": "401",
+      "title": "Acceso No Autorizado",
+      "description": "Por favor, inicia sesión con las credenciales apropiadas para acceder a este recurso.",
+      "goBack": "Volver",
+      "backHome": "Volver al Inicio"
+    },
+    "forbidden": {
+      "code": "403",
+      "title": "Prohibido",
+      "description": "No tienes permiso para acceder a este recurso.",
+      "goBack": "Volver",
+      "backHome": "Volver al Inicio"
+    },
+    "maintenance": {
+      "code": "503",
+      "title": "En Mantenimiento",
+      "description": "Actualmente estamos realizando mantenimiento programado. Por favor, vuelve pronto.",
+      "goBack": "Volver",
+      "backHome": "Volver al Inicio"
+    }
+  },
+  "dashboard": {
+    "title": "Panel",
+    "download": "Descargar",
+    "tabs": {
+      "overview": "Resumen",
+      "analytics": "Analíticas",
+      "reports": "Reportes",
+      "notifications": "Notificaciones"
+    },
+    "cards": {
+      "totalRevenue": "Ingresos Totales",
+      "revenueChange": "+20.1% desde el mes pasado",
+      "subscriptions": "Suscripciones",
+      "subscriptionsChange": "+180.1% desde el mes pasado",
+      "sales": "Ventas",
+      "salesChange": "+19% desde el mes pasado",
+      "activeNow": "Activos Ahora",
+      "activeChange": "+201 desde la última hora"
+    },
+    "sections": {
+      "overview": "Resumen",
+      "recentSales": "Ventas Recientes",
+      "salesThisMonth": "Realizaste 265 ventas este mes."
+    }
+  },
+  "apps": {
+    "title": "Integraciones de Aplicaciones",
+    "description": "¡Aquí está la lista de tus aplicaciones para la integración!",
+    "filterPlaceholder": "Filtrar aplicaciones...",
+    "filters": {
+      "all": "Todas las Apps",
+      "connected": "Conectadas",
+      "notConnected": "No Conectadas"
+    },
+    "sort": {
+      "ascending": "Ascendente",
+      "descending": "Descendente"
+    },
+    "buttons": {
+      "connected": "Conectada",
+      "connect": "Conectar"
+    }
+  },
+  "chats": {
+    "title": "Bandeja de Entrada",
+    "searchPlaceholder": "Buscar chat...",
+    "youPrefix": "Tú: ",
+    "emptyState": {
+      "title": "Tus mensajes",
+      "description": "Envía un mensaje para iniciar un chat.",
+      "action": "Enviar mensaje"
+    },
+    "messageInputPlaceholder": "Escribe tus mensajes...",
+    "sendButton": "Enviar"
+  },
+  "tasks": {
+    "title": "Tareas",
+    "description": "¡Aquí está la lista de tus tareas para este mes!"
+  },
+  "settings": {
+    "account": {
+      "title": "Cuenta",
+      "description": "Actualiza la configuración de tu cuenta. Establece tu idioma y zona horaria preferidos.",
+      "form": {
+        "name": "Nombre",
+        "namePlaceholder": "Tu nombre",
+        "nameDescription": "Este es el nombre que se mostrará en tu perfil y en los correos electrónicos.",
+        "dateOfBirth": "Fecha de nacimiento",
+        "dobDescription": "Tu fecha de nacimiento se utiliza para calcular tu edad.",
+        "language": "Idioma",
+        "selectLanguage": "Seleccionar idioma",
+        "searchLanguage": "Buscar idioma...",
+        "noLanguageFound": "No se encontró ningún idioma.",
+        "languageDescription": "Este es el idioma que se utilizará en el panel.",
+        "updateButton": "Actualizar cuenta"
+      }
+    }
+  },
+  "auth": {
+    "signIn": {
+      "title": "Iniciar sesión",
+      "subtitle": "Ingresa tu correo electrónico y contraseña para acceder a tu cuenta",
+      "emailLabel": "Correo Electrónico",
+      "emailPlaceholder": "nombre@ejemplo.com",
+      "emailRequired": "Por favor ingresa tu correo electrónico",
+      "passwordLabel": "Contraseña",
+      "passwordPlaceholder": "********",
+      "passwordRequired": "Por favor ingresa tu contraseña",
+      "passwordMin": "La contraseña debe tener al menos 7 caracteres",
+      "forgotPassword": "¿Olvidaste tu contraseña?",
+      "signInButton": "Iniciar sesión",
+      "orContinueWith": "O continuar con",
+      "termsText": "Al hacer clic en iniciar sesión, aceptas nuestros",
+      "termsOfService": "Términos de Servicio",
+      "and": "y",
+      "privacyPolicy": "Política de Privacidad",
+      "loading": "Cargando...",
+      "signInFailed": "Error al iniciar sesión",
+      "invalidCredentials": "Correo electrónico o contraseña inválidos",
+      "signInSuccess": "Inicio de sesión exitoso",
+      "welcomeBack": "¡Bienvenido de nuevo, {{email}}!",
+      "unexpectedError": "Ocurrió un error inesperado"
     }
   }
 }

@@ -39,6 +39,13 @@ export function filterSidebarByRole(
 function filterNavItems(items: NavItem[], role: Role): NavItem[] {
   return items
     .map((item) => {
+      // First, check if item has roles restriction
+      if (item.roles && item.roles.length > 0) {
+        if (!item.roles.includes(role)) {
+          return null // User's role not in allowed roles
+        }
+      }
+
       // If item has children, filter them recursively
       if (item.items && item.items.length > 0) {
         const filteredChildren = filterNavItems(item.items, role)
@@ -96,6 +103,13 @@ export function getHiddenRoutes(role: Role): string[] {
  */
 export function shouldShowNavItem(item: NavItem, role: Role | null): boolean {
   if (!role) return false
+
+  // Check if item has roles restriction
+  if (item.roles && item.roles.length > 0) {
+    if (!item.roles.includes(role)) {
+      return false // User's role not in allowed roles
+    }
+  }
 
   // If item has URL, check permissions
   if (item.url) {

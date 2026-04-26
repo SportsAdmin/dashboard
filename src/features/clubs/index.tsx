@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
 import { ProfileDropdown } from '@/components/profile-dropdown'
@@ -8,6 +9,8 @@ import { LanguageSwitcher } from '@/components/language-switcher'
 import { CreateClubForm } from './create-club-form'
 
 export function CreateClub() {
+  const { t } = useTranslation()
+
   return (
     <>
       {/* ===== Top Heading ===== */}
@@ -24,9 +27,11 @@ export function CreateClub() {
       {/* ===== Main ===== */}
       <Main>
         <div className='mb-6'>
-          <h1 className='text-3xl font-bold tracking-tight'>Create Club</h1>
+          <h1 className='text-3xl font-bold tracking-tight'>
+            {t('clubs.pageTitle')}
+          </h1>
           <p className='text-muted-foreground'>
-            Set up a new club with its administrator account
+            {t('clubs.pageDescription')}
           </p>
         </div>
 

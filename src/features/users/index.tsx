@@ -1,4 +1,5 @@
 import { getRouteApi, useNavigate } from '@tanstack/react-router'
+import { useTranslation } from 'react-i18next'
 import { ConfigDrawer } from '@/components/config-drawer'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
@@ -15,10 +16,11 @@ import { UsersTable } from './components/users-table'
 const route = getRouteApi('/_authenticated/users/')
 
 export function Users() {
+  const { t } = useTranslation()
   const search = route.useSearch()
   const navigate = route.useNavigate()
   const homeNavigate = useNavigate()
-  const { users, loading, error, hasAccess, currentUserRole } = useUsers()
+  const { users, loading, error, hasAccess, currentUserRole, refetch } = useUsers()
 
   // Show loading state
   if (loading) {
@@ -35,7 +37,7 @@ export function Users() {
 
         <Main className='flex flex-1 flex-col items-center justify-center gap-4'>
           <div className='text-center'>
-            <p className='text-muted-foreground'>Loading users...</p>
+            <p className='text-muted-foreground'>{t('users.loading')}</p>
           </div>
         </Main>
       </>
@@ -57,20 +59,20 @@ export function Users() {
 
         <Main className='flex flex-1 flex-col items-center justify-center gap-4'>
           <div className='text-center'>
-            <h2 className='text-2xl font-bold tracking-tight'>Access Denied</h2>
+            <h2 className='text-2xl font-bold tracking-tight'>{t('users.accessDenied')}</h2>
             <p className='text-muted-foreground mt-2'>
-              You do not have permission to access user management.
+              {t('users.noPermission')}
             </p>
             <p className='text-sm text-muted-foreground mt-1'>
               {currentUserRole === 'seller'
-                ? 'Sellers cannot view user lists.'
-                : 'Please contact your administrator for access.'}
+                ? t('users.sellerRestricted')
+                : t('users.contactAdmin')}
             </p>
             <Button
               className='mt-4'
               onClick={() => homeNavigate({ to: '/' })}
             >
-              Go to Dashboard
+              {t('users.goToDashboard')}
             </Button>
           </div>
         </Main>
@@ -94,7 +96,7 @@ export function Users() {
         <Main className='flex flex-1 flex-col items-center justify-center gap-4'>
           <div className='text-center'>
             <h2 className='text-2xl font-bold tracking-tight text-destructive'>
-              Error
+              {t('common.error')}
             </h2>
             <p className='text-muted-foreground mt-2'>{error}</p>
           </div>
@@ -104,7 +106,7 @@ export function Users() {
   }
 
   return (
-    <UsersProvider>
+    <UsersProvider refetchUsers={refetch}>
       <Header fixed>
         <Search />
         <div className='ms-auto flex items-center space-x-4'>
@@ -117,12 +119,12 @@ export function Users() {
       <Main className='flex flex-1 flex-col gap-4 sm:gap-6'>
         <div className='flex flex-wrap items-end justify-between gap-2'>
           <div>
-            <h2 className='text-2xl font-bold tracking-tight'>User List</h2>
+            <h2 className='text-2xl font-bold tracking-tight'>{t('users.pageTitle')}</h2>
             <p className='text-muted-foreground'>
-              Manage your users and their roles here.
+              {t('users.description')}
               {currentUserRole === 'manager' && (
                 <span className='block text-sm mt-1'>
-                  Showing users from your club only.
+                  {t('users.managerNote')}
                 </span>
               )}
             </p>

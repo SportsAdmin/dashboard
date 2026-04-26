@@ -64,11 +64,11 @@ export const getSidebarData = (): SidebarData => ({
           url: '/',
           icon: LayoutDashboard,
         },
-        {
-          title: i18n.t('nav.pos'),
-          url: '/pos',
-          icon: ShoppingCart,
-        },
+        // {
+        //   title: i18n.t('nav.pos'),
+        //   url: '/pos',
+        //   icon: ShoppingCart,
+        // },
         {
           title: i18n.t('nav.inventory'),
           url: '/inventory',
@@ -80,7 +80,7 @@ export const getSidebarData = (): SidebarData => ({
           icon: Package2,
         },
         {
-          title: 'Purchase Orders',
+          title: i18n.t('purchaseOrders.title'),
           url: '/purchase-orders',
           icon: ClipboardList,
         },
@@ -93,17 +93,20 @@ export const getSidebarData = (): SidebarData => ({
           title: i18n.t('nav.tasks'),
           url: '/tasks',
           icon: ListTodo,
+          roles: ['admin'],
         },
         {
           title: i18n.t('nav.apps'),
           url: '/apps',
           icon: Package,
+          roles: ['admin'],
         },
         {
           title: i18n.t('nav.chats'),
           url: '/chats',
           badge: '3',
           icon: MessagesSquare,
+          roles: ['admin'],
         },
         {
           title: i18n.t('nav.users'),
@@ -112,144 +115,133 @@ export const getSidebarData = (): SidebarData => ({
           roles: ['admin', 'manager'],
         },
         {
-          title: 'Clubs',
+          title: 'Clubes',
           icon: Building2,
+          url: '/clubs',
           roles: ['admin'],
-          items: [
-            {
-              title: 'All Clubs',
-              url: '/clubs',
-              roles: ['admin'],
-            },
-            {
-              title: 'Create Club',
-              url: '/clubs/create',
-              roles: ['admin'],
-            },
-          ],
         },
-        {
-          title: 'Secured by Clerk',
-          icon: ClerkLogo,
-          items: [
-            {
-              title: 'Sign In',
-              url: '/clerk/sign-in',
-            },
-            {
-              title: 'Sign Up',
-              url: '/clerk/sign-up',
-            },
-            {
-              title: 'User Management',
-              url: '/clerk/user-management',
-            },
-          ],
-        },
+        // {
+        //   title: 'Secured by Clerk',
+        //   icon: ClerkLogo,
+        //   items: [
+        //     {
+        //       title: 'Sign In',
+        //       url: '/clerk/sign-in',
+        //     },
+        //     {
+        //       title: 'Sign Up',
+        //       url: '/clerk/sign-up',
+        //     },
+        //     {
+        //       title: 'User Management',
+        //       url: '/clerk/user-management',
+        //     },
+        //   ],
+        // },
       ],
     },
-    {
-      title: 'Pages',
-      items: [
-        {
-          title: 'Auth',
-          icon: ShieldCheck,
-          items: [
-            {
-              title: 'Sign In',
-              url: '/sign-in',
-            },
-            {
-              title: 'Sign In (2 Col)',
-              url: '/sign-in-2',
-            },
-            {
-              title: 'Sign Up',
-              url: '/sign-up',
-            },
-            {
-              title: 'Forgot Password',
-              url: '/forgot-password',
-            },
-            {
-              title: 'OTP',
-              url: '/otp',
-            },
-          ],
-        },
-        {
-          title: 'Errors',
-          icon: Bug,
-          items: [
-            {
-              title: 'Unauthorized',
-              url: '/errors/unauthorized',
-              icon: Lock,
-            },
-            {
-              title: 'Forbidden',
-              url: '/errors/forbidden',
-              icon: UserX,
-            },
-            {
-              title: 'Not Found',
-              url: '/errors/not-found',
-              icon: FileX,
-            },
-            {
-              title: 'Internal Server Error',
-              url: '/errors/internal-server-error',
-              icon: ServerOff,
-            },
-            {
-              title: 'Maintenance Error',
-              url: '/errors/maintenance-error',
-              icon: Construction,
-            },
-          ],
-        },
-      ],
-    },
-    {
-      title: 'Other',
-      items: [
-        {
-          title: 'Settings',
-          icon: Settings,
-          items: [
-            {
-              title: 'Profile',
-              url: '/settings',
-              icon: UserCog,
-            },
-            {
-              title: 'Account',
-              url: '/settings/account',
-              icon: Wrench,
-            },
-            {
-              title: 'Appearance',
-              url: '/settings/appearance',
-              icon: Palette,
-            },
-            {
-              title: 'Notifications',
-              url: '/settings/notifications',
-              icon: Bell,
-            },
-            {
-              title: 'Display',
-              url: '/settings/display',
-              icon: Monitor,
-            },
-          ],
-        },
-        {
-          title: i18n.t('nav.helpCenter'),
-          url: '/help-center',
-          icon: HelpCircle,
-        },
-      ],
-    },
+    // {
+    //   title: 'Pages',
+    //   items: [
+    //     {
+    //       title: 'Auth',
+    //       icon: ShieldCheck,
+    //       items: [
+    //         {
+    //           title: 'Sign In',
+    //           url: '/sign-in',
+    //         },
+    //         {
+    //           title: 'Sign In (2 Col)',
+    //           url: '/sign-in-2',
+    //         },
+    //         {
+    //           title: 'Sign Up',
+    //           url: '/sign-up',
+    //         },
+    //         {
+    //           title: 'Forgot Password',
+    //           url: '/forgot-password',
+    //         },
+    //         {
+    //           title: 'OTP',
+    //           url: '/otp',
+    //         },
+    //       ],
+    //     },
+    //     {
+    //       title: 'Errors',
+    //       icon: Bug,
+    //       items: [
+    //         {
+    //           title: 'Unauthorized',
+    //           url: '/errors/unauthorized',
+    //           icon: Lock,
+    //         },
+    //         {
+    //           title: 'Forbidden',
+    //           url: '/errors/forbidden',
+    //           icon: UserX,
+    //         },
+    //         {
+    //           title: 'Not Found',
+    //           url: '/errors/not-found',
+    //           icon: FileX,
+    //         },
+    //         {
+    //           title: 'Internal Server Error',
+    //           url: '/errors/internal-server-error',
+    //           icon: ServerOff,
+    //         },
+    //         {
+    //           title: 'Maintenance Error',
+    //           url: '/errors/maintenance-error',
+    //           icon: Construction,
+    //         },
+    //       ],
+    //     },
+    //   ],
+    // },
+    // {
+    //   title: 'Otros',
+    //   items: [
+    //     // {
+    //     //   title: 'Settings',
+    //     //   icon: Settings,
+    //     //   items: [
+    //     //     {
+    //     //       title: 'Profile',
+    //     //       url: '/settings',
+    //     //       icon: UserCog,
+    //     //     },
+    //     //     {
+    //     //       title: 'Account',
+    //     //       url: '/settings/account',
+    //     //       icon: Wrench,
+    //     //     },
+    //     //     {
+    //     //       title: 'Appearance',
+    //     //       url: '/settings/appearance',
+    //     //       icon: Palette,
+    //     //     },
+    //     //     {
+    //     //       title: 'Notifications',
+    //     //       url: '/settings/notifications',
+    //     //       icon: Bell,
+    //     //     },
+    //     //     {
+    //     //       title: 'Display',
+    //     //       url: '/settings/display',
+    //     //       icon: Monitor,
+    //     //     },
+    //     //   ],
+    //     // },
+    //     {
+    //       title: i18n.t('nav.helpCenter'),
+    //       url: '/help-center',
+    //       icon: HelpCircle,
+    //     },
+    //   ],
+    // },
   ],
 })

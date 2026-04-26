@@ -5,6 +5,7 @@ import { z } from 'zod'
 import { Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { useNavigate, useRouter } from '@tanstack/react-router'
+import { useTranslation } from 'react-i18next'
 import { createClubWithAdmin } from '@/services/clubs'
 import {
   Card,
@@ -30,56 +31,57 @@ import { Separator } from '@/components/ui/separator'
 // Form Schema with Validation
 // ============================================
 
-const createClubFormSchema = z.object({
+const createClubFormSchema = (t: (key: string) => string) => z.object({
   // Club Info
   clubName: z
     .string()
-    .min(2, 'Club name must be at least 2 characters')
-    .max(100, 'Club name must be less than 100 characters'),
+    .min(2, t('clubs.form.clubNameMin'))
+    .max(100, t('clubs.form.clubNameMax')),
   city: z
     .string()
-    .min(2, 'City must be at least 2 characters')
-    .max(100, 'City must be less than 100 characters'),
+    .min(2, t('clubs.form.cityMin'))
+    .max(100, t('clubs.form.cityMax')),
   logoUrl: z
     .string()
-    .url('Must be a valid URL')
+    .url(t('clubs.form.logoUrlInvalid'))
     .optional()
     .or(z.literal('')),
 
   // Admin User Info
   adminName: z
     .string()
-    .min(2, 'Admin name must be at least 2 characters')
-    .max(100, 'Admin name must be less than 100 characters'),
+    .min(2, t('clubs.form.adminNameMin'))
+    .max(100, t('clubs.form.adminNameMax')),
   adminEmail: z
     .string()
-    .email('Must be a valid email address'),
+    .email(t('clubs.form.adminEmailInvalid')),
   adminPassword: z
     .string()
-    .min(8, 'Password must be at least 8 characters')
+    .min(8, t('clubs.form.passwordMin'))
     .regex(
       /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
-      'Password must contain at least one uppercase letter, one lowercase letter, and one number'
+      t('clubs.form.passwordPattern')
     ),
   confirmPassword: z.string(),
 }).refine((data) => data.adminPassword === data.confirmPassword, {
-  message: 'Passwords do not match',
+  message: t('clubs.form.passwordsNoMatch'),
   path: ['confirmPassword'],
 })
 
-type CreateClubFormValues = z.infer<typeof createClubFormSchema>
+type CreateClubFormValues = z.infer<ReturnType<typeof createClubFormSchema>>
 
 // ============================================
 // Component
 // ============================================
 
 export function CreateClubForm() {
+  const { t } = useTranslation()
   const [isLoading, setIsLoading] = useState(false)
   const navigate = useNavigate()
   const router = useRouter()
 
   const form = useForm<CreateClubFormValues>({
-    resolver: zodResolver(createClubFormSchema),
+    resolver: zodResolver(createClubFormSchema(t)),
     defaultValues: {
       clubName: '',
       city: '',
@@ -109,8 +111,11 @@ export function CreateClubForm() {
       })
 
       if (response.success) {
-        toast.success('Club created successfully!', {
-          description: `Club "${values.clubName}" has been created with admin ${values.adminEmail}`,
+        toast.success(t('clubs.form.success'), {
+          description: t('clubs.form.successDescription', {
+            clubName: values.clubName,
+            adminEmail: values.adminEmail,
+          }),
         })
 
         // Reset form
@@ -125,16 +130,16 @@ export function CreateClubForm() {
           replace: true,
         })
       } else {
-        toast.error('Failed to create club', {
-          description: response.error || 'An unknown error occurred',
+        toast.error(t('clubs.form.error'), {
+          description: response.error || t('clubs.form.errorUnknown'),
         })
       }
     } catch (error) {
-      toast.error('Failed to create club', {
+      toast.error(t('clubs.form.error'), {
         description:
           error instanceof Error
             ? error.message
-            : 'An unexpected error occurred',
+            : t('clubs.form.errorUnexpected'),
       })
     } finally {
       setIsLoading(false)
@@ -144,9 +149,9 @@ export function CreateClubForm() {
   return (
     <Card className='mx-auto max-w-2xl'>
       <CardHeader>
-        <CardTitle>Create New Club</CardTitle>
+        <CardTitle>{t('clubs.form.title')}</CardTitle>
         <CardDescription>
-          Set up a new club with an admin user in your multi-tenant system
+          {t('clubs.form.description')}
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -155,9 +160,11 @@ export function CreateClubForm() {
             {/* Club Information Section */}
             <div className='space-y-4'>
               <div>
-                <h3 className='text-lg font-medium'>Club Information</h3>
+                <h3 className='text-lg font-medium'>
+                  {t('clubs.form.clubInformation')}
+                </h3>
                 <p className='text-sm text-muted-foreground'>
-                  Basic information about the sports club
+                  {t('clubs.form.clubInfoDescription')}
                 </p>
               </div>
 
@@ -166,16 +173,16 @@ export function CreateClubForm() {
                 name='clubName'
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Club Name *</FormLabel>
+                    <FormLabel>{t('clubs.form.clubName')} *</FormLabel>
                     <FormControl>
                       <Input
-                        placeholder='FC Barcelona'
+                        placeholder={t('clubs.form.clubNamePlaceholder')}
                         {...field}
                         disabled={isLoading}
                       />
                     </FormControl>
                     <FormDescription>
-                      The official name of the sports club
+                      {t('clubs.form.clubNameDescription')}
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -187,16 +194,16 @@ export function CreateClubForm() {
                 name='city'
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>City *</FormLabel>
+                    <FormLabel>{t('clubs.form.city')} *</FormLabel>
                     <FormControl>
                       <Input
-                        placeholder='Barcelona'
+                        placeholder={t('clubs.form.cityPlaceholder')}
                         {...field}
                         disabled={isLoading}
                       />
                     </FormControl>
                     <FormDescription>
-                      The city where the club is located
+                      {t('clubs.form.cityDescription')}
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -208,16 +215,16 @@ export function CreateClubForm() {
                 name='logoUrl'
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Logo URL (Optional)</FormLabel>
+                    <FormLabel>{t('clubs.form.logoUrl')}</FormLabel>
                     <FormControl>
                       <Input
-                        placeholder='https://example.com/logo.png'
+                        placeholder={t('clubs.form.logoUrlPlaceholder')}
                         {...field}
                         disabled={isLoading}
                       />
                     </FormControl>
                     <FormDescription>
-                      URL to the club's logo image
+                      {t('clubs.form.logoUrlDescription')}
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -230,9 +237,11 @@ export function CreateClubForm() {
             {/* Admin User Section */}
             <div className='space-y-4'>
               <div>
-                <h3 className='text-lg font-medium'>Admin User</h3>
+                <h3 className='text-lg font-medium'>
+                  {t('clubs.form.adminUser')}
+                </h3>
                 <p className='text-sm text-muted-foreground'>
-                  Create the primary administrator account for this club
+                  {t('clubs.form.adminUserDescription')}
                 </p>
               </div>
 
@@ -241,16 +250,16 @@ export function CreateClubForm() {
                 name='adminName'
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Admin Name *</FormLabel>
+                    <FormLabel>{t('clubs.form.adminName')} *</FormLabel>
                     <FormControl>
                       <Input
-                        placeholder='John Doe'
+                        placeholder={t('clubs.form.adminNamePlaceholder')}
                         {...field}
                         disabled={isLoading}
                       />
                     </FormControl>
                     <FormDescription>
-                      Full name of the club administrator
+                      {t('clubs.form.adminNameDescription')}
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -262,17 +271,17 @@ export function CreateClubForm() {
                 name='adminEmail'
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Admin Email *</FormLabel>
+                    <FormLabel>{t('clubs.form.adminEmail')} *</FormLabel>
                     <FormControl>
                       <Input
                         type='email'
-                        placeholder='admin@fcbarcelona.com'
+                        placeholder={t('clubs.form.adminEmailPlaceholder')}
                         {...field}
                         disabled={isLoading}
                       />
                     </FormControl>
                     <FormDescription>
-                      Email address for the admin account
+                      {t('clubs.form.adminEmailDescription')}
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -284,18 +293,17 @@ export function CreateClubForm() {
                 name='adminPassword'
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Password *</FormLabel>
+                    <FormLabel>{t('clubs.form.password')} *</FormLabel>
                     <FormControl>
                       <Input
                         type='password'
-                        placeholder='••••••••'
+                        placeholder={t('clubs.form.passwordPlaceholder')}
                         {...field}
                         disabled={isLoading}
                       />
                     </FormControl>
                     <FormDescription>
-                      Must be at least 8 characters with uppercase, lowercase,
-                      and numbers
+                      {t('clubs.form.passwordDescription')}
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -307,17 +315,17 @@ export function CreateClubForm() {
                 name='confirmPassword'
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Confirm Password *</FormLabel>
+                    <FormLabel>{t('clubs.form.confirmPassword')} *</FormLabel>
                     <FormControl>
                       <Input
                         type='password'
-                        placeholder='••••••••'
+                        placeholder={t('clubs.form.confirmPasswordPlaceholder')}
                         {...field}
                         disabled={isLoading}
                       />
                     </FormControl>
                     <FormDescription>
-                      Re-enter the password to confirm
+                      {t('clubs.form.confirmPasswordDescription')}
                     </FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -332,16 +340,16 @@ export function CreateClubForm() {
                 onClick={() => form.reset()}
                 disabled={isLoading}
               >
-                Reset
+                {t('clubs.form.reset')}
               </Button>
               <Button type='submit' disabled={isLoading}>
                 {isLoading ? (
                   <>
                     <Loader2 className='mr-2 h-4 w-4 animate-spin' />
-                    Creating Club...
+                    {t('clubs.form.creating')}
                   </>
                 ) : (
-                  'Create Club'
+                  t('clubs.form.createButton')
                 )}
               </Button>
             </div>

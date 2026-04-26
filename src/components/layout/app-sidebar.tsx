@@ -26,8 +26,14 @@ export function AppSidebar() {
 
   // Filter sidebar navigation based on user role
   const filteredNavGroups = useMemo(() => {
-    if (!role) return []
-    return filterSidebarByRole(sidebarData.navGroups, role)
+    console.log('[AppSidebar] Current role:', role)
+    if (!role) {
+      console.log('[AppSidebar] No role found, returning empty array')
+      return []
+    }
+    const filtered = filterSidebarByRole(sidebarData.navGroups, role)
+    console.log('[AppSidebar] Filtered nav groups:', filtered)
+    return filtered
   }, [sidebarData.navGroups, role])
 
   return (
@@ -45,7 +51,7 @@ export function AppSidebar() {
         ))}
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={sidebarData.user} />
+        <NavUser />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>

@@ -2,6 +2,7 @@ import { useEffect } from 'react'
 import { useForm, useFieldArray } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
+import { useTranslation } from 'react-i18next'
 import { Loader2, Plus, Trash2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -19,9 +20,9 @@ import { useInventory } from '@/hooks/use-inventory'
 import type { PurchaseOrderWithItems, UpdatePurchaseOrderPayload } from '@/types'
 import { statusOptions } from '../data/data'
 
-// Form schema
-const purchaseOrderEditFormSchema = z.object({
-  supplier: z.string().min(1, 'Supplier name is required'),
+// Form schema with translations
+const getPurchaseOrderEditFormSchema = (t: any) => z.object({
+  supplier: z.string().min(1, t('purchaseOrders.form.supplierRequired')),
   status: z.enum([
     'pending',
     'approved',
@@ -29,19 +30,17 @@ const purchaseOrderEditFormSchema = z.object({
     'shipped',
     'delivered',
   ]),
-  expected_date: z.string().min(1, 'Expected date is required'),
+  expected_date: z.string().min(1, t('purchaseOrders.form.expectedDateRequired')),
   notes: z.string().optional(),
   items: z
     .array(
       z.object({
-        inventory_item_id: z.string().min(1, 'Please select a product'),
-        quantity: z.number().min(1, 'Quantity must be at least 1'),
+        inventory_item_id: z.string().min(1, t('purchaseOrders.form.selectProductError')),
+        quantity: z.number().min(1, t('purchaseOrders.form.quantityMin')),
       })
     )
-    .min(1, 'At least one item is required'),
+    .min(1, t('purchaseOrders.form.atLeastOneItem')),
 })
-
-type PurchaseOrderEditFormData = z.infer<typeof purchaseOrderEditFormSchema>
 
 type PurchaseOrderEditFormProps = {
   purchaseOrder: PurchaseOrderWithItems
@@ -56,7 +55,10 @@ export function PurchaseOrderEditForm({
   onCancel,
   isSubmitting = false,
 }: PurchaseOrderEditFormProps) {
+  const { t } = useTranslation()
   const { inventory, loading: inventoryLoading } = useInventory()
+
+  type PurchaseOrderEditFormData = z.infer<ReturnType<typeof getPurchaseOrderEditFormSchema>>
 
   const {
     register,
@@ -66,7 +68,7 @@ export function PurchaseOrderEditForm({
     reset,
     formState: { errors },
   } = useForm<PurchaseOrderEditFormData>({
-    resolver: zodResolver(purchaseOrderEditFormSchema),
+    resolver: zodResolver(getPurchaseOrderEditFormSchema(t)),
     defaultValues: {
       supplier: purchaseOrder.supplier,
       status: purchaseOrder.status,
@@ -119,15 +121,15 @@ export function PurchaseOrderEditForm({
       {/* Basic Information */}
       <Card>
         <CardHeader>
-          <CardTitle>Order Information</CardTitle>
+          <CardTitle>{t('purchaseOrders.form.orderInformation')}</CardTitle>
         </CardHeader>
         <CardContent className='space-y-4'>
           <div className='grid gap-4 md:grid-cols-2'>
             <div className='space-y-2'>
-              <Label htmlFor='supplier'>Supplier *</Label>
+              <Label htmlFor='supplier'>{t('purchaseOrders.form.supplier')} *</Label>
               <Input
                 id='supplier'
-                placeholder='e.g., Nike, Adidas'
+                placeholder={t('purchaseOrders.form.supplierPlaceholder')}
                 disabled={isSubmitting}
                 {...register('supplier')}
               />
@@ -139,19 +141,19 @@ export function PurchaseOrderEditForm({
             </div>
 
             <div className='space-y-2'>
-              <Label htmlFor='status'>Status *</Label>
+              <Label htmlFor='status'>{t('purchaseOrders.edit.status')} *</Label>
               <Select
                 disabled={isSubmitting}
                 onValueChange={(value) => setValue('status', value as any)}
                 defaultValue={purchaseOrder.status}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder='Select status' />
+                  <SelectValue placeholder={t('purchaseOrders.edit.selectStatus')} />
                 </SelectTrigger>
                 <SelectContent>
                   {statusOptions.map((option) => (
                     <SelectItem key={option.value} value={option.value}>
-                      {option.label}
+                      {t(`purchaseOrders.status.${option.value}`)}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -166,7 +168,7 @@ export function PurchaseOrderEditForm({
 
           <div className='grid gap-4 md:grid-cols-2'>
             <div className='space-y-2'>
-              <Label htmlFor='expected_date'>Expected Delivery Date *</Label>
+              <Label htmlFor='expected_date'>{t('purchaseOrders.form.expectedDate')} *</Label>
               <Input
                 id='expected_date'
                 type='date'
@@ -182,10 +184,10 @@ export function PurchaseOrderEditForm({
           </div>
 
           <div className='space-y-2'>
-            <Label htmlFor='notes'>Notes</Label>
+            <Label htmlFor='notes'>{t('purchaseOrders.form.notes')}</Label>
             <Textarea
               id='notes'
-              placeholder='Additional notes or special instructions...'
+              placeholder={t('purchaseOrders.form.notesPlaceholder')}
               disabled={isSubmitting}
               rows={3}
               {...register('notes')}
@@ -197,7 +199,7 @@ export function PurchaseOrderEditForm({
       {/* Order Items */}
       <Card>
         <CardHeader className='flex flex-row items-center justify-between'>
-          <CardTitle>Order Items</CardTitle>
+          <CardTitle>{t('purchaseOrders.form.orderItems')}</CardTitle>
           <Button
             type='button'
             variant='outline'
@@ -206,19 +208,19 @@ export function PurchaseOrderEditForm({
             disabled={isSubmitting || inventoryLoading}
           >
             <Plus className='mr-2 h-4 w-4' />
-            Add Item
+            {t('purchaseOrders.form.addItem')}
           </Button>
         </CardHeader>
         <CardContent className='space-y-4'>
           {inventoryLoading && (
             <p className='text-center text-sm text-muted-foreground'>
-              Loading products...
+              {t('purchaseOrders.form.loadingProducts')}
             </p>
           )}
 
           {!inventoryLoading && fields.length === 0 && (
             <p className='text-center text-sm text-muted-foreground'>
-              No items added yet. Click "Add Item" to get started.
+              {t('purchaseOrders.form.noItemsYet')}
             </p>
           )}
 
@@ -230,7 +232,7 @@ export function PurchaseOrderEditForm({
               >
                 <div className='flex-1 space-y-2'>
                   <Label htmlFor={`items.${index}.inventory_item_id`}>
-                    Product *
+                    {t('purchaseOrders.form.product')} *
                   </Label>
                   <Select
                     disabled={isSubmitting}
@@ -240,12 +242,12 @@ export function PurchaseOrderEditForm({
                     defaultValue={field.inventory_item_id}
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder='Select a product' />
+                      <SelectValue placeholder={t('purchaseOrders.form.selectProduct')} />
                     </SelectTrigger>
                     <SelectContent>
                       {inventory.map((item) => (
                         <SelectItem key={item.id} value={item.id}>
-                          {item.productName} - {item.size} - {item.color} (Stock:{' '}
+                          {item.productName} - {item.size} - {item.color} ({t('pos.sales.stock')}:{' '}
                           {item.stock})
                         </SelectItem>
                       ))}
@@ -259,7 +261,7 @@ export function PurchaseOrderEditForm({
                 </div>
 
                 <div className='w-32 space-y-2'>
-                  <Label htmlFor={`items.${index}.quantity`}>Quantity *</Label>
+                  <Label htmlFor={`items.${index}.quantity`}>{t('purchaseOrders.form.quantity')} *</Label>
                   <Input
                     id={`items.${index}.quantity`}
                     type='number'
@@ -304,11 +306,11 @@ export function PurchaseOrderEditForm({
           onClick={onCancel}
           disabled={isSubmitting}
         >
-          Cancel
+          {t('common.cancel')}
         </Button>
         <Button type='submit' disabled={isSubmitting || inventoryLoading}>
           {isSubmitting && <Loader2 className='mr-2 h-4 w-4 animate-spin' />}
-          {isSubmitting ? 'Updating...' : 'Update Purchase Order'}
+          {isSubmitting ? t('purchaseOrders.edit.updating') : t('purchaseOrders.edit.updateButton')}
         </Button>
       </div>
     </form>

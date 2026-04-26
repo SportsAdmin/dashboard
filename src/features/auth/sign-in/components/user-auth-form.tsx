@@ -3,6 +3,7 @@ import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Link, useNavigate } from '@tanstack/react-router'
+import { useTranslation } from 'react-i18next'
 import { Loader2, LogIn } from 'lucide-react'
 import { toast } from 'sonner'
 import { IconFacebook, IconGithub } from '@/assets/brand-icons'
@@ -21,14 +22,14 @@ import {
 import { Input } from '@/components/ui/input'
 import { PasswordInput } from '@/components/password-input'
 
-const formSchema = z.object({
+const getFormSchema = (t: (key: string) => string) => z.object({
   email: z.email({
-    error: (iss) => (iss.input === '' ? 'Please enter your email' : undefined),
+    error: (iss) => (iss.input === '' ? t('auth.signIn.emailRequired') : undefined),
   }),
   password: z
     .string()
-    .min(1, 'Please enter your password')
-    .min(7, 'Password must be at least 7 characters long'),
+    .min(1, t('auth.signIn.passwordRequired'))
+    .min(7, t('auth.signIn.passwordMin')),
 })
 
 interface UserAuthFormProps extends React.HTMLAttributes<HTMLFormElement> {
@@ -40,9 +41,12 @@ export function UserAuthForm({
   redirectTo,
   ...props
 }: UserAuthFormProps) {
+  const { t } = useTranslation()
   const [isLoading, setIsLoading] = useState(false)
   const navigate = useNavigate()
   const { auth } = useAuthStore()
+
+  const formSchema = getFormSchema(t)
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -60,8 +64,8 @@ export function UserAuthForm({
 
       if (!response.success) {
         setIsLoading(false)
-        toast.error('Sign in failed', {
-          description: response.error || 'Invalid email or password',
+        toast.error(t('auth.signIn.signInFailed'), {
+          description: response.error || t('auth.signIn.invalidCredentials'),
         })
         return
       }
@@ -78,8 +82,8 @@ export function UserAuthForm({
         auth.setUser(userWithExpiry)
         auth.setAccessToken('supabase-session-active')
 
-        toast.success('Sign in successful', {
-          description: `Welcome back, ${response.user.email}!`,
+        toast.success(t('auth.signIn.signInSuccess'), {
+          description: t('auth.signIn.welcomeBack', { email: response.user.email }),
         })
 
         // Redirect to the stored location or default to dashboard
@@ -88,9 +92,9 @@ export function UserAuthForm({
       }
     } catch (error) {
       setIsLoading(false)
-      toast.error('Sign in failed', {
+      toast.error(t('auth.signIn.signInFailed'), {
         description:
-          error instanceof Error ? error.message : 'An unexpected error occurred',
+          error instanceof Error ? error.message : t('auth.signIn.unexpectedError'),
       })
     } finally {
       setIsLoading(false)
@@ -109,9 +113,9 @@ export function UserAuthForm({
           name='email'
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Email</FormLabel>
+              <FormLabel>{t('auth.signIn.emailLabel')}</FormLabel>
               <FormControl>
-                <Input placeholder='name@example.com' {...field} />
+                <Input placeholder={t('auth.signIn.emailPlaceholder')} {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -122,23 +126,23 @@ export function UserAuthForm({
           name='password'
           render={({ field }) => (
             <FormItem className='relative'>
-              <FormLabel>Password</FormLabel>
+              <FormLabel>{t('auth.signIn.passwordLabel')}</FormLabel>
               <FormControl>
-                <PasswordInput placeholder='********' {...field} />
+                <PasswordInput placeholder={t('auth.signIn.passwordPlaceholder')} {...field} />
               </FormControl>
               <FormMessage />
               <Link
                 to='/forgot-password'
                 className='absolute end-0 -top-0.5 text-sm font-medium text-muted-foreground hover:opacity-75'
               >
-                Forgot password?
+                {t('auth.signIn.forgotPassword')}
               </Link>
             </FormItem>
           )}
         />
         <Button className='mt-2' disabled={isLoading}>
           {isLoading ? <Loader2 className='animate-spin' /> : <LogIn />}
-          Sign in
+          {t('auth.signIn.signInButton')}
         </Button>
 
         <div className='relative my-2'>
@@ -147,7 +151,7 @@ export function UserAuthForm({
           </div>
           <div className='relative flex justify-center text-xs uppercase'>
             <span className='bg-background px-2 text-muted-foreground'>
-              Or continue with
+              {t('auth.signIn.orContinueWith')}
             </span>
           </div>
         </div>

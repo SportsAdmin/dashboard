@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button'
 import { useRole } from '@/hooks/useRole'
 import { canCreateUsers } from '@/lib/permissions'
 import { useUsers } from './users-provider'
+import i18n from '@/lib/i18n'
 
 export function UsersPrimaryButtons() {
   const { setOpen } = useUsers()
@@ -23,10 +24,10 @@ export function UsersPrimaryButtons() {
         className='space-x-1'
         onClick={() => setOpen('invite')}
       >
-        <span>Invite User</span> <MailPlus size={18} />
+        <span>{i18n.t('users.invite')}</span> <MailPlus size={18} />
       </Button>
       <Button className='space-x-1' onClick={() => setOpen('add')}>
-        <span>Add User</span> <UserPlus size={18} />
+        <span>{i18n.t('users.addUser')}</span> <UserPlus size={18} />
       </Button>
     </div>
   )

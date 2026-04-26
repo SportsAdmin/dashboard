@@ -97,7 +97,9 @@
       "productName": "Product Name",
       "variant": "Variant",
       "stock": "Stock",
-      "price": "Price"
+      "price": "Price",
+      "size": "Size",
+      "color": "Color"
     },
     "filters": {
       "product": "Product",
@@ -121,12 +123,18 @@
       "category": "Category",
       "categoryPlaceholder": "e.g., Footwear, Apparel, Equipment",
       "categoryRequired": "Category is required",
+      "description": "Description",
+      "descriptionPlaceholder": "e.g., Professional running shoes for athletes",
+      "descriptionRequired": "Description is required",
       "basePrice": "Base Price",
       "basePriceRequired": "Price must be positive",
       "variants": "Variants",
       "addVariant": "Add Variant",
       "variant": "Variant",
       "size": "Size",
+      "selectSize": "Select size",
+      "loadingSizes": "Loading sizes...",
+      "noSizesAvailable": "No sizes available",
       "sizePlaceholder": "e.g., M, L, XL",
       "sizeRequired": "Size is required",
       "color": "Color",
@@ -134,9 +142,13 @@
       "colorRequired": "Color is required",
       "price": "Price",
       "priceRequired": "Price must be positive",
+      "salePrice": "Sale Price (Optional)",
+      "salePricePlaceholder": "0.00",
       "noVariants": "No variants added. Click \"Add Variant\" to create one.",
       "atLeastOneVariant": "At least one variant is required",
+      "cancel": "Cancel",
       "creating": "Creating...",
+      "createProduct": "Create Product",
       "productCreated": "{{name}} has been added successfully"
     },
     "table": {
@@ -188,6 +200,23 @@
       "title": "Create Purchase Order",
       "description": "Create a new order to request inventory from a supplier"
     },
+    "edit": {
+      "title": "Edit Purchase Order",
+      "description": "Update order details and manage status",
+      "orderUpdated": "Purchase order updated successfully",
+      "orderUpdateFailed": "Failed to update purchase order",
+      "status": "Status",
+      "selectStatus": "Select status",
+      "updating": "Updating...",
+      "updateButton": "Update Purchase Order"
+    },
+    "status": {
+      "pending": "Pending",
+      "approved": "Approved",
+      "in_production": "In Production",
+      "shipped": "Shipped",
+      "delivered": "Delivered"
+    },
     "table": {
       "supplier": "Supplier",
       "status": "Status",
@@ -223,6 +252,212 @@
       "createButton": "Create Purchase Order",
       "orderCreated": "Purchase order created successfully",
       "orderCreateFailed": "Failed to create purchase order"
+    }
+  },
+  "profile": {
+    "role": {
+      "admin": "Administrator",
+      "manager": "Manager",
+      "seller": "Seller"
+    },
+    "menu": {
+      "profile": "Profile",
+      "account": "Account",
+      "settings": "Settings",
+      "notifications": "Notifications",
+      "signOut": "Sign out"
+    }
+  },
+  "clubs": {
+    "title": "Clubs",
+    "createClub": "Create Club",
+    "pageTitle": "Create Club",
+    "pageDescription": "Set up a new club with its administrator account",
+    "form": {
+      "title": "Create New Club",
+      "description": "Set up a new club with an admin user in your multi-tenant system",
+      "clubInformation": "Club Information",
+      "clubInfoDescription": "Basic information about the sports club",
+      "clubName": "Club Name",
+      "clubNamePlaceholder": "FC Barcelona",
+      "clubNameDescription": "The official name of the sports club",
+      "clubNameMin": "Club name must be at least 2 characters",
+      "clubNameMax": "Club name must be less than 100 characters",
+      "city": "City",
+      "cityPlaceholder": "Barcelona",
+      "cityDescription": "The city where the club is located",
+      "cityMin": "City must be at least 2 characters",
+      "cityMax": "City must be less than 100 characters",
+      "logoUrl": "Logo URL (Optional)",
+      "logoUrlPlaceholder": "https://example.com/logo.png",
+      "logoUrlDescription": "URL to the club's logo image",
+      "logoUrlInvalid": "Must be a valid URL",
+      "adminUser": "Admin User",
+      "adminUserDescription": "Create the primary administrator account for this club",
+      "adminName": "Admin Name",
+      "adminNamePlaceholder": "John Doe",
+      "adminNameDescription": "Full name of the club administrator",
+      "adminNameMin": "Admin name must be at least 2 characters",
+      "adminNameMax": "Admin name must be less than 100 characters",
+      "adminEmail": "Admin Email",
+      "adminEmailPlaceholder": "admin@fcbarcelona.com",
+      "adminEmailDescription": "Email address for the admin account",
+      "adminEmailInvalid": "Must be a valid email address",
+      "password": "Password",
+      "passwordPlaceholder": "••••••••",
+      "passwordDescription": "Must be at least 8 characters with uppercase, lowercase, and numbers",
+      "passwordMin": "Password must be at least 8 characters",
+      "passwordPattern": "Password must contain at least one uppercase letter, one lowercase letter, and one number",
+      "confirmPassword": "Confirm Password",
+      "confirmPasswordPlaceholder": "••••••••",
+      "confirmPasswordDescription": "Re-enter the password to confirm",
+      "passwordsNoMatch": "Passwords do not match",
+      "reset": "Reset",
+      "creating": "Creating Club...",
+      "createButton": "Create Club",
+      "success": "Club created successfully!",
+      "successDescription": "Club \"{{clubName}}\" has been created with admin {{adminEmail}}",
+      "error": "Failed to create club",
+      "errorUnknown": "An unknown error occurred",
+      "errorUnexpected": "An unexpected error occurred"
+    }
+  },
+  "users": {
+    "title": "Users",
+    "description": "Manage user accounts and permissions",
+    "addUser": "Add User",
+    "searchPlaceholder": "Search users...",
+    "invite": "Invite User",
+    "loading": "Loading users...",
+    "accessDenied": "Access Denied",
+    "noPermission": "You do not have permission to access user management.",
+    "sellerRestricted": "Sellers cannot view user lists.",
+    "contactAdmin": "Please contact your administrator for access.",
+    "goToDashboard": "Go to Dashboard",
+    "pageTitle": "User List",
+    "managerNote": "Showing users from your club only.",
+    "columns": {
+      "name": "Name",
+      "email": "Email",
+      "role": "Role",
+      "status": "Status",
+      "created": "Created",
+      "verified": "Verified"
+    }
+  },
+  "errors": {
+    "notFound": {
+      "code": "404",
+      "title": "Oops! Page Not Found!",
+      "description": "It seems like the page you're looking for does not exist or might have been removed.",
+      "goBack": "Go Back",
+      "backHome": "Back to Home"
+    },
+    "serverError": {
+      "code": "500",
+      "title": "Oops! Something went wrong",
+      "description": "We apologize for the inconvenience. Please try again later.",
+      "goBack": "Go Back",
+      "backHome": "Back to Home"
+    },
+    "unauthorized": {
+      "code": "401",
+      "title": "Unauthorized Access",
+      "description": "Please log in with the appropriate credentials to access this resource.",
+      "goBack": "Go Back",
+      "backHome": "Back to Home"
+    },
+    "forbidden": {
+      "code": "403",
+      "title": "Forbidden",
+      "description": "You don't have permission to access this resource.",
+      "goBack": "Go Back",
+      "backHome": "Back to Home"
+    },
+    "maintenance": {
+      "code": "503",
+      "title": "Under Maintenance",
+      "description": "We're currently performing scheduled maintenance. Please check back soon.",
+      "goBack": "Go Back",
+      "backHome": "Back to Home"
+    }
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "download": "Download",
+    "tabs": {
+      "overview": "Overview",
+      "analytics": "Analytics",
+      "reports": "Reports",
+      "notifications": "Notifications"
+    },
+    "cards": {
+      "totalRevenue": "Total Revenue",
+      "revenueChange": "+20.1% from last month",
+      "subscriptions": "Subscriptions",
+      "subscriptionsChange": "+180.1% from last month",
+      "sales": "Sales",
+      "salesChange": "+19% from last month",
+      "activeNow": "Active Now",
+      "activeChange": "+201 since last hour"
+    },
+    "sections": {
+      "overview": "Overview",
+      "recentSales": "Recent Sales",
+      "salesThisMonth": "You made 265 sales this month."
+    }
+  },
+  "apps": {
+    "title": "App Integrations",
+    "description": "Here's a list of your apps for the integration!",
+    "filterPlaceholder": "Filter apps...",
+    "filters": {
+      "all": "All Apps",
+      "connected": "Connected",
+      "notConnected": "Not Connected"
+    },
+    "sort": {
+      "ascending": "Ascending",
+      "descending": "Descending"
+    },
+    "buttons": {
+      "connected": "Connected",
+      "connect": "Connect"
+    }
+  },
+  "chats": {
+    "title": "Inbox",
+    "searchPlaceholder": "Search chat...",
+    "youPrefix": "You: ",
+    "emptyState": {
+      "title": "Your messages",
+      "description": "Send a message to start a chat.",
+      "action": "Send message"
+    },
+    "messageInputPlaceholder": "Type your messages...",
+    "sendButton": "Send"
+  },
+  "tasks": {
+    "title": "Tasks",
+    "description": "Here's a list of your tasks for this month!"
+  },
+  "settings": {
+    "account": {
+      "title": "Account",
+      "description": "Update your account settings. Set your preferred language and timezone.",
+      "form": {
+        "name": "Name",
+        "namePlaceholder": "Your name",
+        "nameDescription": "This is the name that will be displayed on your profile and in emails.",
+        "dateOfBirth": "Date of birth",
+        "dobDescription": "Your date of birth is used to calculate your age.",
+        "language": "Language",
+        "selectLanguage": "Select language",
+        "searchLanguage": "Search language...",
+        "noLanguageFound": "No language found.",
+        "languageDescription": "This is the language that will be used in the dashboard.",
+        "updateButton": "Update account"
+      }
     }
   }
 }

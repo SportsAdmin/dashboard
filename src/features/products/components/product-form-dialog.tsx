@@ -1,6 +1,7 @@
 import { useForm, useFieldArray } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Loader2 } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 import {
   Dialog,
   DialogContent,
@@ -28,6 +29,7 @@ export function ProductFormDialog({
   onOpenChange,
   onSubmit,
 }: ProductFormDialogProps) {
+  const { t } = useTranslation()
   const { sizes, loading: sizesLoading } = useSizes()
 
   const {
@@ -77,9 +79,9 @@ export function ProductFormDialog({
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className='max-h-[90vh] max-w-2xl'>
         <DialogHeader>
-          <DialogTitle>Create New Product</DialogTitle>
+          <DialogTitle>{t('products.dialog.title')}</DialogTitle>
           <DialogDescription>
-            Add a new product with variants to your inventory
+            {t('products.dialog.description')}
           </DialogDescription>
         </DialogHeader>
 
@@ -89,10 +91,10 @@ export function ProductFormDialog({
               {/* Product Details */}
               <div className='space-y-4'>
                 <div className='space-y-1.5'>
-                  <Label htmlFor='name'>Product Name *</Label>
+                  <Label htmlFor='name'>{t('products.dialog.name')} *</Label>
                   <Input
                     id='name'
-                    placeholder='e.g., Running Shoes Pro'
+                    placeholder={t('products.dialog.namePlaceholder')}
                     disabled={isSubmitting}
                     {...register('name')}
                   />
@@ -104,10 +106,10 @@ export function ProductFormDialog({
                 </div>
 
                 <div className='space-y-1.5'>
-                  <Label htmlFor='category'>Category *</Label>
+                  <Label htmlFor='category'>{t('products.dialog.category')} *</Label>
                   <Input
                     id='category'
-                    placeholder='e.g., Footwear, Apparel, Equipment'
+                    placeholder={t('products.dialog.categoryPlaceholder')}
                     disabled={isSubmitting}
                     {...register('category')}
                   />
@@ -119,10 +121,10 @@ export function ProductFormDialog({
                 </div>
 
                 <div className='space-y-1.5'>
-                  <Label htmlFor='description'>Description *</Label>
+                  <Label htmlFor='description'>{t('products.dialog.description')} *</Label>
                   <Input
                     id='description'
-                    placeholder='e.g., Professional running shoes for athletes'
+                    placeholder={t('products.dialog.descriptionPlaceholder')}
                     disabled={isSubmitting}
                     {...register('description')}
                   />
@@ -160,11 +162,11 @@ export function ProductFormDialog({
               onClick={handleCancel}
               disabled={isSubmitting}
             >
-              Cancel
+              {t('products.dialog.cancel')}
             </Button>
             <Button type='submit' disabled={isSubmitting}>
               {isSubmitting && <Loader2 className='mr-2 size-4 animate-spin' />}
-              {isSubmitting ? 'Creating...' : 'Create Product'}
+              {isSubmitting ? t('products.dialog.creating') : t('products.dialog.createProduct')}
             </Button>
           </DialogFooter>
         </form>

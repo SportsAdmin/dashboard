@@ -3,7 +3,11 @@
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { showSubmittedData } from '@/lib/show-submitted-data'
+import { useState } from 'react'
+import { toast } from 'sonner'
+import { useRole } from '@/hooks/useRole'
+import { createUser } from '@/services/users'
+import { useUsers } from './users-provider'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -100,6 +104,10 @@ export function UsersActionDialog({
   onOpenChange,
 }: UserActionDialogProps) {
   const isEdit = !!currentRow
+  const { role: currentUserRole, club_id } = useRole()
+  const { refetchUsers } = useUsers()
+  const [isSubmitting, setIsSubmitting] = useState(false)
+
   const form = useForm<UserForm>({
     resolver: zodResolver(formSchema),
     defaultValues: isEdit
@@ -121,13 +129,47 @@ export function UsersActionDialog({
         },
   })
 
-  const onSubmit = (values: UserForm) => {
-    form.reset()
-    showSubmittedData(values)
-    onOpenChange(false)
+  const onSubmit = async (values: UserForm) => {
+    if (isEdit) {
+      // TODO: Implement edit user functionality
+      toast.info('Edit functionality not yet implemented')
+      return
+    }
+
+    // Create new user
+    try {
+      setIsSubmitting(true)
+
+      const result = await createUser({
+        email: values.email || '',
+        password: values.password,
+        name: values.name,
+        role: values.role as 'admin' | 'manager' | 'seller',
+        club_id: club_id || undefined,
+      })
+
+      if (result.success) {
+        toast.success('User created successfully')
+        form.reset()
+        onOpenChange(false)
+        // Refetch users to update the list
+        await refetchUsers()
+      } else {
+        toast.error(result.error || 'Failed to create user')
+      }
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'An error occurred')
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   const isPasswordTouched = !!form.formState.dirtyFields.password
+
+  // Filter roles based on current user's role
+  const availableRoles = currentUserRole === 'manager'
+    ? roles.filter(r => r.value === 'seller')
+    : roles
 
   return (
     <Dialog
@@ -201,7 +243,7 @@ export function UsersActionDialog({
                       onValueChange={field.onChange}
                       placeholder='Select a role'
                       className='col-span-4'
-                      items={roles.map(({ label, value }) => ({
+                      items={availableRoles.map(({ label, value }) => ({
                         label,
                         value,
                       }))}
@@ -253,8 +295,8 @@ export function UsersActionDialog({
           </Form>
         </div>
         <DialogFooter>
-          <Button type='submit' form='user-form'>
-            Save changes
+          <Button type='submit' form='user-form' disabled={isSubmitting}>
+            {isSubmitting ? 'Creating...' : 'Save changes'}
           </Button>
         </DialogFooter>
       </DialogContent>

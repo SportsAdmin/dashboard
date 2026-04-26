@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 import { useSearch, useNavigate } from '@tanstack/react-router'
+import { useTranslation } from 'react-i18next'
 import { Loader2 } from 'lucide-react'
 import { useAuth } from '@/hooks/use-auth'
 import {
@@ -14,6 +15,7 @@ import { AuthLayout } from '../auth-layout'
 import { UserAuthForm } from './components/user-auth-form'
 
 export function SignIn() {
+  const { t } = useTranslation()
   const { redirect } = useSearch({ from: '/(auth)/sign-in' })
   const { user, loading } = useAuth()
   const navigate = useNavigate()
@@ -33,7 +35,7 @@ export function SignIn() {
         <div className='flex items-center justify-center py-12'>
           <div className='flex flex-col items-center gap-2'>
             <Loader2 className='h-8 w-8 animate-spin text-muted-foreground' />
-            <p className='text-sm text-muted-foreground'>Loading...</p>
+            <p className='text-sm text-muted-foreground'>{t('auth.signIn.loading')}</p>
           </div>
         </div>
       </AuthLayout>
@@ -49,10 +51,9 @@ export function SignIn() {
     <AuthLayout>
       <Card className='gap-4'>
         <CardHeader>
-          <CardTitle className='text-lg tracking-tight'>Sign in</CardTitle>
+          <CardTitle className='text-lg tracking-tight'>{t('auth.signIn.title')}</CardTitle>
           <CardDescription>
-            Enter your email and password below to <br />
-            log into your account
+            {t('auth.signIn.subtitle')}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -60,19 +61,19 @@ export function SignIn() {
         </CardContent>
         <CardFooter>
           <p className='px-8 text-center text-sm text-muted-foreground'>
-            By clicking sign in, you agree to our{' '}
+            {t('auth.signIn.termsText')}{' '}
             <a
               href='/terms'
               className='underline underline-offset-4 hover:text-primary'
             >
-              Terms of Service
+              {t('auth.signIn.termsOfService')}
             </a>{' '}
-            and{' '}
+            {t('auth.signIn.and')}{' '}
             <a
               href='/privacy'
               className='underline underline-offset-4 hover:text-primary'
             >
-              Privacy Policy
+              {t('auth.signIn.privacyPolicy')}
             </a>
             .
           </p>

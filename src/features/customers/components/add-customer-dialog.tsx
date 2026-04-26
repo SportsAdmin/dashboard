@@ -13,6 +13,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { customerFormSchema, type CustomerFormData } from '../data/schema'
+import i18n from '@/lib/i18n'
 
 type AddCustomerDialogProps = {
   open: boolean
@@ -118,10 +119,10 @@ export function AddCustomerDialog({
               onClick={handleCancel}
               disabled={isSubmitting}
             >
-              Cancel
+              {i18n.t('common.cancel')}
             </Button>
             <Button type='submit' disabled={isSubmitting}>
-              {isSubmitting ? 'Adding...' : 'Add Customer'}
+              {isSubmitting ? i18n.t('dialog.adding') : i18n.t('customers.addCustomer')}
             </Button>
           </DialogFooter>
         </form>

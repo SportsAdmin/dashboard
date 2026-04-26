@@ -12,6 +12,7 @@ import { CustomersTable } from './components/customers-table'
 import { AddCustomerDialog } from './components/add-customer-dialog'
 import { customers } from './data/customers'
 import { type CustomerFormData, type Customer } from './data/schema'
+import i18n from '@/lib/i18n'
 
 export function Customers() {
   const [customersList, setCustomersList] = useState<Customer[]>(customers)
@@ -44,14 +45,14 @@ export function Customers() {
       <Main className='flex flex-1 flex-col gap-4 sm:gap-6'>
         <div className='flex flex-wrap items-end justify-between gap-2'>
           <div>
-            <h2 className='text-2xl font-bold tracking-tight'>Customers</h2>
+            <h2 className='text-2xl font-bold tracking-tight'>{i18n.t('customers.title')}</h2>
             <p className='text-muted-foreground'>
-              Manage your customer database
+              {i18n.t('customers.description')}
             </p>
           </div>
           <Button onClick={() => setDialogOpen(true)}>
             <UserPlus className='mr-2 size-4' />
-            Add Customer
+            {i18n.t('customers.addCustomer')}
           </Button>
         </div>
         <CustomersTable data={customersList} />

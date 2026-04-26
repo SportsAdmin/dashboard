@@ -1,4 +1,5 @@
 import { type ColumnDef } from '@tanstack/react-table'
+import i18n from '@/lib/i18n'
 import { cn } from '@/lib/utils'
 import { Checkbox } from '@/components/ui/checkbox'
 import { DataTableColumnHeader } from '@/components/data-table'
@@ -38,7 +39,7 @@ export const usersColumns: ColumnDef<User>[] = [
   {
     accessorKey: 'name',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Name' />
+      <DataTableColumnHeader column={column} title={i18n.t('users.columns.name')} />
     ),
     cell: ({ row }) => (
       <LongText className='max-w-36 ps-3'>{row.getValue('name')}</LongText>
@@ -54,7 +55,7 @@ export const usersColumns: ColumnDef<User>[] = [
   {
     accessorKey: 'email',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Email' />
+      <DataTableColumnHeader column={column} title={i18n.t('users.columns.email')} />
     ),
     cell: ({ row }) => {
       const email = row.getValue('email') as string | null
@@ -68,7 +69,7 @@ export const usersColumns: ColumnDef<User>[] = [
   {
     accessorKey: 'role',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Role' />
+      <DataTableColumnHeader column={column} title={i18n.t('users.columns.role')} />
     ),
     cell: ({ row }) => {
       const { role } = row.original

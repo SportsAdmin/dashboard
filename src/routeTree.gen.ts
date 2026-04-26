@@ -262,6 +262,7 @@ const AuthenticatedClubsCreateRoute =
   } as any)
 
 export interface FileRoutesByFullPath {
+  '/': typeof AuthenticatedIndexRoute
   '/clerk': typeof ClerkAuthenticatedRouteRouteWithChildren
   '/settings': typeof AuthenticatedSettingsRouteRouteWithChildren
   '/forgot-password': typeof authForgotPasswordRoute
@@ -277,7 +278,6 @@ export interface FileRoutesByFullPath {
   '/customers': typeof AuthenticatedCustomersRoute
   '/inventory': typeof AuthenticatedInventoryRoute
   '/products': typeof AuthenticatedProductsRoute
-  '/': typeof AuthenticatedIndexRoute
   '/clubs/create': typeof AuthenticatedClubsCreateRoute
   '/errors/$error': typeof AuthenticatedErrorsErrorRoute
   '/pos/new': typeof AuthenticatedPosNewRoute
@@ -290,15 +290,15 @@ export interface FileRoutesByFullPath {
   '/clerk/sign-in': typeof ClerkauthSignInRoute
   '/clerk/sign-up': typeof ClerkauthSignUpRoute
   '/clerk/user-management': typeof ClerkAuthenticatedUserManagementRoute
-  '/apps': typeof AuthenticatedAppsIndexRoute
-  '/chats': typeof AuthenticatedChatsIndexRoute
-  '/clubs': typeof AuthenticatedClubsIndexRoute
-  '/help-center': typeof AuthenticatedHelpCenterIndexRoute
-  '/pos': typeof AuthenticatedPosIndexRoute
-  '/purchase-orders': typeof AuthenticatedPurchaseOrdersIndexRoute
+  '/apps/': typeof AuthenticatedAppsIndexRoute
+  '/chats/': typeof AuthenticatedChatsIndexRoute
+  '/clubs/': typeof AuthenticatedClubsIndexRoute
+  '/help-center/': typeof AuthenticatedHelpCenterIndexRoute
+  '/pos/': typeof AuthenticatedPosIndexRoute
+  '/purchase-orders/': typeof AuthenticatedPurchaseOrdersIndexRoute
   '/settings/': typeof AuthenticatedSettingsIndexRoute
-  '/tasks': typeof AuthenticatedTasksIndexRoute
-  '/users': typeof AuthenticatedUsersIndexRoute
+  '/tasks/': typeof AuthenticatedTasksIndexRoute
+  '/users/': typeof AuthenticatedUsersIndexRoute
 }
 export interface FileRoutesByTo {
   '/clerk': typeof ClerkAuthenticatedRouteRouteWithChildren
@@ -384,6 +384,7 @@ export interface FileRoutesById {
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
+    | '/'
     | '/clerk'
     | '/settings'
     | '/forgot-password'
@@ -399,7 +400,6 @@ export interface FileRouteTypes {
     | '/customers'
     | '/inventory'
     | '/products'
-    | '/'
     | '/clubs/create'
     | '/errors/$error'
     | '/pos/new'
@@ -412,15 +412,15 @@ export interface FileRouteTypes {
     | '/clerk/sign-in'
     | '/clerk/sign-up'
     | '/clerk/user-management'
-    | '/apps'
-    | '/chats'
-    | '/clubs'
-    | '/help-center'
-    | '/pos'
-    | '/purchase-orders'
+    | '/apps/'
+    | '/chats/'
+    | '/clubs/'
+    | '/help-center/'
+    | '/pos/'
+    | '/purchase-orders/'
     | '/settings/'
-    | '/tasks'
-    | '/users'
+    | '/tasks/'
+    | '/users/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/clerk'
@@ -530,7 +530,7 @@ declare module '@tanstack/react-router' {
     '/_authenticated': {
       id: '/_authenticated'
       path: ''
-      fullPath: ''
+      fullPath: '/'
       preLoaderRoute: typeof AuthenticatedRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
@@ -656,14 +656,14 @@ declare module '@tanstack/react-router' {
     '/_authenticated/users/': {
       id: '/_authenticated/users/'
       path: '/users'
-      fullPath: '/users'
+      fullPath: '/users/'
       preLoaderRoute: typeof AuthenticatedUsersIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/tasks/': {
       id: '/_authenticated/tasks/'
       path: '/tasks'
-      fullPath: '/tasks'
+      fullPath: '/tasks/'
       preLoaderRoute: typeof AuthenticatedTasksIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
@@ -677,42 +677,42 @@ declare module '@tanstack/react-router' {
     '/_authenticated/purchase-orders/': {
       id: '/_authenticated/purchase-orders/'
       path: '/purchase-orders'
-      fullPath: '/purchase-orders'
+      fullPath: '/purchase-orders/'
       preLoaderRoute: typeof AuthenticatedPurchaseOrdersIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/pos/': {
       id: '/_authenticated/pos/'
       path: '/pos'
-      fullPath: '/pos'
+      fullPath: '/pos/'
       preLoaderRoute: typeof AuthenticatedPosIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/help-center/': {
       id: '/_authenticated/help-center/'
       path: '/help-center'
-      fullPath: '/help-center'
+      fullPath: '/help-center/'
       preLoaderRoute: typeof AuthenticatedHelpCenterIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/clubs/': {
       id: '/_authenticated/clubs/'
       path: '/clubs'
-      fullPath: '/clubs'
+      fullPath: '/clubs/'
       preLoaderRoute: typeof AuthenticatedClubsIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/chats/': {
       id: '/_authenticated/chats/'
       path: '/chats'
-      fullPath: '/chats'
+      fullPath: '/chats/'
       preLoaderRoute: typeof AuthenticatedChatsIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/apps/': {
       id: '/_authenticated/apps/'
       path: '/apps'
-      fullPath: '/apps'
+      fullPath: '/apps/'
       preLoaderRoute: typeof AuthenticatedAppsIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }

@@ -203,6 +203,10 @@ export async function createPurchaseOrder(
 /**
  * Update an existing purchase order
  *
+ * IMPORTANT: This function handles two scenarios:
+ * 1. Simple update (only status/supplier/dates): Updates only purchase_orders table
+ * 2. Full update (with items): Updates purchase_orders + replaces all items
+ *
  * @param {string} id - Purchase order ID
  * @param {UpdatePurchaseOrderPayload} payload - Updated purchase order data
  * @returns {Promise} Response with success status or error
@@ -212,7 +216,7 @@ export async function updatePurchaseOrder(
   payload: UpdatePurchaseOrderPayload
 ): Promise<UpdatePurchaseOrderResponse> {
   try {
-    // Update the purchase order basic fields
+    // Step 1: Update the purchase order basic fields
     const updateData: Record<string, any> = {}
     if (payload.supplier !== undefined) updateData.supplier = payload.supplier
     if (payload.status !== undefined) updateData.status = payload.status
@@ -237,24 +241,46 @@ export async function updatePurchaseOrder(
       }
     }
 
-    // If items are provided, replace them
-    if (payload.items) {
-      // Delete existing items
-      const { error: deleteError } = await supabase
+    // Step 2: If items are provided AND different, replace them
+    // NOTE: We only replace items if they're explicitly provided
+    // This prevents accidental deletion when just updating status
+    if (payload.items && payload.items.length > 0) {
+      // First, get existing items to compare
+      const { data: existingItems, error: fetchError } = await supabase
         .from('purchase_order_items')
-        .delete()
+        .select('id, inventory_item_id, quantity')
         .eq('purchase_order_id', id)
 
-      if (deleteError) {
-        console.error('Error deleting purchase order items:', deleteError)
-        return {
-          success: false,
-          error: deleteError.message,
-        }
+      if (fetchError) {
+        console.error('Error fetching existing items:', fetchError)
+        // Continue anyway - we'll replace the items
       }
 
-      // Insert new items
-      if (payload.items.length > 0) {
+      // Check if items actually changed
+      const itemsChanged = !existingItems ||
+        existingItems.length !== payload.items.length ||
+        !payload.items.every((newItem, index) => {
+          const existing = existingItems.find(e => e.inventory_item_id === newItem.inventory_item_id)
+          return existing && existing.quantity === newItem.quantity
+        })
+
+      // Only replace items if they actually changed
+      if (itemsChanged) {
+        // Delete existing items
+        const { error: deleteError } = await supabase
+          .from('purchase_order_items')
+          .delete()
+          .eq('purchase_order_id', id)
+
+        if (deleteError) {
+          console.error('Error deleting purchase order items:', deleteError)
+          return {
+            success: false,
+            error: `Failed to delete existing items: ${deleteError.message}`,
+          }
+        }
+
+        // Insert new items
         const itemsToInsert = payload.items.map((item) => ({
           purchase_order_id: id,
           inventory_item_id: item.inventory_item_id,
@@ -269,7 +295,7 @@ export async function updatePurchaseOrder(
           console.error('Error creating purchase order items:', itemsError)
           return {
             success: false,
-            error: itemsError.message,
+            error: `Failed to create new items: ${itemsError.message}`,
           }
         }
       }

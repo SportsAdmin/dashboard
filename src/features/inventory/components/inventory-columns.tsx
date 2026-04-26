@@ -1,4 +1,5 @@
 import { type ColumnDef } from '@tanstack/react-table'
+import i18n from '@/lib/i18n'
 import { Badge } from '@/components/ui/badge'
 import { DataTableColumnHeader } from '@/components/data-table'
 import { type InventoryItem } from '../data/schema'
@@ -7,7 +8,7 @@ export const inventoryColumns: ColumnDef<InventoryItem>[] = [
   {
     accessorKey: 'productName',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Product Name' />
+      <DataTableColumnHeader column={column} title={i18n.t('inventory.table.productName')} />
     ),
     meta: {
       className: 'ps-1 max-w-0 w-1/4',
@@ -24,7 +25,7 @@ export const inventoryColumns: ColumnDef<InventoryItem>[] = [
   {
     accessorKey: 'category',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Category' />
+      <DataTableColumnHeader column={column} title={i18n.t('products.dialog.category')} />
     ),
     meta: {
       className: 'ps-1',
@@ -40,7 +41,7 @@ export const inventoryColumns: ColumnDef<InventoryItem>[] = [
   },
   {
     accessorKey: 'variant',
-    header: 'Variant',
+    header: i18n.t('inventory.table.variant'),
     meta: {
       className: 'ps-1',
       tdClassName: 'ps-4',
@@ -61,7 +62,7 @@ export const inventoryColumns: ColumnDef<InventoryItem>[] = [
   {
     accessorKey: 'stock',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Stock' />
+      <DataTableColumnHeader column={column} title={i18n.t('inventory.table.stock')} />
     ),
     meta: {
       className: 'ps-1',
@@ -89,7 +90,7 @@ export const inventoryColumns: ColumnDef<InventoryItem>[] = [
   {
     accessorKey: 'price',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='Price' />
+      <DataTableColumnHeader column={column} title={i18n.t('inventory.table.price')} />
     ),
     meta: {
       className: 'ps-1',
