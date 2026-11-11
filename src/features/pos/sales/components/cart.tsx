@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { ScrollArea } from '@/components/ui/scroll-area'
-import { Separator } from '@/components/ui/separator'
 import { type CartItem } from '../types'
 
 type CartProps = {
@@ -14,12 +13,11 @@ type CartProps = {
 
 export function Cart({ items, onUpdateQuantity, onRemoveItem }: CartProps) {
   const { t } = useTranslation()
-  const subtotal = items.reduce(
+  // Prices already include taxes; this matches the total stored by create_sale
+  const total = items.reduce(
     (sum, item) => sum + item.price * item.quantity,
     0
   )
-  const tax = subtotal * 0.1 // 10% tax
-  const total = subtotal + tax
 
   return (
     <Card className='flex h-full flex-col'>
@@ -99,15 +97,6 @@ export function Cart({ items, onUpdateQuantity, onRemoveItem }: CartProps) {
         </ScrollArea>
         <div className='border-t p-4'>
           <div className='space-y-2'>
-            <div className='flex justify-between text-sm'>
-              <span className='text-muted-foreground'>{t('pos.sales.subtotal')}</span>
-              <span className='font-medium'>${subtotal.toFixed(2)}</span>
-            </div>
-            <div className='flex justify-between text-sm'>
-              <span className='text-muted-foreground'>{t('pos.sales.tax')}</span>
-              <span className='font-medium'>${tax.toFixed(2)}</span>
-            </div>
-            <Separator className='my-2' />
             <div className='flex justify-between text-lg font-bold'>
               <span>{t('pos.sales.total')}</span>
               <span>${total.toFixed(2)}</span>

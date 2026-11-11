@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { Search, Filter } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { Input } from '@/components/ui/input'
@@ -17,11 +18,17 @@ import { type POSProduct } from '@/services/pos'
 
 type ProductSelectorProps = {
   onSelectProduct: (product: POSProduct) => void
+  /** Increment to reload products (e.g. after a sale changed stock) */
+  refreshKey?: number
 }
 
-export function ProductSelector({ onSelectProduct }: ProductSelectorProps) {
+export function ProductSelector({
+  onSelectProduct,
+  refreshKey = 0,
+}: ProductSelectorProps) {
   const { t } = useTranslation()
   const {
+    refetch,
     filteredProducts,
     loading,
     error,
@@ -31,6 +38,11 @@ export function ProductSelector({ onSelectProduct }: ProductSelectorProps) {
     setCategoryFilter,
     categories,
   } = usePOSProducts()
+
+  useEffect(() => {
+    if (refreshKey > 0) void refetch()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [refreshKey])
 
   return (
     <Card className='flex h-full flex-col'>

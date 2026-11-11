@@ -9,6 +9,7 @@ import { LanguageSwitcher } from '@/components/language-switcher'
 import { ConfigDrawer } from '@/components/config-drawer'
 import { Button } from '@/components/ui/button'
 import { type POSProduct } from '@/services/pos'
+import { createSale } from '@/services/sales'
 import { ProductSelector } from './components/product-selector'
 import { Cart } from './components/cart'
 import { PaymentButtons } from './components/payment-buttons'
@@ -17,6 +18,8 @@ import { type CartItem } from './types'
 export function PosSales() {
   const { t } = useTranslation()
   const [cartItems, setCartItems] = useState<CartItem[]>([])
+  const [submitting, setSubmitting] = useState(false)
+  const [refreshKey, setRefreshKey] = useState(0)
 
   const handleAddToCart = (product: POSProduct) => {
     setCartItems((prev) => {
@@ -63,23 +66,38 @@ export function PosSales() {
     setCartItems((prev) => prev.filter((item) => item.id !== itemId))
   }
 
-  const handlePayment = (method: 'cash' | 'card' | 'transfer') => {
+  const handlePayment = async (method: 'cash' | 'card' | 'transfer') => {
+    if (submitting || cartItems.length === 0) return
+    // Prices in the cart include taxes; the DB recomputes the same total
     const total = cartItems.reduce(
       (sum, item) => sum + item.price * item.quantity,
       0
     )
-    const totalWithTax = total * 1.1
 
-    const methodTranslated = t(`pos.sales.payment.${method}`)
-    toast.success(
-      t('pos.sales.paymentSuccess', {
-        method: methodTranslated,
-        total: totalWithTax.toFixed(2)
+    setSubmitting(true)
+    try {
+      await createSale({
+        items: cartItems.map((item) => ({
+          variant_id: item.variant_id,
+          quantity: item.quantity,
+        })),
+        payments: [{ method, amount: total }],
       })
-    )
 
-    // Clear cart after successful payment
-    setCartItems([])
+      toast.success(
+        t('pos.sales.paymentSuccess', {
+          method: t(`pos.sales.payment.${method}`),
+          total: total.toFixed(2),
+        })
+      )
+      setCartItems([])
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : String(error))
+    } finally {
+      // Stock changed (or was out of date): reload the product list either way
+      setRefreshKey((key) => key + 1)
+      setSubmitting(false)
+    }
   }
 
   const handleClearCart = () => {
@@ -110,7 +128,10 @@ export function PosSales() {
         <div className='grid flex-1 gap-4 lg:grid-cols-2'>
           {/* Left side - Product Selector */}
           <div className='flex flex-col'>
-            <ProductSelector onSelectProduct={handleAddToCart} />
+            <ProductSelector
+              onSelectProduct={handleAddToCart}
+              refreshKey={refreshKey}
+            />
           </div>
 
           {/* Right side - Cart */}
@@ -121,7 +142,7 @@ export function PosSales() {
               onRemoveItem={handleRemoveItem}
             />
             <PaymentButtons
-              disabled={cartItems.length === 0}
+              disabled={cartItems.length === 0 || submitting}
               onPayment={handlePayment}
             />
           </div>

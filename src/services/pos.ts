@@ -24,6 +24,7 @@ interface InventoryItemRaw {
   product_variants: {
     id: string
     price: number
+    price_sale: number | null
     color: string
     products: {
       id: string
@@ -67,6 +68,7 @@ export async function getAvailableProducts(): Promise<{
         product_variants (
           id,
           price,
+          price_sale,
           color,
           products (
             id,
@@ -126,7 +128,8 @@ export async function getAvailableProducts(): Promise<{
           size: sizeName,
           size_order: size?.order_index || 999,
           color: color,
-          price: variant.price || 0,
+          // Effective price: offer price if set (same rule as create_sale in the DB)
+          price: Number(variant.price_sale ?? variant.price ?? 0),
           stock: item.stock,
           label: `${productName} ${sizeName} ${color}`.trim(),
         }
