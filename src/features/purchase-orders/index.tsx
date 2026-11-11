@@ -1,16 +1,16 @@
 import { Link } from '@tanstack/react-router'
 import { Plus } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
+import { usePurchaseOrders } from '@/hooks/use-purchase-orders'
+import { Button } from '@/components/ui/button'
 import { ConfigDrawer } from '@/components/config-drawer'
+import { LanguageSwitcher } from '@/components/language-switcher'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
-import { LanguageSwitcher } from '@/components/language-switcher'
-import { Button } from '@/components/ui/button'
 import { PurchaseOrdersTable } from './components/purchase-orders-table'
-import { usePurchaseOrders } from '@/hooks/use-purchase-orders'
 
 export function PurchaseOrders() {
   const { t } = useTranslation()
@@ -48,13 +48,17 @@ export function PurchaseOrders() {
 
         {loading && (
           <div className='flex items-center justify-center py-8'>
-            <p className='text-muted-foreground'>{t('purchaseOrders.loadingOrders')}</p>
+            <p className='text-muted-foreground'>
+              {t('purchaseOrders.loadingOrders')}
+            </p>
           </div>
         )}
 
         {error && (
           <div className='flex items-center justify-center py-8'>
-            <p className='text-destructive'>{t('common.error')}: {error}</p>
+            <p className='text-destructive'>
+              {t('common.error')}: {error}
+            </p>
           </div>
         )}
 
@@ -63,7 +67,7 @@ export function PurchaseOrders() {
             <p className='text-lg font-medium text-muted-foreground'>
               {t('purchaseOrders.noOrdersYet')}
             </p>
-            <p className='text-sm text-muted-foreground mt-2'>
+            <p className='mt-2 text-sm text-muted-foreground'>
               {t('purchaseOrders.createFirstOrder')}
             </p>
           </div>

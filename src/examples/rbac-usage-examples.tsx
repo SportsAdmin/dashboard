@@ -124,15 +124,15 @@ export function ProductsTableExample({ products }: { products: Product[] }) {
 
 interface PurchaseOrder {
   id: string
-  status: 'pending' | 'approved' | 'received' | 'cancelled'
+  status: 'pending' | 'approved' | 'in_production' | 'shipped' | 'delivered'
   amount: number
 }
 
 export function PurchaseOrderCard({ order }: { order: PurchaseOrder }) {
-  const { canEditPO, isAdmin } = usePermissions()
+  const { canEditPO } = usePermissions()
 
-  // Admin can always edit, manager only if status is pending
-  const canEdit = isAdmin() || canEditPO(order.status)
+  // Admin / manager can edit until the order is delivered
+  const canEdit = canEditPO(order.status)
 
   return (
     <Card>

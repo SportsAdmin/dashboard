@@ -52,6 +52,8 @@ export interface CreateProductPayload {
     description: string
   }
   variants: ProductVariantInput[]
+  /** Required for admins (they have no club); ignored by the DB for staff */
+  clubId?: string | null
 }
 
 export interface CreateProductRPCParams {
@@ -64,6 +66,7 @@ export interface CreateProductRPCParams {
     price: number
     price_sale: number | null
   }[]
+  p_club_id?: string | null
 }
 
 export interface UpdateProductPayload {

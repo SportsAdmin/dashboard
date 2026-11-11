@@ -27,7 +27,7 @@
   },
   "nav": {
     "dashboard": "Panel",
-    "pos": "TPV",
+    "pos": "Punto de venta",
     "inventory": "Inventario",
     "products": "Productos",
     "customers": "Clientes",
@@ -36,7 +36,8 @@
     "chats": "Chats",
     "users": "Usuarios",
     "settings": "Configuración",
-    "helpCenter": "Centro de Ayuda"
+    "helpCenter": "Centro de Ayuda",
+    "returns": "Devoluciones"
   },
   "pos": {
     "dashboard": {
@@ -53,7 +54,6 @@
       "sinceLastHour": "desde la última hora"
     },
     "sales": {
-      "title": "Nueva Venta",
       "searchProducts": "Buscar productos...",
       "cart": "Carrito",
       "cartEmpty": "El carrito está vacío",
@@ -68,14 +68,32 @@
       "payment": {
         "cash": "Efectivo",
         "card": "Tarjeta",
-        "transfer": "Transferencia"
+        "transfer": "Transferencia",
+        "mercadopago": "Mercado Pago"
       },
       "outOfStock": "Sin Stock",
       "stock": "Stock",
       "each": "c/u",
       "stockLimitReached": "Límite de stock alcanzado. Solo {{stock}} disponibles",
       "paymentSuccess": "Pago de {{method}} por ${{total}} completado",
-      "cartCleared": "Carrito vaciado"
+      "cartCleared": "Carrito vaciado",
+      "split": {
+        "splitPayment": "Pago mixto",
+        "title": "Pago mixto",
+        "description": "Dividí el total entre varios medios de pago. La suma tiene que ser igual al total.",
+        "totalToPay": "Total a cobrar",
+        "method": "Medio de pago",
+        "amount": "Monto",
+        "addPayment": "Agregar medio de pago",
+        "removePayment": "Quitar",
+        "assigned": "Asignado",
+        "remaining": "Falta asignar",
+        "exceeds": "Excede el total por",
+        "fillRemaining": "Completar con lo que falta",
+        "confirm": "Cobrar",
+        "saleRegistered": "Venta registrada por {{total}} ({{methods}})"
+      },
+      "title": "Nueva Venta"
     },
     "topNav": {
       "panel": "Panel",
@@ -116,14 +134,13 @@
     "searchPlaceholder": "Buscar productos...",
     "dialog": {
       "title": "Crear Nuevo Producto",
-      "description": "Agrega un nuevo producto con variantes a tu inventario",
+      "description": "Descripción",
       "name": "Nombre del Producto",
       "namePlaceholder": "ej., Zapatillas Pro",
       "nameRequired": "El nombre del producto es obligatorio",
       "category": "Categoría",
       "categoryPlaceholder": "ej., Calzado, Ropa, Equipo",
       "categoryRequired": "La categoría es obligatoria",
-      "description": "Descripción",
       "descriptionPlaceholder": "ej., Zapatillas profesionales para corredores",
       "descriptionRequired": "La descripción es obligatoria",
       "basePrice": "Precio Base",
@@ -208,7 +225,10 @@
       "status": "Estado",
       "selectStatus": "Selecciona un estado",
       "updating": "Actualizando...",
-      "updateButton": "Actualizar Orden de Compra"
+      "updateButton": "Actualizar Orden de Compra",
+      "readOnlyDelivered": "Esta orden ya fue entregada: el stock ya se sumó y no se puede modificar.",
+      "readOnlyRole": "Solo lectura: tu rol puede ver esta orden pero no modificarla.",
+      "back": "Volver"
     },
     "status": {
       "pending": "Pendiente",
@@ -252,7 +272,8 @@
       "createButton": "Crear Orden de Compra",
       "orderCreated": "Orden de compra creada exitosamente",
       "orderCreateFailed": "Error al crear la orden de compra"
-    }
+    },
+    "view": "Ver orden de compra"
   },
   "profile": {
     "role": {
@@ -292,16 +313,16 @@
       "logoUrlPlaceholder": "https://ejemplo.com/logo.png",
       "logoUrlDescription": "URL de la imagen del logo del club",
       "logoUrlInvalid": "Debe ser una URL válida",
-      "adminUser": "Usuario Administrador",
-      "adminUserDescription": "Crea la cuenta de administrador principal para este club",
-      "adminName": "Nombre del Administrador",
+      "adminUser": "Responsable del club (manager)",
+      "adminUserDescription": "Crea la cuenta del manager que administra este club. Solo ve y opera sobre este club.",
+      "adminName": "Nombre del responsable",
       "adminNamePlaceholder": "Juan Pérez",
-      "adminNameDescription": "Nombre completo del administrador del club",
-      "adminNameMin": "El nombre del administrador debe tener al menos 2 caracteres",
-      "adminNameMax": "El nombre del administrador debe tener menos de 100 caracteres",
-      "adminEmail": "Email del Administrador",
-      "adminEmailPlaceholder": "admin@fcbarcelona.com",
-      "adminEmailDescription": "Dirección de correo electrónico para la cuenta de administrador",
+      "adminNameDescription": "Nombre completo del manager del club",
+      "adminNameMin": "El nombre del responsable debe tener al menos 2 caracteres",
+      "adminNameMax": "El nombre del responsable debe tener menos de 100 caracteres",
+      "adminEmail": "Email del responsable",
+      "adminEmailPlaceholder": "responsable@club.com",
+      "adminEmailDescription": "Dirección de correo para la cuenta del manager",
       "adminEmailInvalid": "Debe ser una dirección de correo electrónico válida",
       "password": "Contraseña",
       "passwordPlaceholder": "••••••••",
@@ -485,5 +506,54 @@
       "welcomeBack": "¡Bienvenido de nuevo, {{email}}!",
       "unexpectedError": "Ocurrió un error inesperado"
     }
+  },
+  "returns": {
+    "title": "Devoluciones",
+    "description": "Registrá y consultá las devoluciones de ventas",
+    "newReturn": "Nueva devolución",
+    "newReturnDescription": "Elegí la venta y las unidades que devuelve el cliente.",
+    "loading": "Cargando devoluciones...",
+    "empty": "Todavía no hay devoluciones",
+    "emptyHint": "Las devoluciones registradas van a aparecer acá.",
+    "created": "Devolución registrada",
+    "deleted": "Devolución anulada",
+    "delete": "Anular devolución",
+    "deleteTitle": "¿Anular esta devolución?",
+    "deleteDescription": "Se elimina el registro y las unidades que habían vuelto al stock se descuentan de nuevo.",
+    "notRestocked": "(no vuelve al stock)",
+    "condition": {
+      "new": "Nuevo",
+      "used": "Usado",
+      "damaged": "Dañado"
+    },
+    "table": {
+      "date": "Fecha",
+      "sale": "Venta",
+      "items": "Productos",
+      "reason": "Motivo",
+      "createdBy": "Registrada por"
+    },
+    "form": {
+      "sale": "Venta",
+      "selectSale": "Seleccioná una venta",
+      "loadingSales": "Cargando ventas...",
+      "noSales": "No hay ventas con unidades para devolver",
+      "items": "Unidades a devolver",
+      "soldReturned": "Vendidas: {{sold}} · Ya devueltas: {{returned}} · Disponibles: {{available}}",
+      "quantity": "Cantidad",
+      "damagedHint": "Los productos marcados como \"Dañado\" se registran pero no vuelven al stock.",
+      "reason": "Motivo",
+      "reasonPlaceholder": "Ej: talle incorrecto",
+      "submit": "Registrar devolución"
+    }
+  },
+  "clubSelect": {
+    "label": "Club",
+    "placeholder": "Elegí el club",
+    "loading": "Cargando clubes...",
+    "hint": "Como admin no tenés club propio: indicá a qué club pertenece.",
+    "required": "Elegí un club",
+    "chooseFirst": "Elegí primero el club para ver sus productos.",
+    "loadError": "No se pudieron cargar los clubes"
   }
 }

@@ -36,6 +36,7 @@ export function Products() {
           price: v.price,
           price_sale: v.price_sale || null,
         })),
+        clubId: data.club_id || null,
       })
 
       if (response.success) {

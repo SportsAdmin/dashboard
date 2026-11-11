@@ -27,7 +27,7 @@
   },
   "nav": {
     "dashboard": "Dashboard",
-    "pos": "POS",
+    "pos": "Point of Sale",
     "inventory": "Inventory",
     "products": "Products",
     "customers": "Customers",
@@ -36,7 +36,8 @@
     "chats": "Chats",
     "users": "Users",
     "settings": "Settings",
-    "helpCenter": "Help Center"
+    "helpCenter": "Help Center",
+    "returns": "Returns"
   },
   "pos": {
     "dashboard": {
@@ -53,7 +54,6 @@
       "sinceLastHour": "since last hour"
     },
     "sales": {
-      "title": "New Sale",
       "searchProducts": "Search products...",
       "cart": "Cart",
       "cartEmpty": "Cart is empty",
@@ -68,14 +68,32 @@
       "payment": {
         "cash": "Cash",
         "card": "Card",
-        "transfer": "Transfer"
+        "transfer": "Transfer",
+        "mercadopago": "Mercado Pago"
       },
       "outOfStock": "Out of Stock",
       "stock": "Stock",
       "each": "each",
       "stockLimitReached": "Stock limit reached. Only {{stock}} available",
       "paymentSuccess": "{{method}} payment of ${{total}} completed",
-      "cartCleared": "Cart cleared"
+      "cartCleared": "Cart cleared",
+      "split": {
+        "splitPayment": "Split payment",
+        "title": "Split payment",
+        "description": "Split the total across several payment methods. The amounts must add up to the total.",
+        "totalToPay": "Total to charge",
+        "method": "Payment method",
+        "amount": "Amount",
+        "addPayment": "Add payment method",
+        "removePayment": "Remove",
+        "assigned": "Assigned",
+        "remaining": "Remaining",
+        "exceeds": "Exceeds the total by",
+        "fillRemaining": "Fill with remaining",
+        "confirm": "Charge",
+        "saleRegistered": "Sale registered for {{total}} ({{methods}})"
+      },
+      "title": "New Sale"
     },
     "topNav": {
       "panel": "Dashboard",
@@ -116,14 +134,13 @@
     "searchPlaceholder": "Search products...",
     "dialog": {
       "title": "Create New Product",
-      "description": "Add a new product with variants to your inventory",
+      "description": "Description",
       "name": "Product Name",
       "namePlaceholder": "e.g., Running Shoes Pro",
       "nameRequired": "Product name is required",
       "category": "Category",
       "categoryPlaceholder": "e.g., Footwear, Apparel, Equipment",
       "categoryRequired": "Category is required",
-      "description": "Description",
       "descriptionPlaceholder": "e.g., Professional running shoes for athletes",
       "descriptionRequired": "Description is required",
       "basePrice": "Base Price",
@@ -208,7 +225,10 @@
       "status": "Status",
       "selectStatus": "Select status",
       "updating": "Updating...",
-      "updateButton": "Update Purchase Order"
+      "updateButton": "Update Purchase Order",
+      "readOnlyDelivered": "This order was already delivered: stock was applied and it can no longer be changed.",
+      "readOnlyRole": "Read only: your role can view this order but not change it.",
+      "back": "Back"
     },
     "status": {
       "pending": "Pending",
@@ -252,7 +272,8 @@
       "createButton": "Create Purchase Order",
       "orderCreated": "Purchase order created successfully",
       "orderCreateFailed": "Failed to create purchase order"
-    }
+    },
+    "view": "View purchase order"
   },
   "profile": {
     "role": {
@@ -292,16 +313,16 @@
       "logoUrlPlaceholder": "https://example.com/logo.png",
       "logoUrlDescription": "URL to the club's logo image",
       "logoUrlInvalid": "Must be a valid URL",
-      "adminUser": "Admin User",
-      "adminUserDescription": "Create the primary administrator account for this club",
-      "adminName": "Admin Name",
+      "adminUser": "Club manager",
+      "adminUserDescription": "Create the manager account for this club. It only sees and operates on this club.",
+      "adminName": "Manager name",
       "adminNamePlaceholder": "John Doe",
-      "adminNameDescription": "Full name of the club administrator",
-      "adminNameMin": "Admin name must be at least 2 characters",
-      "adminNameMax": "Admin name must be less than 100 characters",
-      "adminEmail": "Admin Email",
-      "adminEmailPlaceholder": "admin@fcbarcelona.com",
-      "adminEmailDescription": "Email address for the admin account",
+      "adminNameDescription": "Full name of the club manager",
+      "adminNameMin": "Manager name must be at least 2 characters",
+      "adminNameMax": "Manager name must be less than 100 characters",
+      "adminEmail": "Manager email",
+      "adminEmailPlaceholder": "manager@club.com",
+      "adminEmailDescription": "Email address for the manager account",
       "adminEmailInvalid": "Must be a valid email address",
       "password": "Password",
       "passwordPlaceholder": "••••••••",
@@ -459,5 +480,54 @@
         "updateButton": "Update account"
       }
     }
+  },
+  "returns": {
+    "title": "Returns",
+    "description": "Register and review sale returns",
+    "newReturn": "New return",
+    "newReturnDescription": "Choose the sale and the units the customer is returning.",
+    "loading": "Loading returns...",
+    "empty": "No returns yet",
+    "emptyHint": "Registered returns will show up here.",
+    "created": "Return registered",
+    "deleted": "Return cancelled",
+    "delete": "Cancel return",
+    "deleteTitle": "Cancel this return?",
+    "deleteDescription": "The record is deleted and units that went back to stock are deducted again.",
+    "notRestocked": "(not restocked)",
+    "condition": {
+      "new": "New",
+      "used": "Used",
+      "damaged": "Damaged"
+    },
+    "table": {
+      "date": "Date",
+      "sale": "Sale",
+      "items": "Products",
+      "reason": "Reason",
+      "createdBy": "Registered by"
+    },
+    "form": {
+      "sale": "Sale",
+      "selectSale": "Select a sale",
+      "loadingSales": "Loading sales...",
+      "noSales": "No sales with units left to return",
+      "items": "Units to return",
+      "soldReturned": "Sold: {{sold}} · Already returned: {{returned}} · Available: {{available}}",
+      "quantity": "Quantity",
+      "damagedHint": "Items marked \"Damaged\" are recorded but not put back into stock.",
+      "reason": "Reason",
+      "reasonPlaceholder": "e.g. wrong size",
+      "submit": "Register return"
+    }
+  },
+  "clubSelect": {
+    "label": "Club",
+    "placeholder": "Choose the club",
+    "loading": "Loading clubs...",
+    "hint": "As an admin you have no club of your own: choose which club this belongs to.",
+    "required": "Choose a club",
+    "chooseFirst": "Choose the club first to see its products.",
+    "loadError": "Could not load clubs"
   }
 }

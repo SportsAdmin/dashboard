@@ -163,8 +163,6 @@ export async function createClubWithAdmin(
       }
     }
 
-    console.log('✅ Valid session found for user:', sessionData.session.user.email)
-    console.log('📝 Access token (first 20 chars):', sessionData.session.access_token.substring(0, 20) + '...')
 
     // Check user profile and role before calling Edge Function
     const profileCheck = await checkCurrentUserProfile()
@@ -202,6 +200,8 @@ export async function createClubWithAdmin(
       },
       body: JSON.stringify({
         club_name: payload.club.name,
+        city: payload.club.city || null,
+        logo_url: payload.club.logo_url || null,
         email: payload.admin.email,
         password: payload.admin.password,
         name: payload.admin.name,

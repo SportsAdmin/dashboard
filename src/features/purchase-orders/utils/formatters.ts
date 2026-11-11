@@ -1,9 +1,14 @@
-import type { PurchaseOrderWithItems, PurchaseOrderItemWithDetails } from '@/types'
+import type {
+  PurchaseOrderWithItems,
+  PurchaseOrderItemWithDetails,
+} from '@/types'
 
 /**
  * Calculate total quantity of items in a purchase order
  */
-export function getTotalQuantity(purchaseOrder: PurchaseOrderWithItems): number {
+export function getTotalQuantity(
+  purchaseOrder: PurchaseOrderWithItems
+): number {
   return (
     purchaseOrder.purchase_order_items?.reduce(
       (sum: number, item: PurchaseOrderItemWithDetails) => sum + item.quantity,
@@ -65,7 +70,10 @@ export function isOverdue(purchaseOrder: PurchaseOrderWithItems): boolean {
 export function getStatusVariant(
   status: string
 ): 'default' | 'secondary' | 'destructive' | 'outline' | 'success' {
-  const variants: Record<string, 'default' | 'secondary' | 'destructive' | 'outline' | 'success'> = {
+  const variants: Record<
+    string,
+    'default' | 'secondary' | 'destructive' | 'outline' | 'success'
+  > = {
     pending: 'outline',
     approved: 'secondary',
     in_production: 'default',

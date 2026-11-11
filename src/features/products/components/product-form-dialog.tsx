@@ -2,6 +2,9 @@ import { useForm, useFieldArray } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Loader2 } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
+import { usePermissions } from '@/hooks/use-permissions'
+import { useSizes } from '@/hooks/use-sizes'
+import { Button } from '@/components/ui/button'
 import {
   Dialog,
   DialogContent,
@@ -10,13 +13,12 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
-import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { ScrollArea } from '@/components/ui/scroll-area'
+import { ClubSelect } from '@/components/club-select'
 import { productFormSchema, type ProductFormData } from '../data/schema'
 import { VariantInputs } from './variant-inputs'
-import { useSizes } from '@/hooks/use-sizes'
 
 type ProductFormDialogProps = {
   open: boolean
@@ -31,12 +33,18 @@ export function ProductFormDialog({
 }: ProductFormDialogProps) {
   const { t } = useTranslation()
   const { sizes, loading: sizesLoading } = useSizes()
+  const { isAdmin } = usePermissions()
+  const requireClub = isAdmin()
 
   const {
     register,
     handleSubmit,
     control,
     reset,
+    setValue,
+    setError,
+    clearErrors,
+    watch,
     formState: { errors, isSubmitting },
   } = useForm<ProductFormData>({
     resolver: zodResolver(productFormSchema),
@@ -44,6 +52,7 @@ export function ProductFormDialog({
       name: '',
       category: '',
       description: '',
+      club_id: '',
       variants: [{ size_id: '', color: '', price: 0, price_sale: null }],
     },
   })
@@ -54,6 +63,10 @@ export function ProductFormDialog({
   })
 
   const handleFormSubmit = async (data: ProductFormData) => {
+    if (requireClub && !data.club_id) {
+      setError('club_id', { message: t('clubSelect.required') })
+      return
+    }
     const success = await onSubmit(data)
 
     // Only reset and close if submission was successful
@@ -90,6 +103,17 @@ export function ProductFormDialog({
             <div className='space-y-6 py-4'>
               {/* Product Details */}
               <div className='space-y-4'>
+                {requireClub && (
+                  <ClubSelect
+                    value={watch('club_id') ?? ''}
+                    onChange={(clubId) => {
+                      setValue('club_id', clubId)
+                      clearErrors('club_id')
+                    }}
+                    error={errors.club_id?.message}
+                    disabled={isSubmitting}
+                  />
+                )}
                 <div className='space-y-1.5'>
                   <Label htmlFor='name'>{t('products.dialog.name')} *</Label>
                   <Input
@@ -106,7 +130,9 @@ export function ProductFormDialog({
                 </div>
 
                 <div className='space-y-1.5'>
-                  <Label htmlFor='category'>{t('products.dialog.category')} *</Label>
+                  <Label htmlFor='category'>
+                    {t('products.dialog.category')} *
+                  </Label>
                   <Input
                     id='category'
                     placeholder={t('products.dialog.categoryPlaceholder')}
@@ -121,7 +147,9 @@ export function ProductFormDialog({
                 </div>
 
                 <div className='space-y-1.5'>
-                  <Label htmlFor='description'>{t('products.dialog.description')} *</Label>
+                  <Label htmlFor='description'>
+                    {t('products.dialog.description')} *
+                  </Label>
                   <Input
                     id='description'
                     placeholder={t('products.dialog.descriptionPlaceholder')}
@@ -166,7 +194,9 @@ export function ProductFormDialog({
             </Button>
             <Button type='submit' disabled={isSubmitting}>
               {isSubmitting && <Loader2 className='mr-2 size-4 animate-spin' />}
-              {isSubmitting ? t('products.dialog.creating') : t('products.dialog.createProduct')}
+              {isSubmitting
+                ? t('products.dialog.creating')
+                : t('products.dialog.createProduct')}
             </Button>
           </DialogFooter>
         </form>

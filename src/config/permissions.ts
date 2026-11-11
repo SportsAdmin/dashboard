@@ -6,12 +6,7 @@ export type { Role } from '@/hooks/use-role'
 /**
  * Action types that can be performed in the system
  */
-export type Action =
-  | 'create'
-  | 'read'
-  | 'update'
-  | 'delete'
-  | 'manage' // Full CRUD access
+export type Action = 'create' | 'read' | 'update' | 'delete' | 'manage' // Full CRUD access
 
 /**
  * Resource types in the system
@@ -20,17 +15,24 @@ export type Resource =
   | 'users'
   | 'clubs'
   | 'products'
-  | 'inventory'
+  | 'sizes'
+  | 'inventory' // 'update' = manual stock adjustment (adjust_stock)
   | 'sales'
-  | 'purchase-orders'
+  | 'returns' // 'delete' = cancel a return (delete_return)
+  | 'purchase-orders' // 'update' includes changing status / receiving goods
   | 'customers'
   | 'tasks'
   | 'dashboard'
 
 /**
- * Purchase order status
+ * Purchase order status (must match purchase_orders_status_check in the DB)
  */
-export type PurchaseOrderStatus = 'pending' | 'approved' | 'received' | 'cancelled'
+export type PurchaseOrderStatus =
+  | 'pending'
+  | 'approved'
+  | 'in_production'
+  | 'shipped'
+  | 'delivered'
 
 /**
  * Permission rule structure
@@ -49,11 +51,25 @@ interface RolePermissions {
 }
 
 /**
- * Complete permissions configuration for all roles
+ * Delivered orders are final: stock was already applied, items and status are
+ * locked in the DB (trigger lock_delivered_purchase_order_items).
+ */
+const notDelivered = (context?: any) =>
+  context?.action !== 'update' || context?.data?.status !== 'delivered'
+
+/**
+ * Complete permissions configuration for all roles.
+ *
+ * MIRRORS THE DATABASE (RLS policies + RPC role checks). The DB is the source of
+ * truth; this only decides what the UI shows. Keep both in sync:
+ *   supabase/migrations/*_harden_rls.sql, *_fix_stock_flows.sql,
+ *   *_returns_management.sql, *_role_alignment.sql
+ *
+ * Scope: admin = every club; manager / seller = only their own club.
  */
 export const permissions: Record<Role, RolePermissions> = {
   /**
-   * ADMIN - Full access to everything
+   * ADMIN - Everything, on every club
    */
   admin: {
     canAccess: ['*'], // Access to all routes
@@ -61,9 +77,15 @@ export const permissions: Record<Role, RolePermissions> = {
       users: { actions: ['manage'] },
       clubs: { actions: ['manage'] },
       products: { actions: ['manage'] },
-      inventory: { actions: ['manage'] },
-      sales: { actions: ['manage'] },
-      'purchase-orders': { actions: ['manage'] },
+      sizes: { actions: ['manage'] },
+      inventory: { actions: ['read', 'update'] },
+      sales: { actions: ['create', 'read'] },
+      returns: { actions: ['create', 'read', 'delete'] },
+      // No 'delete': purchase orders can't be deleted (no DELETE policy)
+      'purchase-orders': {
+        actions: ['create', 'read', 'update'],
+        condition: notDelivered,
+      },
       customers: { actions: ['manage'] },
       tasks: { actions: ['manage'] },
       dashboard: { actions: ['read'] },
@@ -71,10 +93,12 @@ export const permissions: Record<Role, RolePermissions> = {
   },
 
   /**
-   * MANAGER - Same as seller + user management + dashboard + limited purchase order editing
+   * MANAGER - Runs their club: sells, receives goods, adjusts stock,
+   * edits products, creates sellers, cancels returns
    */
   manager: {
     canAccess: [
+      '/',
       '/dashboard',
       '/products',
       '/inventory',
@@ -82,55 +106,50 @@ export const permissions: Record<Role, RolePermissions> = {
       '/purchase-orders',
       '/purchase-orders/create',
       '/purchase-orders/:id',
-      '/purchase-orders/:id/edit',
       '/users',
       '/users/create',
       '/customers',
-      '/tasks',
       '/pos',
-      '/pos/sales',
-      '/pos/sales/new',
+      '/pos/new',
+      '/returns',
+      '/settings',
     ],
     resources: {
-      // Can create users but only with role = seller
+      // Can create users but only with role = seller (edge function create-user)
       users: {
         actions: ['create', 'read'],
         condition: (context) => {
-          // For create action, ensure role is seller
           if (context?.action === 'create') {
             return context?.data?.role === 'seller'
           }
           return true
         },
       },
-      products: { actions: ['read'] },
-      inventory: { actions: ['read'] },
+      products: { actions: ['create', 'read', 'update'] },
+      sizes: { actions: ['read'] },
+      inventory: { actions: ['read', 'update'] },
       sales: { actions: ['create', 'read'] },
-      // Can only edit purchase orders if status = pending
+      returns: { actions: ['create', 'read', 'delete'] },
+      // Can edit (and receive) any order of their club until it is delivered
       'purchase-orders': {
         actions: ['create', 'read', 'update'],
-        condition: (context) => {
-          // For update action, check if status is pending
-          if (context?.action === 'update') {
-            return context?.data?.status === 'pending'
-          }
-          return true
-        },
+        condition: notDelivered,
       },
-      customers: { actions: ['create', 'read'] },
-      tasks: { actions: ['create', 'read', 'update'] },
+      customers: { actions: ['create', 'read', 'update'] },
       dashboard: { actions: ['read'] },
     },
   },
 
   /**
-   * SELLER - Limited access
+   * SELLER - Sells, registers returns, creates products and purchase orders
    */
   seller: {
     canAccess: [
+      '/',
+      '/dashboard',
       '/pos',
-      '/pos/sales',
-      '/pos/sales/new',
+      '/pos/new',
+      '/returns',
       '/products',
       '/inventory',
       '/sales',
@@ -138,15 +157,17 @@ export const permissions: Record<Role, RolePermissions> = {
       '/purchase-orders/create',
       '/purchase-orders/:id', // View only
       '/customers',
-      '/tasks',
+      '/settings',
     ],
     resources: {
-      products: { actions: ['read'] },
+      products: { actions: ['create', 'read'] },
+      sizes: { actions: ['read'] },
       inventory: { actions: ['read'] },
       sales: { actions: ['create', 'read'] },
+      returns: { actions: ['create', 'read'] },
       'purchase-orders': { actions: ['create', 'read'] },
-      customers: { actions: ['create', 'read'] },
-      tasks: { actions: ['create', 'read'] },
+      customers: { actions: ['create', 'read', 'update'] },
+      dashboard: { actions: ['read'] },
     },
   },
 }
@@ -300,14 +321,7 @@ export function canEditPurchaseOrder(
   role: Role | null,
   status: PurchaseOrderStatus
 ): boolean {
-  if (!role) return false
-
-  // Admin can edit any status
-  if (role === 'admin') return true
-
-  // Manager can only edit pending
-  if (role === 'manager' && status === 'pending') return true
-
-  // Seller cannot edit
-  return false
+  return canPerformAction(role, 'purchase-orders', 'update', {
+    data: { status },
+  })
 }

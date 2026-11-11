@@ -128,6 +128,7 @@ export async function createProduct(
       p_category: payload.product.category,
       p_description: payload.product.description,
       p_variants: transformedVariants,
+      p_club_id: payload.clubId ?? null,
     }
 
     // @ts-expect-error - Supabase RPC types are not correctly generated for create_product function

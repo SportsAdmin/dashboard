@@ -32,7 +32,7 @@ serve(async (req) => {
     )
 
     // Parse request body
-    const { club_name, email, password, name, debug } = await req.json()
+    const { club_name, city, logo_url, email, password, name, debug } = await req.json()
 
     // 🔍 Debug mode
     if (debug === true) {
@@ -149,7 +149,7 @@ serve(async (req) => {
       )
     }
 
-    // Create new user for the club admin
+    // Create the user that will manage the club
     const { data: newUser, error: createUserError } = await supabaseAdmin.auth.admin.createUser({
       email,
       password,
@@ -174,7 +174,7 @@ serve(async (req) => {
     // Create club
     const { data: club, error: clubError } = await supabaseAdmin
       .from("clubs")
-      .insert({ name: club_name })
+      .insert({ name: club_name, city: city || null, logo_url: logo_url || null })
       .select()
       .single()
 
@@ -194,14 +194,15 @@ serve(async (req) => {
       )
     }
 
-    // Create profile for the new admin
+    // Create the profile: the club's responsible user is a MANAGER of that club.
+    // (Never "admin": admin is global and would see/operate on every club.)
     const { error: profileInsertError } = await supabaseAdmin
       .from("profiles")
       .insert({
         id: userId,
         club_id: club.id,
         name,
-        role: "admin",
+        role: "manager",
       })
 
     if (profileInsertError) {

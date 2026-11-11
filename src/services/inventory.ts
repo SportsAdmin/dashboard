@@ -35,6 +35,7 @@ export async function getInventory(): Promise<{
         id,
         stock,
         variant_id,
+        club_id,
         product_variants (
           id,
           color,
@@ -83,6 +84,7 @@ export async function getInventory(): Promise<{
           price: variant?.price || 0,
           stock: item.stock,
           variantId: item.variant_id,
+          clubId: item.club_id ?? null,
         }
       })
 

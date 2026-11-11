@@ -9,6 +9,7 @@ export const inventoryItemSchema = z.object({
   stock: z.number(),
   price: z.number(),
   variantId: z.string(),
+  clubId: z.string().nullable().optional(),
 })
 
 export type InventoryItem = z.infer<typeof inventoryItemSchema>

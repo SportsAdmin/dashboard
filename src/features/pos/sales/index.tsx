@@ -10,6 +10,11 @@ import { ConfigDrawer } from '@/components/config-drawer'
 import { Button } from '@/components/ui/button'
 import { type POSProduct } from '@/services/pos'
 import { createSale } from '@/services/sales'
+import { formatMoney, toCents } from '@/lib/utils'
+import {
+  SplitPaymentDialog,
+  type PaymentLine,
+} from './components/split-payment-dialog'
 import { ProductSelector } from './components/product-selector'
 import { Cart } from './components/cart'
 import { PaymentButtons } from './components/payment-buttons'
@@ -20,6 +25,7 @@ export function PosSales() {
   const [cartItems, setCartItems] = useState<CartItem[]>([])
   const [submitting, setSubmitting] = useState(false)
   const [refreshKey, setRefreshKey] = useState(0)
+  const [splitOpen, setSplitOpen] = useState(false)
 
   const handleAddToCart = (product: POSProduct) => {
     setCartItems((prev) => {
@@ -66,13 +72,13 @@ export function PosSales() {
     setCartItems((prev) => prev.filter((item) => item.id !== itemId))
   }
 
-  const handlePayment = async (method: 'cash' | 'card' | 'transfer') => {
+  // Prices in the cart include taxes. This total is only for display: the DB
+  // recomputes it from current prices and rejects payments that don't match.
+  const total =
+    cartItems.reduce((sum, item) => sum + toCents(item.price) * item.quantity, 0) / 100
+
+  const submitSale = async (payments: PaymentLine[]) => {
     if (submitting || cartItems.length === 0) return
-    // Prices in the cart include taxes; the DB recomputes the same total
-    const total = cartItems.reduce(
-      (sum, item) => sum + item.price * item.quantity,
-      0
-    )
 
     setSubmitting(true)
     try {
@@ -81,16 +87,23 @@ export function PosSales() {
           variant_id: item.variant_id,
           quantity: item.quantity,
         })),
-        payments: [{ method, amount: total }],
+        payments,
       })
 
       toast.success(
-        t('pos.sales.paymentSuccess', {
-          method: t(`pos.sales.payment.${method}`),
-          total: total.toFixed(2),
+        t('pos.sales.split.saleRegistered', {
+          total: formatMoney(total),
+          methods: payments
+            .map((p) =>
+              payments.length > 1
+                ? `${t(`pos.sales.payment.${p.method}`)} ${formatMoney(p.amount)}`
+                : t(`pos.sales.payment.${p.method}`)
+            )
+            .join(' + '),
         })
       )
       setCartItems([])
+      setSplitOpen(false)
     } catch (error) {
       toast.error(error instanceof Error ? error.message : String(error))
     } finally {
@@ -143,11 +156,20 @@ export function PosSales() {
             />
             <PaymentButtons
               disabled={cartItems.length === 0 || submitting}
-              onPayment={handlePayment}
+              onPayment={(method) => submitSale([{ method, amount: total }])}
+              onSplitPayment={() => setSplitOpen(true)}
             />
           </div>
         </div>
       </Main>
+
+      <SplitPaymentDialog
+        open={splitOpen}
+        onOpenChange={setSplitOpen}
+        total={total}
+        submitting={submitting}
+        onConfirm={submitSale}
+      />
     </>
   )
 }

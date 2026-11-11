@@ -71,6 +71,8 @@ export interface CreatePurchaseOrderPayload {
   expected_date: string
   notes?: string
   items: PurchaseOrderItemInput[]
+  /** Required for admins (they have no club); ignored by the DB for staff */
+  club_id?: string | null
 }
 
 export interface UpdatePurchaseOrderPayload {
@@ -95,6 +97,7 @@ export interface CreatePurchaseOrderRPCPayload {
   p_expected_date: string
   p_notes: string | null
   p_items: PurchaseOrderItemInput[]
+  p_club_id?: string | null
 }
 
 // Type for existing purchase order item from database
@@ -138,7 +141,3 @@ export interface UpdatePurchaseOrderResponse {
   error?: string
 }
 
-export interface DeletePurchaseOrderResponse {
-  success: boolean
-  error?: string
-}

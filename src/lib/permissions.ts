@@ -1,3 +1,4 @@
+import { canEditPurchaseOrder as canEditPurchaseOrderConfig } from '@/config/permissions'
 import { Role } from '@/store/useAuthStore'
 
 /**
@@ -45,30 +46,15 @@ export function canDeleteUsers(role: Role | null): boolean {
 }
 
 /**
- * Check if a role can edit a purchase order based on its status
- * - Admin: can edit everything
- * - Manager: can edit only if status === 'pending'
- * - Seller: cannot edit
+ * Check if a role can edit a purchase order based on its status.
+ * Same rule as the DB: admin / manager (own club) until it is delivered;
+ * sellers only view. Purchase orders can't be deleted by anyone.
  */
 export function canEditPurchaseOrder(
   role: Role | null,
   status: 'pending' | 'approved' | 'in_production' | 'shipped' | 'delivered'
 ): boolean {
-  if (!role) return false
-
-  if (role === 'admin') return true
-  if (role === 'manager') return status === 'pending'
-
-  return false
-}
-
-/**
- * Check if a role can delete purchase orders
- * Only admin can delete purchase orders
- */
-export function canDeletePurchaseOrder(role: Role | null): boolean {
-  if (!role) return false
-  return role === 'admin'
+  return canEditPurchaseOrderConfig(role, status)
 }
 
 /**
@@ -95,7 +81,7 @@ export function canView(role: Role | null, feature: string): boolean {
     products: ['admin', 'manager', 'seller'],
     inventory: ['admin', 'manager', 'seller'],
     pos: ['admin', 'manager', 'seller'],
-    customers: ['admin', 'manager', 'seller']
+    customers: ['admin', 'manager', 'seller'],
   }
 
   const allowedRoles = restrictions[feature]
@@ -109,7 +95,11 @@ export function canView(role: Role | null, feature: string): boolean {
  */
 export function hasPermission(
   role: Role | null,
-  permission: 'create-users' | 'delete-users' | 'manage-clubs' | 'edit-pending-po' | 'delete-po'
+  permission:
+    | 'create-users'
+    | 'delete-users'
+    | 'manage-clubs'
+    | 'edit-pending-po'
 ): boolean {
   switch (permission) {
     case 'create-users':
@@ -120,8 +110,6 @@ export function hasPermission(
       return canManageClubs(role)
     case 'edit-pending-po':
       return canEditPurchaseOrder(role, 'pending')
-    case 'delete-po':
-      return canDeletePurchaseOrder(role)
     default:
       return false
   }

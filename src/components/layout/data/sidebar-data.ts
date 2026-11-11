@@ -12,6 +12,8 @@ import {
   UserCircle,
   Building2,
   ClipboardList,
+  ShoppingCart,
+  Undo2,
 } from 'lucide-react'
 import i18n from '@/lib/i18n'
 import { type SidebarData } from '../types'
@@ -48,11 +50,12 @@ export const getSidebarData = (): SidebarData => ({
           url: '/',
           icon: LayoutDashboard,
         },
-        // {
-        //   title: i18n.t('nav.pos'),
-        //   url: '/pos',
-        //   icon: ShoppingCart,
-        // },
+        {
+          // Goes straight to the sale screen: the /pos dashboard still shows mock data
+          title: i18n.t('nav.pos'),
+          url: '/pos/new',
+          icon: ShoppingCart,
+        },
         {
           title: i18n.t('nav.inventory'),
           url: '/inventory',
@@ -67,6 +70,11 @@ export const getSidebarData = (): SidebarData => ({
           title: i18n.t('purchaseOrders.title'),
           url: '/purchase-orders',
           icon: ClipboardList,
+        },
+        {
+          title: i18n.t('nav.returns'),
+          url: '/returns',
+          icon: Undo2,
         },
         {
           title: i18n.t('nav.customers'),

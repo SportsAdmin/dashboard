@@ -31,27 +31,6 @@ export async function createSale(input: CreateSaleInput): Promise<string> {
   return data as unknown as string
 }
 
-export interface ReturnItemInput {
-  variant_id: string
-  quantity: number
-  condition?: 'new' | 'used' | 'damaged'
-}
-
-/** Registers a return; 'damaged' items are not put back into stock. */
-export async function createReturn(
-  saleId: string,
-  items: ReturnItemInput[],
-  reason?: string
-): Promise<string> {
-  const { data, error } = await supabase.rpc(
-    'create_return' as never,
-    { p_sale_id: saleId, p_items: items, p_reason: reason ?? null } as never
-  )
-
-  if (error) throw new Error(error.message)
-  return data as unknown as string
-}
-
 /** Manual stock correction (admin / manager). Returns the new stock. */
 export async function adjustStock(
   inventoryItemId: string,

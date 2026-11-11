@@ -1,25 +1,30 @@
 import { useNavigate, useParams } from '@tanstack/react-router'
+import type { PurchaseOrderStatus } from '@/config/permissions'
+import { updatePurchaseOrder } from '@/services/purchaseOrders'
+import type { UpdatePurchaseOrderPayload } from '@/types'
 import { ArrowLeft } from 'lucide-react'
-import { toast } from 'sonner'
 import { useTranslation } from 'react-i18next'
+import { toast } from 'sonner'
+import { usePermissions } from '@/hooks/use-permissions'
+import { usePurchaseOrder } from '@/hooks/use-purchase-orders'
+import { Button } from '@/components/ui/button'
 import { ConfigDrawer } from '@/components/config-drawer'
+import { LanguageSwitcher } from '@/components/language-switcher'
 import { Header } from '@/components/layout/header'
 import { Main } from '@/components/layout/main'
 import { ProfileDropdown } from '@/components/profile-dropdown'
 import { Search } from '@/components/search'
 import { ThemeSwitch } from '@/components/theme-switch'
-import { LanguageSwitcher } from '@/components/language-switcher'
-import { Button } from '@/components/ui/button'
 import { PurchaseOrderEditForm } from './components/purchase-order-edit-form'
-import { usePurchaseOrder } from '@/hooks/use-purchase-orders'
-import { updatePurchaseOrder } from '@/services/purchaseOrders'
-import type { UpdatePurchaseOrderPayload } from '@/types'
 
 export function EditPurchaseOrder() {
   const { t } = useTranslation()
   const navigate = useNavigate()
   const { id } = useParams({ from: '/_authenticated/purchase-orders/$id' })
   const { purchaseOrder, loading, error } = usePurchaseOrder(id)
+  const { canEditPO, loading: roleLoading } = usePermissions()
+  const readOnly =
+    !purchaseOrder || !canEditPO(purchaseOrder.status as PurchaseOrderStatus)
 
   const handleSubmit = async (data: UpdatePurchaseOrderPayload) => {
     const response = await updatePurchaseOrder(id, data)
@@ -61,7 +66,9 @@ export function EditPurchaseOrder() {
           </Button>
           <div>
             <h2 className='text-2xl font-bold tracking-tight'>
-              {t('purchaseOrders.edit.title')}
+              {readOnly && !loading
+                ? t('purchaseOrders.view')
+                : t('purchaseOrders.edit.title')}
             </h2>
             <p className='text-muted-foreground'>
               {t('purchaseOrders.edit.description')}
@@ -77,15 +84,18 @@ export function EditPurchaseOrder() {
 
         {error && (
           <div className='flex items-center justify-center py-8'>
-            <p className='text-destructive'>{t('common.error')}: {error}</p>
+            <p className='text-destructive'>
+              {t('common.error')}: {error}
+            </p>
           </div>
         )}
 
-        {!loading && !error && purchaseOrder && (
+        {!loading && !roleLoading && !error && purchaseOrder && (
           <PurchaseOrderEditForm
             purchaseOrder={purchaseOrder}
             onSubmit={handleSubmit}
             onCancel={handleCancel}
+            readOnly={readOnly}
           />
         )}
       </Main>

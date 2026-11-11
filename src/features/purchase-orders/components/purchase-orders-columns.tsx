@@ -1,11 +1,12 @@
-import { type ColumnDef } from '@tanstack/react-table'
 import { format } from 'date-fns'
+import { Link } from '@tanstack/react-router'
+import { type ColumnDef } from '@tanstack/react-table'
+import type { PurchaseOrderStatus } from '@/config/permissions'
+import type { PurchaseOrderWithItems } from '@/types'
+import { Eye, Pencil } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { DataTableColumnHeader } from '@/components/data-table'
-import { Link } from '@tanstack/react-router'
-import { Pencil } from 'lucide-react'
-import type { PurchaseOrderWithItems } from '@/types'
 import {
   getStatusVariant,
   getStatusLabel,
@@ -14,11 +15,18 @@ import {
   getTotalQuantity,
 } from '../utils/formatters'
 
-export const getPurchaseOrdersColumns = (t: any): ColumnDef<PurchaseOrderWithItems>[] => [
+export const getPurchaseOrdersColumns = (
+  t: any,
+  /** Whether the current user can edit an order in this status (else: view only) */
+  canEdit: (status: PurchaseOrderStatus) => boolean
+): ColumnDef<PurchaseOrderWithItems>[] => [
   {
     accessorKey: 'supplier',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title={t('purchaseOrders.table.supplier')} />
+      <DataTableColumnHeader
+        column={column}
+        title={t('purchaseOrders.table.supplier')}
+      />
     ),
     meta: {
       className: 'ps-1 max-w-0 w-1/5',
@@ -26,16 +34,17 @@ export const getPurchaseOrdersColumns = (t: any): ColumnDef<PurchaseOrderWithIte
     },
     cell: ({ row }) => {
       return (
-        <span className='truncate font-medium'>
-          {row.getValue('supplier')}
-        </span>
+        <span className='truncate font-medium'>{row.getValue('supplier')}</span>
       )
     },
   },
   {
     accessorKey: 'status',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title={t('purchaseOrders.table.status')} />
+      <DataTableColumnHeader
+        column={column}
+        title={t('purchaseOrders.table.status')}
+      />
     ),
     meta: {
       className: 'ps-1',
@@ -55,7 +64,10 @@ export const getPurchaseOrdersColumns = (t: any): ColumnDef<PurchaseOrderWithIte
   {
     accessorKey: 'expected_date',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title={t('purchaseOrders.table.expectedDate')} />
+      <DataTableColumnHeader
+        column={column}
+        title={t('purchaseOrders.table.expectedDate')}
+      />
     ),
     meta: {
       className: 'ps-1',
@@ -68,7 +80,7 @@ export const getPurchaseOrdersColumns = (t: any): ColumnDef<PurchaseOrderWithIte
       try {
         const date = new Date(dateStr)
         return (
-          <span className={overdue ? 'text-destructive font-medium' : ''}>
+          <span className={overdue ? 'font-medium text-destructive' : ''}>
             {format(date, 'MMM dd, yyyy')}
           </span>
         )
@@ -85,16 +97,21 @@ export const getPurchaseOrdersColumns = (t: any): ColumnDef<PurchaseOrderWithIte
       tdClassName: 'ps-4',
     },
     cell: ({ row }) => {
-      const { previews, hasMore, remaining } = getProductPreviews(row.original, 2)
+      const { previews, hasMore, remaining } = getProductPreviews(
+        row.original,
+        2
+      )
 
       return (
         <div className='flex flex-col gap-1'>
           {previews.length === 0 ? (
-            <span className='text-xs text-muted-foreground'>{t('purchaseOrders.table.noItems')}</span>
+            <span className='text-xs text-muted-foreground'>
+              {t('purchaseOrders.table.noItems')}
+            </span>
           ) : (
             <>
               {previews.map((preview, index) => (
-                <span key={index} className='text-sm truncate'>
+                <span key={index} className='truncate text-sm'>
                   {preview}
                 </span>
               ))}
@@ -113,7 +130,10 @@ export const getPurchaseOrdersColumns = (t: any): ColumnDef<PurchaseOrderWithIte
     id: 'items_count',
     accessorFn: (row) => row.purchase_order_items?.length || 0,
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title={t('purchaseOrders.table.totalItems')} />
+      <DataTableColumnHeader
+        column={column}
+        title={t('purchaseOrders.table.totalItems')}
+      />
     ),
     meta: {
       className: 'ps-1',
@@ -134,7 +154,10 @@ export const getPurchaseOrdersColumns = (t: any): ColumnDef<PurchaseOrderWithIte
   {
     accessorKey: 'created_at',
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title={t('purchaseOrders.table.created')} />
+      <DataTableColumnHeader
+        column={column}
+        title={t('purchaseOrders.table.created')}
+      />
     ),
     meta: {
       className: 'ps-1',
@@ -158,13 +181,20 @@ export const getPurchaseOrdersColumns = (t: any): ColumnDef<PurchaseOrderWithIte
       tdClassName: 'ps-4',
     },
     cell: ({ row }) => {
+      const editable = canEdit(row.original.status as PurchaseOrderStatus)
       return (
-        <Link
-          to='/purchase-orders/$id'
-          params={{ id: row.original.id }}
-        >
-          <Button variant='ghost' size='sm'>
-            <Pencil className='h-4 w-4' />
+        <Link to='/purchase-orders/$id' params={{ id: row.original.id }}>
+          <Button
+            variant='ghost'
+            size='sm'
+            aria-label={editable ? t('common.edit') : t('purchaseOrders.view')}
+            title={editable ? t('common.edit') : t('purchaseOrders.view')}
+          >
+            {editable ? (
+              <Pencil className='h-4 w-4' />
+            ) : (
+              <Eye className='h-4 w-4' />
+            )}
           </Button>
         </Link>
       )

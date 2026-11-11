@@ -1,4 +1,3 @@
-import { supabase } from '@/lib/supabase'
 import type {
   PurchaseOrderWithItems,
   CreatePurchaseOrderPayload,
@@ -11,8 +10,8 @@ import type {
   PurchaseOrderResponse,
   CreatePurchaseOrderResponse,
   UpdatePurchaseOrderResponse,
-  DeletePurchaseOrderResponse,
 } from '@/types'
+import { supabase } from '@/lib/supabase'
 
 // ============================================
 // Service Functions
@@ -32,7 +31,8 @@ export async function getPurchaseOrders(): Promise<PurchaseOrdersResponse> {
   try {
     const { data, error } = await supabase
       .from('purchase_orders')
-      .select(`
+      .select(
+        `
         id,
         supplier,
         status,
@@ -59,7 +59,8 @@ export async function getPurchaseOrders(): Promise<PurchaseOrdersResponse> {
             )
           )
         )
-      `)
+      `
+      )
       .order('created_at', { ascending: false })
 
     if (error) {
@@ -89,11 +90,14 @@ export async function getPurchaseOrders(): Promise<PurchaseOrdersResponse> {
  * @param {string} id - Purchase order ID
  * @returns {Promise} Response with purchase order or error
  */
-export async function getPurchaseOrder(id: string): Promise<PurchaseOrderResponse> {
+export async function getPurchaseOrder(
+  id: string
+): Promise<PurchaseOrderResponse> {
   try {
     const { data, error } = await supabase
       .from('purchase_orders')
-      .select(`
+      .select(
+        `
         id,
         supplier,
         status,
@@ -120,7 +124,8 @@ export async function getPurchaseOrder(id: string): Promise<PurchaseOrderRespons
             )
           )
         )
-      `)
+      `
+      )
       .eq('id', id)
       .single()
 
@@ -170,11 +175,15 @@ export async function createPurchaseOrder(
         inventory_item_id: item.inventory_item_id,
         quantity: item.quantity,
       })),
+      p_club_id: payload.club_id ?? null,
     }
 
     // Call the RPC function
-    // @ts-expect-error - Supabase RPC types are not correctly generated for create_purchase_order function
-    const { data, error } = await supabase.rpc('create_purchase_order', rpcPayload)
+    // Supabase RPC types are not generated for create_purchase_order
+    const { data, error } = await supabase.rpc(
+      'create_purchase_order' as never,
+      rpcPayload as never
+    )
 
     if (error) {
       console.error('Error creating purchase order via RPC:', error)
@@ -207,20 +216,77 @@ export async function createPurchaseOrder(
 /**
  * Update an existing purchase order
  *
- * IMPORTANT: This function handles two scenarios:
- * 1. Simple update (only status/supplier/dates): Updates only purchase_orders table
- * 2. Full update (with items): Updates purchase_orders + replaces all items
+ * Order of operations matters:
+ * 1. Items first (if they changed) — while the order is still editable.
+ * 2. Then the order fields, including status. Marking it 'delivered' applies the
+ *    stock in the DB (trigger) using the items saved in step 1, and locks the order.
  *
- * @param {string} id - Purchase order ID
- * @param {UpdatePurchaseOrderPayload} payload - Updated purchase order data
- * @returns {Promise} Response with success status or error
+ * RLS doesn't raise when a row isn't editable for the user: it just updates 0
+ * rows. We detect that and return a clear error instead of a false "success".
  */
 export async function updatePurchaseOrder(
   id: string,
   payload: UpdatePurchaseOrderPayload
 ): Promise<UpdatePurchaseOrderResponse> {
+  const notAllowed =
+    'No tenés permiso para modificar esta orden (o ya fue entregada).'
+
   try {
-    // Step 1: Update the purchase order basic fields
+    // Step 1: replace items if they actually changed
+    if (payload.items && payload.items.length > 0) {
+      const { data: existingItems, error: fetchError } = await supabase
+        .from('purchase_order_items')
+        .select('id, inventory_item_id, quantity')
+        .eq('purchase_order_id', id)
+
+      if (fetchError) {
+        return { success: false, error: fetchError.message }
+      }
+
+      const existing = (existingItems ?? []) as ExistingPurchaseOrderItem[]
+      const itemsChanged =
+        existing.length !== payload.items.length ||
+        !payload.items.every((newItem) => {
+          const match = existing.find(
+            (e) => e.inventory_item_id === newItem.inventory_item_id
+          )
+          return match && match.quantity === newItem.quantity
+        })
+
+      if (itemsChanged) {
+        const { data: deleted, error: deleteError } = await supabase
+          .from('purchase_order_items')
+          .delete()
+          .eq('purchase_order_id', id)
+          .select('id')
+
+        if (deleteError) {
+          return { success: false, error: deleteError.message }
+        }
+        if (existing.length > 0 && (deleted ?? []).length === 0) {
+          return { success: false, error: notAllowed }
+        }
+
+        const itemsToInsert: PurchaseOrderItemToInsert[] = payload.items.map(
+          (item) => ({
+            purchase_order_id: id,
+            inventory_item_id: item.inventory_item_id,
+            quantity: item.quantity,
+          })
+        )
+
+        const { error: itemsError } = await supabase
+          .from('purchase_order_items')
+          // @ts-expect-error - Supabase types are not correctly generated for purchase_order_items insert
+          .insert(itemsToInsert)
+
+        if (itemsError) {
+          return { success: false, error: itemsError.message }
+        }
+      }
+    }
+
+    // Step 2: order fields (status last, so delivery uses the final items)
     const updateData: PurchaseOrderUpdateData = {}
     if (payload.supplier !== undefined) updateData.supplier = payload.supplier
     if (payload.status !== undefined) updateData.status = payload.status
@@ -229,137 +295,23 @@ export async function updatePurchaseOrder(
     if (payload.notes !== undefined) updateData.notes = payload.notes
 
     if (Object.keys(updateData).length > 0) {
-      const { error: orderError} = await supabase
+      const { data: updated, error: orderError } = await supabase
         .from('purchase_orders')
         // @ts-expect-error - Supabase types are not correctly generated for this table
         .update(updateData)
         .eq('id', id)
+        .select('id')
 
       if (orderError) {
-        console.error('Error updating purchase order:', orderError)
-        return {
-          success: false,
-          error: orderError.message,
-        }
+        return { success: false, error: orderError.message }
+      }
+      if ((updated ?? []).length === 0) {
+        return { success: false, error: notAllowed }
       }
     }
 
-    // Step 2: If items are provided AND different, replace them
-    // NOTE: We only replace items if they're explicitly provided
-    // This prevents accidental deletion when just updating status
-    if (payload.items && payload.items.length > 0) {
-      // First, get existing items to compare
-      const { data: existingItems, error: fetchError } = await supabase
-        .from('purchase_order_items')
-        .select('id, inventory_item_id, quantity')
-        .eq('purchase_order_id', id)
-
-      if (fetchError) {
-        console.error('Error fetching existing items:', fetchError)
-        // Continue anyway - we'll replace the items
-      }
-
-      // Check if items actually changed
-      const itemsChanged = !existingItems ||
-        existingItems.length !== payload.items.length ||
-        !payload.items.every((newItem) => {
-          const existing = (existingItems as ExistingPurchaseOrderItem[]).find(
-            (e) => e.inventory_item_id === newItem.inventory_item_id
-          )
-          return existing && existing.quantity === newItem.quantity
-        })
-
-      // Only replace items if they actually changed
-      if (itemsChanged) {
-        // Delete existing items
-        const { error: deleteError } = await supabase
-          .from('purchase_order_items')
-          .delete()
-          .eq('purchase_order_id', id)
-
-        if (deleteError) {
-          console.error('Error deleting purchase order items:', deleteError)
-          return {
-            success: false,
-            error: `Failed to delete existing items: ${deleteError.message}`,
-          }
-        }
-
-        // Insert new items
-        const itemsToInsert: PurchaseOrderItemToInsert[] = payload.items.map((item) => ({
-          purchase_order_id: id,
-          inventory_item_id: item.inventory_item_id,
-          quantity: item.quantity,
-        }))
-
-        const { error: itemsError } = await supabase
-          .from('purchase_order_items')
-          // @ts-expect-error - Supabase types are not correctly generated for purchase_order_items insert
-          .insert(itemsToInsert)
-
-        if (itemsError) {
-          console.error('Error creating purchase order items:', itemsError)
-          return {
-            success: false,
-            error: `Failed to create new items: ${itemsError.message}`,
-          }
-        }
-      }
-    }
-
-    return {
-      success: true,
-    }
+    return { success: true }
   } catch (error) {
-    console.error('Unexpected error in updatePurchaseOrder:', error)
-    return {
-      success: false,
-      error: error instanceof Error ? error.message : 'Unknown error occurred',
-    }
-  }
-}
-
-/**
- * Delete a purchase order
- *
- * @param {string} id - Purchase order ID
- * @returns {Promise} Response with success status or error
- */
-export async function deletePurchaseOrder(id: string): Promise<DeletePurchaseOrderResponse> {
-  try {
-    // Delete items first (if not using CASCADE)
-    const { error: itemsError } = await supabase
-      .from('purchase_order_items')
-      .delete()
-      .eq('purchase_order_id', id)
-
-    if (itemsError) {
-      console.error('Error deleting purchase order items:', itemsError)
-      return {
-        success: false,
-        error: itemsError.message,
-      }
-    }
-
-    // Delete the purchase order
-    const { error: orderError } = await supabase
-      .from('purchase_orders')
-      .delete()
-      .eq('id', id)
-
-    if (orderError) {
-      console.error('Error deleting purchase order:', orderError)
-      return {
-        success: false,
-        error: orderError.message,
-      }
-    }
-
-    return {
-      success: true,
-    }
-  } catch (error) {
-    console.error('Unexpected error in deletePurchaseOrder:', error)
     return {
       success: false,
       error: error instanceof Error ? error.message : 'Unknown error occurred',

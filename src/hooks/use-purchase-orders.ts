@@ -4,9 +4,12 @@ import {
   getPurchaseOrder,
   createPurchaseOrder,
   updatePurchaseOrder,
-  deletePurchaseOrder,
 } from '@/services/purchaseOrders'
-import type { PurchaseOrder, CreatePurchaseOrderPayload, UpdatePurchaseOrderPayload } from '@/types'
+import type {
+  PurchaseOrder,
+  CreatePurchaseOrderPayload,
+  UpdatePurchaseOrderPayload,
+} from '@/types'
 
 interface UsePurchaseOrdersReturn {
   purchaseOrders: PurchaseOrder[]
@@ -20,7 +23,6 @@ interface UsePurchaseOrdersReturn {
     id: string,
     payload: UpdatePurchaseOrderPayload
   ) => Promise<{ success: boolean; error?: string }>
-  deleteOrder: (id: string) => Promise<{ success: boolean; error?: string }>
 }
 
 /**
@@ -90,7 +92,8 @@ export function usePurchaseOrders(): UsePurchaseOrdersReturn {
 
       return response
     } catch (err) {
-      const error = err instanceof Error ? err.message : 'An unexpected error occurred'
+      const error =
+        err instanceof Error ? err.message : 'An unexpected error occurred'
       return {
         success: false,
         error,
@@ -112,26 +115,8 @@ export function usePurchaseOrders(): UsePurchaseOrdersReturn {
 
       return response
     } catch (err) {
-      const error = err instanceof Error ? err.message : 'An unexpected error occurred'
-      return {
-        success: false,
-        error,
-      }
-    }
-  }
-
-  const deleteOrder = async (id: string) => {
-    try {
-      const response = await deletePurchaseOrder(id)
-
-      if (response.success) {
-        // Refetch to get the updated list
-        await fetchPurchaseOrders()
-      }
-
-      return response
-    } catch (err) {
-      const error = err instanceof Error ? err.message : 'An unexpected error occurred'
+      const error =
+        err instanceof Error ? err.message : 'An unexpected error occurred'
       return {
         success: false,
         error,
@@ -150,7 +135,6 @@ export function usePurchaseOrders(): UsePurchaseOrdersReturn {
     refetch: fetchPurchaseOrders,
     createOrder,
     updateOrder,
-    deleteOrder,
   }
 }
 

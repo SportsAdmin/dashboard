@@ -5,6 +5,16 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
+/** Formats an amount as money with 2 decimals, e.g. 1234.5 -> "$1,234.50" */
+export function formatMoney(amount: number) {
+  return `$${amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+}
+
+/** Rounds to cents, avoiding floating point drift (0.1 + 0.2 -> 0.3) */
+export function toCents(amount: number) {
+  return Math.round(amount * 100)
+}
+
 export function sleep(ms: number = 1000) {
   return new Promise((resolve) => setTimeout(resolve, ms))
 }

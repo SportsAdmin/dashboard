@@ -32,6 +32,8 @@ export const productFormSchema = z.object({
   name: z.string().min(1, 'Product name is required'),
   category: z.string().min(1, 'Category is required'),
   description: z.string().min(1, 'Description is required'),
+  /** Only used (and required) when the user is an admin */
+  club_id: z.string().optional(),
   variants: z.array(variantFormSchema).min(1, 'At least one variant is required'),
 })
 

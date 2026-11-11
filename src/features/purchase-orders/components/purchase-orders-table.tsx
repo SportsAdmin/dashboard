@@ -12,8 +12,10 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table'
+import type { PurchaseOrderWithItems } from '@/types'
 import { useTranslation } from 'react-i18next'
 import { cn } from '@/lib/utils'
+import { usePermissions } from '@/hooks/use-permissions'
 import { useTableUrlState } from '@/hooks/use-table-url-state'
 import {
   Table,
@@ -25,7 +27,6 @@ import {
 } from '@/components/ui/table'
 import { DataTablePagination, DataTableToolbar } from '@/components/data-table'
 import { statusOptions } from '../data/data'
-import type { PurchaseOrderWithItems } from '@/types'
 import { getPurchaseOrdersColumns } from './purchase-orders-columns'
 
 const route = getRouteApi('/_authenticated/purchase-orders/')
@@ -36,7 +37,8 @@ type DataTableProps = {
 
 export function PurchaseOrdersTable({ data }: DataTableProps) {
   const { t } = useTranslation()
-  const columns = getPurchaseOrdersColumns(t)
+  const { canEditPO } = usePermissions()
+  const columns = getPurchaseOrdersColumns(t, canEditPO)
 
   // Local UI-only states
   const [rowSelection, setRowSelection] = useState({})

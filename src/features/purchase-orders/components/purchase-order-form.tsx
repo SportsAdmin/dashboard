@@ -1,12 +1,16 @@
+import { useState } from 'react'
+import { z } from 'zod'
 import { useForm, useFieldArray } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { z } from 'zod'
-import { useTranslation } from 'react-i18next'
+import type { CreatePurchaseOrderPayload } from '@/types'
 import { Loader2, Plus, Trash2 } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
+import { useInventory } from '@/hooks/use-inventory'
+import { usePermissions } from '@/hooks/use-permissions'
 import { Button } from '@/components/ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Textarea } from '@/components/ui/textarea'
 import {
   Select,
   SelectContent,
@@ -14,24 +18,28 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { useInventory } from '@/hooks/use-inventory'
-import type { CreatePurchaseOrderPayload } from '@/types'
+import { Textarea } from '@/components/ui/textarea'
+import { ClubSelect } from '@/components/club-select'
 
 // Form schema with translations - we need to use a function to access t()
-const getPurchaseOrderFormSchema = (t: any) => z.object({
-  supplier: z.string().min(1, t('purchaseOrders.form.supplierRequired')),
-  expected_date: z.string().min(1, t('purchaseOrders.form.expectedDateRequired')),
-  notes: z.string().optional(),
-  items: z
-    .array(
-      z.object({
-        inventory_item_id: z.string().min(1, t('purchaseOrders.form.selectProductError')),
-        quantity: z.number().min(1, t('purchaseOrders.form.quantityMin')),
-      })
-    )
-    .min(1, t('purchaseOrders.form.atLeastOneItem')),
-})
+const getPurchaseOrderFormSchema = (t: any) =>
+  z.object({
+    supplier: z.string().min(1, t('purchaseOrders.form.supplierRequired')),
+    expected_date: z
+      .string()
+      .min(1, t('purchaseOrders.form.expectedDateRequired')),
+    notes: z.string().optional(),
+    items: z
+      .array(
+        z.object({
+          inventory_item_id: z
+            .string()
+            .min(1, t('purchaseOrders.form.selectProductError')),
+          quantity: z.number().min(1, t('purchaseOrders.form.quantityMin')),
+        })
+      )
+      .min(1, t('purchaseOrders.form.atLeastOneItem')),
+  })
 
 type PurchaseOrderFormData = {
   supplier: string
@@ -56,6 +64,15 @@ export function PurchaseOrderForm({
 }: PurchaseOrderFormProps) {
   const { t } = useTranslation()
   const { inventory, loading: inventoryLoading } = useInventory()
+  const { isAdmin } = usePermissions()
+  const requireClub = isAdmin()
+  const [clubId, setClubId] = useState('')
+  const [clubError, setClubError] = useState<string>()
+  // Admins see every club's inventory: only offer products of the chosen club
+  const clubInventory = requireClub
+    ? inventory.filter((item) => item.clubId === clubId)
+    : inventory
+  const needsClub = requireClub && !clubId
 
   const {
     register,
@@ -73,13 +90,25 @@ export function PurchaseOrderForm({
     },
   })
 
-  const { fields, append, remove } = useFieldArray({
+  const { fields, append, remove, replace } = useFieldArray({
     control,
     name: 'items',
   })
 
   const handleFormSubmit = async (data: PurchaseOrderFormData) => {
-    await onSubmit(data)
+    if (needsClub) {
+      setClubError(t('clubSelect.required'))
+      return
+    }
+    await onSubmit({ ...data, club_id: requireClub ? clubId : null })
+  }
+
+  const changeClub = (value: string) => {
+    if (value === clubId) return
+    setClubId(value)
+    setClubError(undefined)
+    // Products belong to a club: start the item list over for the new one
+    replace([{ inventory_item_id: '', quantity: 1 }])
   }
 
   const addItem = () => {
@@ -100,9 +129,19 @@ export function PurchaseOrderForm({
           <CardTitle>{t('purchaseOrders.form.orderInformation')}</CardTitle>
         </CardHeader>
         <CardContent className='space-y-4'>
+          {requireClub && (
+            <ClubSelect
+              value={clubId}
+              onChange={changeClub}
+              error={clubError}
+              disabled={isSubmitting}
+            />
+          )}
           <div className='grid gap-4 md:grid-cols-2'>
             <div className='space-y-2'>
-              <Label htmlFor='supplier'>{t('purchaseOrders.form.supplier')} *</Label>
+              <Label htmlFor='supplier'>
+                {t('purchaseOrders.form.supplier')} *
+              </Label>
               <Input
                 id='supplier'
                 placeholder={t('purchaseOrders.form.supplierPlaceholder')}
@@ -117,7 +156,9 @@ export function PurchaseOrderForm({
             </div>
 
             <div className='space-y-2'>
-              <Label htmlFor='expected_date'>{t('purchaseOrders.form.expectedDate')} *</Label>
+              <Label htmlFor='expected_date'>
+                {t('purchaseOrders.form.expectedDate')} *
+              </Label>
               <Input
                 id='expected_date'
                 type='date'
@@ -154,7 +195,7 @@ export function PurchaseOrderForm({
             variant='outline'
             size='sm'
             onClick={addItem}
-            disabled={isSubmitting || inventoryLoading}
+            disabled={isSubmitting || inventoryLoading || needsClub}
           >
             <Plus className='mr-2 h-4 w-4' />
             {t('purchaseOrders.form.addItem')}
@@ -167,16 +208,23 @@ export function PurchaseOrderForm({
             </p>
           )}
 
-          {!inventoryLoading && fields.length === 0 && (
+          {needsClub && (
+            <p className='text-center text-sm text-muted-foreground'>
+              {t('clubSelect.chooseFirst')}
+            </p>
+          )}
+
+          {!inventoryLoading && !needsClub && fields.length === 0 && (
             <p className='text-center text-sm text-muted-foreground'>
               {t('purchaseOrders.form.noItemsYet')}
             </p>
           )}
 
           {!inventoryLoading &&
+            !needsClub &&
             fields.map((field, index) => (
               <div
-                key={field.id}
+                key={`${clubId}-${field.id}`}
                 className='flex gap-4 rounded-lg border p-4'
               >
                 <div className='flex-1 space-y-2'>
@@ -191,13 +239,15 @@ export function PurchaseOrderForm({
                     defaultValue={field.inventory_item_id}
                   >
                     <SelectTrigger>
-                      <SelectValue placeholder={t('purchaseOrders.form.selectProduct')} />
+                      <SelectValue
+                        placeholder={t('purchaseOrders.form.selectProduct')}
+                      />
                     </SelectTrigger>
                     <SelectContent>
-                      {inventory.map((item) => (
+                      {clubInventory.map((item) => (
                         <SelectItem key={item.id} value={item.id}>
-                          {item.productName} - {item.size} - {item.color} ({t('pos.sales.stock')}:{' '}
-                          {item.stock})
+                          {item.productName} - {item.size} - {item.color} (
+                          {t('pos.sales.stock')}: {item.stock})
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -210,7 +260,9 @@ export function PurchaseOrderForm({
                 </div>
 
                 <div className='w-32 space-y-2'>
-                  <Label htmlFor={`items.${index}.quantity`}>{t('purchaseOrders.form.quantity')} *</Label>
+                  <Label htmlFor={`items.${index}.quantity`}>
+                    {t('purchaseOrders.form.quantity')} *
+                  </Label>
                   <Input
                     id={`items.${index}.quantity`}
                     type='number'
@@ -242,7 +294,9 @@ export function PurchaseOrderForm({
             ))}
 
           {errors.items?.root && (
-            <p className='text-sm text-destructive'>{errors.items.root.message}</p>
+            <p className='text-sm text-destructive'>
+              {errors.items.root.message}
+            </p>
           )}
         </CardContent>
       </Card>
@@ -259,7 +313,9 @@ export function PurchaseOrderForm({
         </Button>
         <Button type='submit' disabled={isSubmitting || inventoryLoading}>
           {isSubmitting && <Loader2 className='mr-2 h-4 w-4 animate-spin' />}
-          {isSubmitting ? t('purchaseOrders.form.creating') : t('purchaseOrders.form.createButton')}
+          {isSubmitting
+            ? t('purchaseOrders.form.creating')
+            : t('purchaseOrders.form.createButton')}
         </Button>
       </div>
     </form>
