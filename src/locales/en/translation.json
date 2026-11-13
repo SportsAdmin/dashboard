@@ -37,7 +37,11 @@
     "users": "Users",
     "settings": "Settings",
     "helpCenter": "Help Center",
-    "returns": "Returns"
+    "returns": "Returns",
+    "sales": "Sales",
+    "dailyCash": "Daily cash",
+    "salesSummary": "Summary",
+    "noProfile": "Your user has no profile yet, so there are no sections to show. Ask an administrator to assign you a role and a club."
   },
   "pos": {
     "dashboard": {
@@ -528,6 +532,78 @@
     "hint": "As an admin you have no club of your own: choose which club this belongs to.",
     "required": "Choose a club",
     "chooseFirst": "Choose the club first to see its products.",
-    "loadError": "Could not load clubs"
+    "loadError": "Could not load clubs",
+    "all": "All clubs"
+  },
+  "pager": {
+    "showing": "{{first}}–{{last}} of {{total}}",
+    "rowsPerPage": "Rows per page",
+    "pageOf": "Page {{page}} of {{pageCount}}",
+    "first": "First page",
+    "previous": "Previous page",
+    "next": "Next page",
+    "last": "Last page"
+  },
+  "sales": {
+    "daily": {
+      "title": "Daily cash",
+      "description": "The day's sales and how much came in through each payment method."
+    },
+    "summary": {
+      "title": "Sales summary",
+      "description": "Sales by week, month or year. Every filter queries the data again."
+    },
+    "period": {
+      "day": "Day",
+      "week": "Week",
+      "month": "Month",
+      "year": "Year"
+    },
+    "previousPeriod": "Previous period",
+    "nextPeriod": "Next period",
+    "today": "Today",
+    "current": "Current",
+    "cards": {
+      "amount": "Total sold",
+      "sales": "Sales",
+      "avgTicket": "Average ticket",
+      "units": "Units",
+      "returnsHint": "{{count}} returns ({{units}} units)"
+    },
+    "byMethod": {
+      "title": "By payment method",
+      "salesCount": "{{count}} sales",
+      "salesCount_one": "{{count}} sale",
+      "salesCount_other": "{{count}} sales",
+      "splitHint": "A split payment counts in each method it used."
+    },
+    "series": {
+      "byDay": "Sales per day",
+      "byMonth": "Sales per month",
+      "day": "Day",
+      "month": "Month"
+    },
+    "topProducts": {
+      "title": "Best sellers",
+      "units_one": "{{count}} unit",
+      "units_other": "{{count}} units"
+    },
+    "bySeller": {
+      "title": "By seller"
+    },
+    "list": {
+      "title": "Sales",
+      "date": "Date",
+      "time": "Time",
+      "sale": "Sale",
+      "club": "Club",
+      "products": "Products",
+      "payment": "Payment",
+      "seller": "Seller",
+      "total": "Total",
+      "empty": "No sales in this period.",
+      "returned_one": "{{count}} returned",
+      "returned_other": "{{count}} returned"
+    }
   }
 }

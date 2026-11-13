@@ -1,8 +1,8 @@
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
+import { filterSidebarByRole } from '@/lib/sidebar-filter'
 import { useLayout } from '@/context/layout-provider'
 import { useRole } from '@/hooks/useRole'
-import { filterSidebarByRole } from '@/lib/sidebar-filter'
 import {
   Sidebar,
   SidebarContent,
@@ -18,23 +18,17 @@ import { TeamSwitcher } from './team-switcher'
 
 export function AppSidebar() {
   const { collapsible, variant } = useLayout()
-  const { i18n } = useTranslation()
-  const { role } = useRole()
+  const { i18n, t } = useTranslation()
+  const { role, loading } = useRole()
 
   // Get fresh sidebar data when language changes
   const sidebarData = getSidebarData()
 
   // Filter sidebar navigation based on user role
-  const filteredNavGroups = useMemo(() => {
-    console.log('[AppSidebar] Current role:', role)
-    if (!role) {
-      console.log('[AppSidebar] No role found, returning empty array')
-      return []
-    }
-    const filtered = filterSidebarByRole(sidebarData.navGroups, role)
-    console.log('[AppSidebar] Filtered nav groups:', filtered)
-    return filtered
-  }, [sidebarData.navGroups, role])
+  const filteredNavGroups = useMemo(
+    () => (role ? filterSidebarByRole(sidebarData.navGroups, role) : []),
+    [sidebarData.navGroups, role]
+  )
 
   return (
     <Sidebar collapsible={collapsible} variant={variant}>
@@ -49,6 +43,12 @@ export function AppSidebar() {
         {filteredNavGroups.map((props) => (
           <NavGroup key={props.title} {...props} />
         ))}
+        {!loading && !role && (
+          // Logged in but without a profile (no role): nothing to show yet
+          <p className='px-4 py-3 text-sm text-muted-foreground group-data-[collapsible=icon]:hidden'>
+            {t('nav.noProfile')}
+          </p>
+        )}
       </SidebarContent>
       <SidebarFooter>
         <NavUser />

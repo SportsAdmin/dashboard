@@ -13,6 +13,8 @@ export function canAccessRoute(role: Role | null, route: string): boolean {
   // Define route restrictions
   const restrictedRoutes: Record<string, Role[]> = {
     '/users': ['admin', 'manager'],
+    '/sales': ['admin', 'manager'],
+    '/sales/summary': ['admin', 'manager'],
     '/clubs': ['admin'],
     '/clubs/create': ['admin'],
     '/tasks': ['admin'],

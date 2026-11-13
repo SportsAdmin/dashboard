@@ -31,6 +31,7 @@ import { Route as AuthenticatedSettingsRouteRouteImport } from './routes/_authen
 import { Route as AuthenticatedUsersIndexRouteImport } from './routes/_authenticated/users/index'
 import { Route as AuthenticatedTasksIndexRouteImport } from './routes/_authenticated/tasks/index'
 import { Route as AuthenticatedSettingsIndexRouteImport } from './routes/_authenticated/settings/index'
+import { Route as AuthenticatedSalesIndexRouteImport } from './routes/_authenticated/sales/index'
 import { Route as AuthenticatedReturnsIndexRouteImport } from './routes/_authenticated/returns/index'
 import { Route as AuthenticatedPurchaseOrdersIndexRouteImport } from './routes/_authenticated/purchase-orders/index'
 import { Route as AuthenticatedPosIndexRouteImport } from './routes/_authenticated/pos/index'
@@ -45,6 +46,7 @@ import { Route as AuthenticatedSettingsNotificationsRouteImport } from './routes
 import { Route as AuthenticatedSettingsDisplayRouteImport } from './routes/_authenticated/settings/display'
 import { Route as AuthenticatedSettingsAppearanceRouteImport } from './routes/_authenticated/settings/appearance'
 import { Route as AuthenticatedSettingsAccountRouteImport } from './routes/_authenticated/settings/account'
+import { Route as AuthenticatedSalesSummaryRouteImport } from './routes/_authenticated/sales/summary'
 import { Route as AuthenticatedPurchaseOrdersCreateRouteImport } from './routes/_authenticated/purchase-orders/create'
 import { Route as AuthenticatedPurchaseOrdersIdRouteImport } from './routes/_authenticated/purchase-orders/$id'
 import { Route as AuthenticatedPosNewRouteImport } from './routes/_authenticated/pos/new'
@@ -160,6 +162,11 @@ const AuthenticatedSettingsIndexRoute =
     path: '/',
     getParentRoute: () => AuthenticatedSettingsRouteRoute,
   } as any)
+const AuthenticatedSalesIndexRoute = AuthenticatedSalesIndexRouteImport.update({
+  id: '/sales/',
+  path: '/sales/',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedReturnsIndexRoute =
   AuthenticatedReturnsIndexRouteImport.update({
     id: '/returns/',
@@ -238,6 +245,12 @@ const AuthenticatedSettingsAccountRoute =
     path: '/account',
     getParentRoute: () => AuthenticatedSettingsRouteRoute,
   } as any)
+const AuthenticatedSalesSummaryRoute =
+  AuthenticatedSalesSummaryRouteImport.update({
+    id: '/sales/summary',
+    path: '/sales/summary',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedPurchaseOrdersCreateRoute =
   AuthenticatedPurchaseOrdersCreateRouteImport.update({
     id: '/purchase-orders/create',
@@ -290,6 +303,7 @@ export interface FileRoutesByFullPath {
   '/pos/new': typeof AuthenticatedPosNewRoute
   '/purchase-orders/$id': typeof AuthenticatedPurchaseOrdersIdRoute
   '/purchase-orders/create': typeof AuthenticatedPurchaseOrdersCreateRoute
+  '/sales/summary': typeof AuthenticatedSalesSummaryRoute
   '/settings/account': typeof AuthenticatedSettingsAccountRoute
   '/settings/appearance': typeof AuthenticatedSettingsAppearanceRoute
   '/settings/display': typeof AuthenticatedSettingsDisplayRoute
@@ -304,6 +318,7 @@ export interface FileRoutesByFullPath {
   '/pos/': typeof AuthenticatedPosIndexRoute
   '/purchase-orders/': typeof AuthenticatedPurchaseOrdersIndexRoute
   '/returns/': typeof AuthenticatedReturnsIndexRoute
+  '/sales/': typeof AuthenticatedSalesIndexRoute
   '/settings/': typeof AuthenticatedSettingsIndexRoute
   '/tasks/': typeof AuthenticatedTasksIndexRoute
   '/users/': typeof AuthenticatedUsersIndexRoute
@@ -329,6 +344,7 @@ export interface FileRoutesByTo {
   '/pos/new': typeof AuthenticatedPosNewRoute
   '/purchase-orders/$id': typeof AuthenticatedPurchaseOrdersIdRoute
   '/purchase-orders/create': typeof AuthenticatedPurchaseOrdersCreateRoute
+  '/sales/summary': typeof AuthenticatedSalesSummaryRoute
   '/settings/account': typeof AuthenticatedSettingsAccountRoute
   '/settings/appearance': typeof AuthenticatedSettingsAppearanceRoute
   '/settings/display': typeof AuthenticatedSettingsDisplayRoute
@@ -343,6 +359,7 @@ export interface FileRoutesByTo {
   '/pos': typeof AuthenticatedPosIndexRoute
   '/purchase-orders': typeof AuthenticatedPurchaseOrdersIndexRoute
   '/returns': typeof AuthenticatedReturnsIndexRoute
+  '/sales': typeof AuthenticatedSalesIndexRoute
   '/settings': typeof AuthenticatedSettingsIndexRoute
   '/tasks': typeof AuthenticatedTasksIndexRoute
   '/users': typeof AuthenticatedUsersIndexRoute
@@ -373,6 +390,7 @@ export interface FileRoutesById {
   '/_authenticated/pos/new': typeof AuthenticatedPosNewRoute
   '/_authenticated/purchase-orders/$id': typeof AuthenticatedPurchaseOrdersIdRoute
   '/_authenticated/purchase-orders/create': typeof AuthenticatedPurchaseOrdersCreateRoute
+  '/_authenticated/sales/summary': typeof AuthenticatedSalesSummaryRoute
   '/_authenticated/settings/account': typeof AuthenticatedSettingsAccountRoute
   '/_authenticated/settings/appearance': typeof AuthenticatedSettingsAppearanceRoute
   '/_authenticated/settings/display': typeof AuthenticatedSettingsDisplayRoute
@@ -387,6 +405,7 @@ export interface FileRoutesById {
   '/_authenticated/pos/': typeof AuthenticatedPosIndexRoute
   '/_authenticated/purchase-orders/': typeof AuthenticatedPurchaseOrdersIndexRoute
   '/_authenticated/returns/': typeof AuthenticatedReturnsIndexRoute
+  '/_authenticated/sales/': typeof AuthenticatedSalesIndexRoute
   '/_authenticated/settings/': typeof AuthenticatedSettingsIndexRoute
   '/_authenticated/tasks/': typeof AuthenticatedTasksIndexRoute
   '/_authenticated/users/': typeof AuthenticatedUsersIndexRoute
@@ -415,6 +434,7 @@ export interface FileRouteTypes {
     | '/pos/new'
     | '/purchase-orders/$id'
     | '/purchase-orders/create'
+    | '/sales/summary'
     | '/settings/account'
     | '/settings/appearance'
     | '/settings/display'
@@ -429,6 +449,7 @@ export interface FileRouteTypes {
     | '/pos/'
     | '/purchase-orders/'
     | '/returns/'
+    | '/sales/'
     | '/settings/'
     | '/tasks/'
     | '/users/'
@@ -454,6 +475,7 @@ export interface FileRouteTypes {
     | '/pos/new'
     | '/purchase-orders/$id'
     | '/purchase-orders/create'
+    | '/sales/summary'
     | '/settings/account'
     | '/settings/appearance'
     | '/settings/display'
@@ -468,6 +490,7 @@ export interface FileRouteTypes {
     | '/pos'
     | '/purchase-orders'
     | '/returns'
+    | '/sales'
     | '/settings'
     | '/tasks'
     | '/users'
@@ -497,6 +520,7 @@ export interface FileRouteTypes {
     | '/_authenticated/pos/new'
     | '/_authenticated/purchase-orders/$id'
     | '/_authenticated/purchase-orders/create'
+    | '/_authenticated/sales/summary'
     | '/_authenticated/settings/account'
     | '/_authenticated/settings/appearance'
     | '/_authenticated/settings/display'
@@ -511,6 +535,7 @@ export interface FileRouteTypes {
     | '/_authenticated/pos/'
     | '/_authenticated/purchase-orders/'
     | '/_authenticated/returns/'
+    | '/_authenticated/sales/'
     | '/_authenticated/settings/'
     | '/_authenticated/tasks/'
     | '/_authenticated/users/'
@@ -687,6 +712,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedSettingsIndexRouteImport
       parentRoute: typeof AuthenticatedSettingsRouteRoute
     }
+    '/_authenticated/sales/': {
+      id: '/_authenticated/sales/'
+      path: '/sales'
+      fullPath: '/sales/'
+      preLoaderRoute: typeof AuthenticatedSalesIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/returns/': {
       id: '/_authenticated/returns/'
       path: '/returns'
@@ -785,6 +817,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedSettingsAccountRouteImport
       parentRoute: typeof AuthenticatedSettingsRouteRoute
     }
+    '/_authenticated/sales/summary': {
+      id: '/_authenticated/sales/summary'
+      path: '/sales/summary'
+      fullPath: '/sales/summary'
+      preLoaderRoute: typeof AuthenticatedSalesSummaryRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/purchase-orders/create': {
       id: '/_authenticated/purchase-orders/create'
       path: '/purchase-orders/create'
@@ -857,6 +896,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedPosNewRoute: typeof AuthenticatedPosNewRoute
   AuthenticatedPurchaseOrdersIdRoute: typeof AuthenticatedPurchaseOrdersIdRoute
   AuthenticatedPurchaseOrdersCreateRoute: typeof AuthenticatedPurchaseOrdersCreateRoute
+  AuthenticatedSalesSummaryRoute: typeof AuthenticatedSalesSummaryRoute
   AuthenticatedAppsIndexRoute: typeof AuthenticatedAppsIndexRoute
   AuthenticatedChatsIndexRoute: typeof AuthenticatedChatsIndexRoute
   AuthenticatedClubsIndexRoute: typeof AuthenticatedClubsIndexRoute
@@ -864,6 +904,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedPosIndexRoute: typeof AuthenticatedPosIndexRoute
   AuthenticatedPurchaseOrdersIndexRoute: typeof AuthenticatedPurchaseOrdersIndexRoute
   AuthenticatedReturnsIndexRoute: typeof AuthenticatedReturnsIndexRoute
+  AuthenticatedSalesIndexRoute: typeof AuthenticatedSalesIndexRoute
   AuthenticatedTasksIndexRoute: typeof AuthenticatedTasksIndexRoute
   AuthenticatedUsersIndexRoute: typeof AuthenticatedUsersIndexRoute
 }
@@ -880,6 +921,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedPurchaseOrdersIdRoute: AuthenticatedPurchaseOrdersIdRoute,
   AuthenticatedPurchaseOrdersCreateRoute:
     AuthenticatedPurchaseOrdersCreateRoute,
+  AuthenticatedSalesSummaryRoute: AuthenticatedSalesSummaryRoute,
   AuthenticatedAppsIndexRoute: AuthenticatedAppsIndexRoute,
   AuthenticatedChatsIndexRoute: AuthenticatedChatsIndexRoute,
   AuthenticatedClubsIndexRoute: AuthenticatedClubsIndexRoute,
@@ -887,6 +929,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedPosIndexRoute: AuthenticatedPosIndexRoute,
   AuthenticatedPurchaseOrdersIndexRoute: AuthenticatedPurchaseOrdersIndexRoute,
   AuthenticatedReturnsIndexRoute: AuthenticatedReturnsIndexRoute,
+  AuthenticatedSalesIndexRoute: AuthenticatedSalesIndexRoute,
   AuthenticatedTasksIndexRoute: AuthenticatedTasksIndexRoute,
   AuthenticatedUsersIndexRoute: AuthenticatedUsersIndexRoute,
 }

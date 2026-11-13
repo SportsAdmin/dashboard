@@ -18,7 +18,11 @@ type ClubSelectProps = {
   onChange: (clubId: string) => void
   error?: string
   disabled?: boolean
+  /** Filter mode: adds "All clubs" (value '') and drops the required mark/hint */
+  allowAll?: boolean
 }
+
+const ALL = '__all__'
 
 /**
  * Club picker for admins. Admins have no club of their own, so the DB requires
@@ -31,6 +35,7 @@ export function ClubSelect({
   onChange,
   error,
   disabled,
+  allowAll = false,
 }: ClubSelectProps) {
   const { t } = useTranslation()
   const [clubs, setClubs] = useState<Club[]>([])
@@ -47,10 +52,13 @@ export function ClubSelect({
 
   return (
     <div className='space-y-1.5'>
-      <Label htmlFor={id}>{t('clubSelect.label')} *</Label>
+      <Label htmlFor={id}>
+        {t('clubSelect.label')}
+        {!allowAll && ' *'}
+      </Label>
       <Select
-        value={value}
-        onValueChange={onChange}
+        value={allowAll && !value ? ALL : value}
+        onValueChange={(next) => onChange(next === ALL ? '' : next)}
         disabled={disabled || loading}
       >
         <SelectTrigger id={id} className='w-full' aria-invalid={!!error}>
@@ -61,6 +69,9 @@ export function ClubSelect({
           />
         </SelectTrigger>
         <SelectContent>
+          {allowAll && (
+            <SelectItem value={ALL}>{t('clubSelect.all')}</SelectItem>
+          )}
           {clubs.map((club) => (
             <SelectItem key={club.id} value={club.id}>
               {club.name}
@@ -69,7 +80,9 @@ export function ClubSelect({
           ))}
         </SelectContent>
       </Select>
-      <p className='text-xs text-muted-foreground'>{t('clubSelect.hint')}</p>
+      {!allowAll && (
+        <p className='text-xs text-muted-foreground'>{t('clubSelect.hint')}</p>
+      )}
       {error && <p className='text-xs text-destructive'>{error}</p>}
     </div>
   )

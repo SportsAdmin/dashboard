@@ -32,6 +32,18 @@ declare
   v_seller_product uuid;
   v_admin_product uuid;
   v_admin_po uuid;
+  v_today date;
+  v_base jsonb;
+  v_sum jsonb;
+  v_list jsonb;
+  v_week jsonb;
+  v_year jsonb;
+  v_other jsonb;
+  v_other_manager uuid;
+  v_num numeric;
+  v_num2 numeric;
+  v_num3 numeric;
+  v_num4 numeric;
   v_stock int;
   v_ledger int;
   v_err text;
@@ -49,10 +61,18 @@ begin
   limit 1;
   select id into v_seller from profiles where role = 'seller' and club_id = v_club limit 1;
   select id into v_other_seller from profiles where role = 'seller' and club_id <> v_club limit 1;
+  select id into v_other_manager from profiles where role = 'manager' and club_id <> v_club limit 1;
 
   if v_admin is null or v_manager is null or v_seller is null or v_other_seller is null then
     raise exception 'Faltan usuarios de prueba (admin, manager+seller del mismo club, seller de otro club)';
   end if;
+
+  -- Sales report baseline for today (real sales may already exist)
+  v_today := (now() at time zone 'America/Argentina/Buenos_Aires')::date;
+  perform set_config('role', 'authenticated', true);
+  perform set_config('request.jwt.claims', format(c_claims, v_manager), true);
+  v_base := public.sales_summary(v_today, v_today);
+  reset role;
 
   -- ---------------------------------------------------------------- fixture (as postgres)
   insert into products (club_id, name, category, description, active)
@@ -412,6 +432,77 @@ begin
   insert into t_results (escenario, ok, detalle)
   values ('6f. Una orden no puede mezclar productos de otro club', v_err like 'La orden tiene productos%',
           coalesce(v_err, 'SIN ERROR'));
+
+  -- ================================================================ 8. REPORTES DE VENTAS
+  -- Test sales today in this club: 2a (3 units, $3.000 cash) and 2g (2 units, $1.200 cash + $800 transfer)
+  perform set_config('role', 'authenticated', true);
+  perform set_config('request.jwt.claims', format(c_claims, v_manager), true);
+  v_sum := public.sales_summary(v_today, v_today);
+  v_list := public.sales_list(v_today, v_today, null, 1, 5);
+  v_week := public.sales_summary(date_trunc('week', v_today)::date, (date_trunc('week', v_today) + interval '6 day')::date);
+  v_year := public.sales_summary(date_trunc('year', v_today)::date, (date_trunc('year', v_today) + interval '1 year - 1 day')::date);
+  reset role;
+  insert into t_results (escenario, ok, detalle)
+  values ('8a. Caja diaria del manager: 2 ventas más, $5.000 más, 5 unidades más',
+          (v_sum#>>'{totals,sales}')::int - (v_base#>>'{totals,sales}')::int = 2
+            and (v_sum#>>'{totals,amount}')::numeric - (v_base#>>'{totals,amount}')::numeric = 5000
+            and (v_sum#>>'{totals,units}')::int - (v_base#>>'{totals,units}')::int = 5,
+          format('ventas=%s monto=%s unidades=%s', v_sum#>>'{totals,sales}', v_sum#>>'{totals,amount}',
+                 v_sum#>>'{totals,units}'));
+
+  select coalesce(sum((x->>'amount')::numeric) filter (where x->>'method' = 'cash'), 0),
+         coalesce(sum((x->>'amount')::numeric) filter (where x->>'method' = 'transfer'), 0)
+  into v_num, v_num2 from jsonb_array_elements(v_sum->'by_method') x;
+  select coalesce(sum((x->>'amount')::numeric) filter (where x->>'method' = 'cash'), 0),
+         coalesce(sum((x->>'amount')::numeric) filter (where x->>'method' = 'transfer'), 0)
+  into v_num3, v_num4 from jsonb_array_elements(v_base->'by_method') x;
+  insert into t_results (escenario, ok, detalle)
+  values ('8b. Por medio de pago: el pago mixto suma a efectivo (+4.200) y transferencia (+800)',
+          v_num - v_num3 = 4200 and v_num2 - v_num4 = 800,
+          format('efectivo=%s transferencia=%s', v_num, v_num2));
+
+  insert into t_results (escenario, ok, detalle)
+  values ('8c. Paginado en la base: página de 5, total y cantidad de páginas correctos',
+          (v_list->>'total_count')::int = (v_sum#>>'{totals,sales}')::int
+            and jsonb_array_length(v_list->'rows') = least((v_list->>'total_count')::int, 5)
+            and (v_list->>'page_count')::int = greatest(ceil((v_list->>'total_count')::numeric / 5)::int, 1)
+            and (v_list#>>'{rows,0,payments}') is not null,
+          format('total=%s filas=%s paginas=%s', v_list->>'total_count', jsonb_array_length(v_list->'rows'),
+                 v_list->>'page_count'));
+
+  insert into t_results (escenario, ok, detalle)
+  values ('8d. Semana (7 días) y año (12 meses): la serie cambia de granularidad y suma lo mismo que el total',
+          jsonb_array_length(v_week->'series') = 7 and v_week->>'bucket' = 'day'
+            and jsonb_array_length(v_year->'series') = 12 and v_year->>'bucket' = 'month'
+            and (select sum((x->>'amount')::numeric) from jsonb_array_elements(v_year->'series') x)
+                = (v_year#>>'{totals,amount}')::numeric,
+          format('semana=%s %s / año=%s %s', jsonb_array_length(v_week->'series'), v_week->>'bucket',
+                 jsonb_array_length(v_year->'series'), v_year->>'bucket'));
+
+  v_err := null;
+  begin
+    perform set_config('role', 'authenticated', true);
+    perform set_config('request.jwt.claims', format(c_claims, v_seller), true);
+    perform public.sales_summary(v_today, v_today);
+  exception when others then v_err := sqlerrm;
+  end;
+  reset role;
+  perform set_config('role', 'authenticated', true);
+  perform set_config('request.jwt.claims', format(c_claims, v_other_manager), true);
+  v_other := public.sales_summary(v_today, v_today, v_club);
+  reset role;
+  insert into t_results (escenario, ok, detalle)
+  values ('8e. Un seller no ve reportes; un manager de otro club no ve ventas de este club aunque lo pida',
+          v_err like 'Solo admin y manager%' and (v_other#>>'{totals,sales}')::int = 0,
+          format('seller: %s / otro manager: %s ventas', coalesce(v_err, 'SIN ERROR'), v_other#>>'{totals,sales}'));
+
+  perform set_config('role', 'authenticated', true);
+  perform set_config('request.jwt.claims', format(c_claims, v_admin), true);
+  v_other := public.sales_summary(v_today, v_today, v_club);
+  reset role;
+  insert into t_results (escenario, ok, detalle)
+  values ('8f. El admin filtra por club y ve lo mismo que el manager de ese club',
+          v_other->'totals' = v_sum->'totals', format('admin=%s manager=%s', v_other->'totals', v_sum->'totals'));
 
   select stock into v_stock from inventory_items where id = v_item;
   select coalesce(sum(quantity), 0) into v_ledger from stock_movements where inventory_item_id = v_item;

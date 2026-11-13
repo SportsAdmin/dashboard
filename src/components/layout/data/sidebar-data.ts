@@ -13,6 +13,9 @@ import {
   Building2,
   ClipboardList,
   ShoppingCart,
+  BarChart3,
+  Wallet,
+  CalendarRange,
   Undo2,
 } from 'lucide-react'
 import i18n from '@/lib/i18n'
@@ -55,6 +58,19 @@ export const getSidebarData = (): SidebarData => ({
           title: i18n.t('nav.pos'),
           url: '/pos/new',
           icon: ShoppingCart,
+        },
+        {
+          title: i18n.t('nav.sales'),
+          icon: BarChart3,
+          roles: ['admin', 'manager'],
+          items: [
+            { title: i18n.t('nav.dailyCash'), url: '/sales', icon: Wallet },
+            {
+              title: i18n.t('nav.salesSummary'),
+              url: '/sales/summary',
+              icon: CalendarRange,
+            },
+          ],
         },
         {
           title: i18n.t('nav.inventory'),

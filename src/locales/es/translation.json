@@ -37,7 +37,11 @@
     "users": "Usuarios",
     "settings": "Configuración",
     "helpCenter": "Centro de Ayuda",
-    "returns": "Devoluciones"
+    "returns": "Devoluciones",
+    "sales": "Ventas",
+    "dailyCash": "Caja diaria",
+    "salesSummary": "Resumen",
+    "noProfile": "Tu usuario no tiene un perfil asignado, por eso no ves secciones. Pedile a un administrador que te asigne un rol y un club."
   },
   "pos": {
     "dashboard": {
@@ -554,6 +558,78 @@
     "hint": "Como admin no tenés club propio: indicá a qué club pertenece.",
     "required": "Elegí un club",
     "chooseFirst": "Elegí primero el club para ver sus productos.",
-    "loadError": "No se pudieron cargar los clubes"
+    "loadError": "No se pudieron cargar los clubes",
+    "all": "Todos los clubes"
+  },
+  "pager": {
+    "showing": "{{first}}–{{last}} de {{total}}",
+    "rowsPerPage": "Filas por página",
+    "pageOf": "Página {{page}} de {{pageCount}}",
+    "first": "Primera página",
+    "previous": "Página anterior",
+    "next": "Página siguiente",
+    "last": "Última página"
+  },
+  "sales": {
+    "daily": {
+      "title": "Caja diaria",
+      "description": "Lo vendido en el día y cuánto entró por cada medio de pago."
+    },
+    "summary": {
+      "title": "Resumen de ventas",
+      "description": "Ventas por semana, mes o año. Cada filtro vuelve a consultar los datos."
+    },
+    "period": {
+      "day": "Día",
+      "week": "Semana",
+      "month": "Mes",
+      "year": "Año"
+    },
+    "previousPeriod": "Período anterior",
+    "nextPeriod": "Período siguiente",
+    "today": "Hoy",
+    "current": "Actual",
+    "cards": {
+      "amount": "Total vendido",
+      "sales": "Ventas",
+      "avgTicket": "Ticket promedio",
+      "units": "Unidades",
+      "returnsHint": "{{count}} devoluciones ({{units}} unidades)"
+    },
+    "byMethod": {
+      "title": "Por medio de pago",
+      "salesCount": "{{count}} ventas",
+      "salesCount_one": "{{count}} venta",
+      "salesCount_other": "{{count}} ventas",
+      "splitHint": "Una venta con pago mixto suma en cada medio que usó."
+    },
+    "series": {
+      "byDay": "Ventas por día",
+      "byMonth": "Ventas por mes",
+      "day": "Día",
+      "month": "Mes"
+    },
+    "topProducts": {
+      "title": "Productos más vendidos",
+      "units_one": "{{count}} unidad",
+      "units_other": "{{count}} unidades"
+    },
+    "bySeller": {
+      "title": "Por vendedor"
+    },
+    "list": {
+      "title": "Ventas",
+      "date": "Fecha",
+      "time": "Hora",
+      "sale": "Venta",
+      "club": "Club",
+      "products": "Productos",
+      "payment": "Pago",
+      "seller": "Vendedor",
+      "total": "Total",
+      "empty": "No hay ventas en este período.",
+      "returned_one": "{{count}} devuelta",
+      "returned_other": "{{count}} devueltas"
+    }
   }
 }

@@ -103,6 +103,7 @@ export const permissions: Record<Role, RolePermissions> = {
       '/products',
       '/inventory',
       '/sales',
+      '/sales/summary',
       '/purchase-orders',
       '/purchase-orders/create',
       '/purchase-orders/:id',
@@ -152,7 +153,6 @@ export const permissions: Record<Role, RolePermissions> = {
       '/returns',
       '/products',
       '/inventory',
-      '/sales',
       '/purchase-orders',
       '/purchase-orders/create',
       '/purchase-orders/:id', // View only
